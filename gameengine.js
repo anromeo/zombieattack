@@ -145,3 +145,45 @@ Entity.prototype.rotateAndCache = function (image, angle) {
     //offscreenCtx.strokeRect(0,0,size,size);
     return offscreenCanvas;
 }
+
+function LivingEntity(pointerX, pointerY, directionX, directionY) {
+    this.pointerX = pointerX;
+    this.pointerY = pointerY;
+    this.directionX = directionX;
+    this.directionY = directionY;
+    this.health = 100;
+    this.strength = 25;
+    this.speed = 10;
+    this.movingAnimation = null;
+    this.attackAnimation = null;
+    this.struckAnimation = null;
+    this.deathAnimation = null;
+}
+
+LivingEntity.prototype = new Entity();
+LivingEntity.prototype.constructor = LivingEntity;
+
+LivingEntity.prototype.setMovingAnimation = function (spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
+    this.movingAnimation = new Animation(spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse);
+}
+
+LivingEntity.prototype.setAttackAnimation = function (spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
+    this.attackAnimation = new Animation(spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse);
+}
+
+LivingEntity.prototype.setStruckAnimation = function (spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
+    this.struckAnimation = new Animation(spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse);
+}
+
+LivingEntity.prototype.setDeathAnimation = function (spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
+    this.deathAnimation = new Animation(spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse);
+}
+
+
+function NonLivingEntity() {
+
+}
+
+NonLivingEntity.prototype = new Entity();
+NonLivingEntity.prototype.constructor = NonLivingEntity;
+
