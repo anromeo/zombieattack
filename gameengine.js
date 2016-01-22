@@ -116,6 +116,11 @@ function Entity(game, x, y) {
     this.removeFromWorld = false;
 }
 
+Entity.prototype.setLocation = function (X, Y) {
+    this.x = X;
+    this.y = Y;
+}
+
 Entity.prototype.update = function () {
 }
 
@@ -146,7 +151,8 @@ Entity.prototype.rotateAndCache = function (image, angle) {
     return offscreenCanvas;
 }
 
-function LivingEntity(pointerX, pointerY, directionX, directionY) {
+function LivingEntity(game, pointerX, pointerY, directionX, directionY, locationX, locationY) {
+    Entity.call(this, game, locationX, locationY);
     this.pointerX = pointerX;
     this.pointerY = pointerY;
     this.directionX = directionX;
@@ -158,6 +164,7 @@ function LivingEntity(pointerX, pointerY, directionX, directionY) {
     this.attackAnimation = null;
     this.struckAnimation = null;
     this.deathAnimation = null;
+    this.currentAnimation = movingAnimation;
 }
 
 LivingEntity.prototype = new Entity();
@@ -179,11 +186,41 @@ LivingEntity.prototype.setDeathAnimation = function (spriteSheet, frameWidth, fr
     this.deathAnimation = new Animation(spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse);
 }
 
+LivingEntity.prototype.draw = function () {
+    this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+}
 
-function NonLivingEntity() {
+LivingEntity.prototype.update = function () {
+    if (this.health === 0) {
+        this.currentAnimation = this.deathAnimation;
+    } else if (/* Attack button is pressed */) {
+        this.currentAnimation = this.attackAnimation;
+    } else {
+        this.currentAnimation = this.movingAnimation;
+    }
+}
 
+
+function NonLivingEntity(game, locationX, locationY) {
+    Entity.call(this, game, locationX, locationY);
+    this.image = null;
 }
 
 NonLivingEntity.prototype = new Entity();
 NonLivingEntity.prototype.constructor = NonLivingEntity;
 
+NonLivingEntity.prototype.setImage = function (image) {
+    this.image = image;
+}
+
+NonLivingEntity.prototype.setLocation = function (X, Y) {
+    Entity.prototype.setLocation.call(this, X, Y);
+}
+
+NonLivingEntity.prototype.draw = function () {
+    this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+}
+
+NonLivingEntity.prototype.update = function () {
+    
+}
