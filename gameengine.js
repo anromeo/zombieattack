@@ -191,13 +191,13 @@ LivingEntity.prototype.draw = function () {
 }
 
 LivingEntity.prototype.update = function () {
-    if (this.health === 0) {
-        this.currentAnimation = this.deathAnimation;
-    } else if (/* Attack button is pressed */) {
-        this.currentAnimation = this.attackAnimation;
-    } else {
-        this.currentAnimation = this.movingAnimation;
-    }
+    // if (this.health === 0) {
+    //     this.currentAnimation = this.deathAnimation;
+    // } else if (/* Attack button is pressed */) {
+    //     this.currentAnimation = this.attackAnimation;
+    // } else {
+    //     this.currentAnimation = this.movingAnimation;
+    // }
 }
 
 
