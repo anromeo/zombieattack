@@ -3,15 +3,18 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Game Project Shell</title>
-    <script type="text/javascript" src="./game/gameengine.js"></script>
+    <title>Zombies!</title>
+	<script type="text/javascript" src="./entities/entitiesabstract.js"></script>
+	<script type="text/javascript" src="./entities/friendlyAI.js"></script>
+	<script type="text/javascript" src="./entities/playerControlled.js"></script>
+    <script type="text/javascript" src="./entities/demon.js"></script>
+	<script type="text/javascript" src="./game/gameengine.js"></script>
     <script type="text/javascript" src="./game/assetmanager.js"></script>
     <script type="text/javascript" src="./game/animation.js"></script>
-    <script type="text/javascript" src="./entities/entitiesabstract.js"></script>
-    <script type="text/javascript" src="./entities/demon.js"></script>
-    <script type="text/javascript" src="./game/main.js"></script>
+	<script type="text/javascript" src="./game/main.js"></script>
 </head>
 <body>
-    <canvas id="gameWorld" tabindex="1" width="800" height="800" style="border: 1px solid brown; background: lightskyblue"></canvas>
+    <canvas id="gameWorld" width="800" height="800" style="border: 1px solid white; background: black"></canvas>
+	<!--<canvas id="gameWorld" tabindex="1" width="800" height="800" style="border: 1px solid brown; background: lightskyblue"></canvas>-->
 </body>
 </html>
