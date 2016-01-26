@@ -1,3 +1,8 @@
+var friction = 1;
+var maxSpeed = 100;
+var minSpeed = 5;
+
+
 function Entity(game, x, y) {
     this.game = game;
     this.x = x;
@@ -84,7 +89,10 @@ LivingEntity.prototype.setDeathAnimation = function (spriteSheet, frameWidth, fr
 // }
 
 LivingEntity.prototype.draw = function () {
-    this.movingAnimation.drawFrameRotate(this.game.clockTick, this.ctx, this.x, this.y, this.angle);
+    if (this.movingAnimation) {
+        this.movingAnimation.drawFrameRotate(this.game.clockTick, this.ctx, this.x, this.y, this.angle);
+    }
+//    Entity.draw();
 }
 
 LivingEntity.prototype.update = function () {
@@ -96,7 +104,6 @@ LivingEntity.prototype.update = function () {
     //     this.currentAnimation = this.movingAnimation;
     // }
 }
-
 
 function NonLivingEntity(game, locationX, locationY) {
     Entity.call(this, game, locationX, locationY);
@@ -116,6 +123,7 @@ NonLivingEntity.prototype.setLocation = function (X, Y) {
 
 NonLivingEntity.prototype.draw = function () {
     this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+
 }
 
 NonLivingEntity.prototype.update = function () {

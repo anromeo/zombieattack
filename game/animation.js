@@ -53,7 +53,9 @@ Animation.prototype.drawFrameRotate = function (tick, ctx, x, y, angle) {
         this.currentAngleImage[angle][frame] = this.rotateAndCache(angle, xindex, yindex);
     }
 
-    ctx.drawImage(this.currentAngleImage[angle][frame], x, y);
+    if (ctx !== null) {
+        ctx.drawImage(this.currentAngleImage[angle][frame], x, y);
+    }
 }
 
 Animation.prototype.rotateAndCache = function (angle, xindex, yindex) {

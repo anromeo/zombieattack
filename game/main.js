@@ -46,18 +46,51 @@ Background.prototype.draw = function (ctx) {
 // ASSET_MANAGER.queueDownload("./img/RobotUnicorn.png");
 // ASSET_MANAGER.queueDownload("./img/man2.png");
 
+
+/** From 435 */
+
+ASSET_MANAGER.queueDownload("./images/demon.png");
+
 ASSET_MANAGER.downloadAll(function () {
     console.log("starting up da sheild");
     var canvas = document.getElementById('gameWorld');
     var ctx = canvas.getContext('2d');
 
+    var numZombies = 1;
+    var numPlayers = 6;
+    var numRocks = 12;
+
     var gameEngine = new GameEngine();
- 
+    var circle;
+    for (var i = 0; i < numPlayers; i++) {
+        circle = new akz(gameEngine);
+        gameEngine.addEntity(circle);
+    }
+    for (var i = 0; i < numZombies; i++) {
+        circle = new Zombie(gameEngine);
+        gameEngine.addEntity(circle);
+    }
+
+    for (var i = 0; i < numRocks; i++) {
+        circle = new Rock(gameEngine);
+        gameEngine.addEntity(circle);
+    }
     gameEngine.init(ctx);
     gameEngine.start();
-
-    gameEngine.addEntity(new Demon(gameEngine));
-
-//    gameEngine.addEntity(new Man(gameEngine, ASSET_MANAGER.getAsset("./img/man2.png")));
-
 });
+
+// ASSET_MANAGER.downloadAll(function () {
+//     console.log("starting up da sheild");
+//     var canvas = document.getElementById('gameWorld');
+//     var ctx = canvas.getContext('2d');
+
+//     var gameEngine = new GameEngine();
+ 
+//     gameEngine.init(ctx);
+//     gameEngine.start();
+
+//     gameEngine.addEntity(new Demon(gameEngine));
+
+// //    gameEngine.addEntity(new Man(gameEngine, ASSET_MANAGER.getAsset("./img/man2.png")));
+
+// });
