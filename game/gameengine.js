@@ -42,6 +42,15 @@ function GameEngine() {
     this.wheel = null;
     this.surfaceWidth = null;
     this.surfaceHeight = null;
+
+    // Quinn's Additions
+    this.keyState = null;
+    this.keydown = null;
+    this.startInput();
+    this.timer = new Timer();
+    this.keydown = {key:"", x:0, y:0};
+    this.keyState = {};
+    console.log('game initialized');
 }
 
 GameEngine.prototype.init = function (ctx) {
@@ -100,15 +109,73 @@ GameEngine.prototype.start = function () {
 //     console.log('Input started');
 // }
 
+
 GameEngine.prototype.startInput = function () {
     console.log('Starting input');
+    var getXandY = function(e) {
+        // var x =  e.clientX - that.ctx.canvas.getBoundingClientRect().left - (that.ctx.canvas.width/2);
+        // var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top - (that.ctx.canvas.height/2);
+        var x =  e.clientX - that.ctx.canvas.getBoundingClientRect().left;
+        var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top;
+        //console.log("x: " + x + " y: " + y);
+        return {x: x, y: y};
+    }
+    var getKeyDir = function(e) {
+        //e = (KeyboardEvent) e
+        //console.log(e);
+        var key =  "";
+        var x = 0;
+        var y = 0;
+        switch(e.keyCode) {
+            case 37:
+            key = "left"
+            x = -1;
+            //console.log(key + " " + e);
+            break;
+            case 38:
+            key = "up"
+            y = -1;
+            //console.log(key + " " + e);
+            break;
+            case 39:
+            key = "right"
+            x = 1;
+            //console.log(key + " " + e);
+            break;
+            case 40:
+            key = "down"
+            y = 1;
+            //console.log(key + " " + e);
+            break;
+            default:
+            console.log("default: " + e);
+            break;          
+        }       
+        return {key:key, x: x, y: y};
+    }
     var that = this;
 
-    this.ctx.canvas.addEventListener("keydown", function (e) {
-        if (String.fromCharCode(e.which) === ' ') that.space = true;
-//        console.log(e);
+    if (this.ctx) {
+        this.ctx.canvas.addEventListener("click", function(e) {
+            that.click = getXandY(e);
+            e.stopPropagation();
+            e.preventDefault();
+        }, false);
+        
+        this.ctx.canvas.addEventListener("mousemove", function(e) {
+            that.mouse = getXandY(e);       
+        }, false);
+    }
+    window.addEventListener('keydown',function(e){
         e.preventDefault();
-    }, false);
+        that.keyState[e.keyCode] = true;
+        //console.log("keyCode DOWN" + e.keyCode);
+    },false);    
+    window.addEventListener('keyup',function(e){
+        e.preventDefault();
+        that.keyState[e.keyCode] = false;
+        //console.log("keyCode UP" + e.keyCode);
+    },false);
 
     console.log('Input started');
 }
@@ -194,5 +261,8 @@ GameEngine.prototype.loop = function () {
     this.clockTick = this.timer.tick();
     this.update();
     this.draw();
+    this.click = null;
+    this.rightclick = null;
+    this.wheel = null;
     this.space = null;
 }

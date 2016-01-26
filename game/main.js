@@ -63,7 +63,7 @@ ASSET_MANAGER.downloadAll(function () {
     var gameEngine = new GameEngine();
     var circle;
     for (var i = 0; i < numPlayers; i++) {
-        circle = new akz(gameEngine);
+        circle = new friendlyAI(gameEngine);
         gameEngine.addEntity(circle);
     }
     for (var i = 0; i < numZombies; i++) {
@@ -75,6 +75,10 @@ ASSET_MANAGER.downloadAll(function () {
         circle = new Rock(gameEngine);
         gameEngine.addEntity(circle);
     }
+
+    var player = new playerControlled(gameEngine);
+    gameEngine.addEntity(player);
+
     gameEngine.init(ctx);
     gameEngine.start();
 });
