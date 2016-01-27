@@ -8,7 +8,7 @@
 function playerControlled(game) {
     this.player = 1;
     this.radius = 10;
-    this.rocks = 0;
+    //this.rocks = 0;
     this.kills = 0;
     this.name = "playerControlled";
     this.color = "White";
@@ -168,17 +168,17 @@ playerControlled.prototype.update = function () {
                 ent.x += ent.velocity.x * this.game.clockTick;
                 ent.y += ent.velocity.y * this.game.clockTick;
             }
-            if (ent.name === "Rock" && this.rocks < 2) {
-                this.rocks++;
-                ent.removeFromWorld = true;
-            }
+            // if (ent.name === "Rock" && this.rocks < 2) {
+                // this.rocks++;
+                // ent.removeFromWorld = true;
+            // }
         }
     }
     
 
-    if (this.cooldown === 0 && this.action.throwRock && this.rocks > 0) {
+    if (this.cooldown === 0 && this.action.throwRock ) { //&& this.rocks > 0) {
         this.cooldown = 1;
-        this.rocks--;
+        //this.rocks--;
         var target = this.action.target;
     var dir = null;
     if (target != null) {

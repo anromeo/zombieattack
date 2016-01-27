@@ -9,7 +9,9 @@ function Zombie(game, clone) {
     this.maxSpeed = minSpeed + (maxSpeed - minSpeed) * Math.random();
     if (!clone) {
         LivingEntity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1);
-    } else {
+		this.x = this.game.surfaceWidth * Math.random();
+		this.y = this.game.surfaceHeight * Math.random();
+	} else {
         if (clone.x < 0) clone.x = 0;
         if (clone.y < 0) clone.y = 0;
         if (clone.x > 800) clone.x = 800;
@@ -155,9 +157,16 @@ Zombie.prototype.update = function () {
     this.directionX -= (1 - friction) * this.game.clockTick * this.directionX;
     this.directionY -= (1 - friction) * this.game.clockTick * this.directionY;
 
-    console.log(Math.atan(this.directionX / this.directionY)* (180/Math.PI));
-    this.angle = Math.atan(this.directionX / this.directionY) * (180/Math.PI);
-
+    //console.log(Math.atan(this.directionX / this.directionY)* (180/Math.PI));
+    //this.angle = Math.atan(this.directionX / this.directionY) * (180/Math.PI);
+	//console.log("this.directionX" + this.directionX + "this.directionY" + this.directionY + "this.x" + this.x + "this.y" + this.y);
+	this.angle = Math.atan2(this.directionY , this.directionX) * (180/Math.PI); //-  Math.atan2(this.x , this.y) * (180/Math.PI);
+	//this.angle = Math.atan2(-1 , -1) * (180/Math.PI) -  Math.atan2(0 , 0) * (180/Math.PI);
+	this.angle = this.angle + 90;
+	while (this.angle > 360) {
+		this.angle = this.angle - 360;
+	}
+	//console.log("angle in zombie: " + this.angle);
     // this.x += this.directionX;
     // this.y += this.directionY;
     // this.currentAnimation = this.movingAnimation;

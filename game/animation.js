@@ -32,8 +32,9 @@ function Animation(spriteSheet, frameWidth, frameHeight, frameDuration, frames, 
 //                  this.frameHeight);
 // }
 
-Animation.prototype.drawFrameRotate = function (tick, ctx, x, y, angle) {
-    this.elapsedTime += tick;
+Animation.prototype.drawFrameRotate = function (tick, ctx, x, y, theAngle) {
+    var angle = Math.floor(theAngle);
+	this.elapsedTime += tick;
     if (this.isDone()) {
         if (this.loop) this.elapsedTime = 0;
     }
@@ -59,7 +60,7 @@ Animation.prototype.drawFrameRotate = function (tick, ctx, x, y, angle) {
 }
 
 Animation.prototype.rotateAndCache = function (angle, xindex, yindex) {
-    console.log("Rotating and Caching");
+    //console.log("Rotating and Caching");
     var offscreenCanvas = document.createElement('canvas');
     var size = Math.max(this.frameWidth, this.frameHeight);
     offscreenCanvas.width = size;

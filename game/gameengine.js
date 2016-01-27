@@ -33,7 +33,8 @@ function GameEngine() {
     this.zombies = [];
     this.players = [];
     this.rocks = [];
-    this.zombieCooldown = 1;
+    this.zombieCooldownNum = 5;  //how often a zombie will appear
+	this.zombieCooldown = this.zombieCooldownNum;
 
     this.showOutlines = false;
     this.ctx = null;
@@ -222,7 +223,7 @@ GameEngine.prototype.update = function () {
 
     this.zombieCooldown -= this.clockTick;
     if (this.zombieCooldown < 0) {
-        this.zombieCooldown = 1;
+        this.zombieCooldown = this.zombieCooldownNum;
         var zom = new Zombie(this);
         this.addEntity(zom);
     }

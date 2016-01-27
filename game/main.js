@@ -56,25 +56,26 @@ ASSET_MANAGER.downloadAll(function () {
     var canvas = document.getElementById('gameWorld');
     var ctx = canvas.getContext('2d');
 
-    var numZombies = 1;
+    //var numZombies = 2;
     var numPlayers = 6;
-    var numRocks = 12;
+    //var numRocks = 12;
 
     var gameEngine = new GameEngine();
     var circle;
-    for (var i = 0; i < numPlayers; i++) {
-        circle = new friendlyAI(gameEngine);
-        gameEngine.addEntity(circle);
-    }
-    for (var i = 0; i < numZombies; i++) {
-        circle = new Zombie(gameEngine);
-        gameEngine.addEntity(circle);
-    }
+    // for (var i = 0; i < numPlayers; i++) {
+        // circle = new friendlyAI(gameEngine);
+        // gameEngine.addEntity(circle);
+    // }
+    // for (var i = 0; i < numZombies; i++) {
+		// console.log("added zombie");
+        // circle = new Zombie(gameEngine);
+        // gameEngine.addEntity(circle);
+    // }
 
-    for (var i = 0; i < numRocks; i++) {
-        circle = new Rock(gameEngine);
-        gameEngine.addEntity(circle);
-    }
+    // for (var i = 0; i < numRocks; i++) {
+        // circle = new Rock(gameEngine);
+        // gameEngine.addEntity(circle);
+    // }
 
     var player = new playerControlled(gameEngine);
     gameEngine.addEntity(player);

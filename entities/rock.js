@@ -43,6 +43,7 @@ Rock.prototype.update = function () {
     this.y += this.velocity.y * this.game.clockTick;
 
     if (this.collideLeft() || this.collideRight()) {
+		this.removeFromWorld = true;
         this.velocity.x = 0;
         this.velocity.y = 0;
         if (this.collideLeft()) this.x = this.radius;
@@ -50,6 +51,7 @@ Rock.prototype.update = function () {
     }
 
     if (this.collideTop() || this.collideBottom()) {
+		this.removeFromWorld = true;
         this.velocity.x = 0;
         this.velocity.y = 0;
         if (this.collideTop()) this.y = this.radius;

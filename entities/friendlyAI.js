@@ -103,12 +103,12 @@ friendlyAI.prototype.selectAction = function () {
 
   ////calculate where the zombie will be
     if (targetZombie && !targetZombie.removeFromWorld && 0 === this.cooldown && this.rocks > 0 && nearZombie) { 
-    action.target = this.calculateInterceptionPoint(targetZombie, targetZombie.velocity, this, this.game.rocks[0].maxSpeed);
+    action.target = this.calculateInterceptionPoint(targetZombie, targetZombie.velocity, this, Rock.maxSpeed);
         action.throwRock = true;
     }
   
   if (targetZombie && !targetZombie.removeFromWorld && 0 === this.cooldown && this.rocks > 1) { 
-    action.target = this.calculateInterceptionPoint(targetZombie, targetZombie.velocity, this, this.game.rocks[0].maxSpeed);
+    action.target = this.calculateInterceptionPoint(targetZombie, targetZombie.velocity, this, Rock.maxSpeed);
         action.throwRock = true;
     }
   

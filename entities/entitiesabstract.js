@@ -55,6 +55,7 @@ function LivingEntity(game, pointerX, pointerY, directionX, directionY, location
     this.pointerY = pointerY;
     this.directionX = directionX;
     this.directionY = directionY;
+	this.angle = 0;
     this.health = 100;
     this.strength = 25;
     this.speed = 10;
@@ -89,6 +90,7 @@ LivingEntity.prototype.setDeathAnimation = function (spriteSheet, frameWidth, fr
 // }
 
 LivingEntity.prototype.draw = function () {
+	//console.log("angle LE draw: " + this.angle);
     if (this.movingAnimation) {
         this.movingAnimation.drawFrameRotate(this.game.clockTick, this.ctx, this.x, this.y, this.angle);
     }
