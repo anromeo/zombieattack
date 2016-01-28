@@ -18,6 +18,10 @@ Entity.prototype.setLocation = function (X, Y) {
     this.y = Y;
 }
 
+Entity.prototype.setRemoved = function (bool) {
+    this.removeFromWorld = bool;
+}
+
 Entity.prototype.update = function () {
 }
 
@@ -51,6 +55,9 @@ Entity.prototype.draw = function (ctx) {
 
 function LivingEntity(game, pointerX, pointerY, directionX, directionY, locationX, locationY) {
     Entity.call(this, game, locationX, locationY);
+    this.game = game;
+    this.locationX = locationX;
+    this.locationY = locationY;
     this.pointerX = pointerX;
     this.pointerY = pointerY;
     this.directionX = directionX;
@@ -69,6 +76,22 @@ function LivingEntity(game, pointerX, pointerY, directionX, directionY, location
 LivingEntity.prototype = new Entity();
 LivingEntity.prototype.constructor = LivingEntity;
 
+LivingEntity.prototype.getX = function () {
+    return this.locationX;
+} 
+
+LivingEntity.prototype.getY = function () {
+    return this.locationY;
+} 
+
+LivingEntity.prototype.setX = function (x) {
+    this.locationX = x;
+}
+
+LivingEntity.prototype.setY = function (y) {
+    this.locationY = y;
+}
+ 
 LivingEntity.prototype.setMovingAnimation = function (spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse, numFramesInRow) {
     this.movingAnimation = new Animation(spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse, numFramesInRow);
 }
@@ -89,12 +112,21 @@ LivingEntity.prototype.setDeathAnimation = function (spriteSheet, frameWidth, fr
 //     this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
 // }
 
-LivingEntity.prototype.draw = function () {
+LivingEntity.prototype.draw = function (ctx) {
 	//console.log("angle LE draw: " + this.angle);
-    if (this.movingAnimation) {
-        this.movingAnimation.drawFrameRotate(this.game.clockTick, this.ctx, this.x, this.y, this.angle);
+    if (this.movingAnimation && this.name === "playerControlled") {
+
+        console.log("Location: " + this.x + " " + this.y);
+        console.log("Mouse: " + this.game.x + " " + this.game.y);
+
+        var rad = Math.atan2(this.game.y - this.y, this.game.x - this.x);
+        var deg = rad * (180 / Math.PI);
+
+        this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x, this.y, deg);
+
+    } else if (this.movingAnimation) { // Zombies
+        this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x, this.y, this.angle);
     }
-//    Entity.draw();
 }
 
 LivingEntity.prototype.update = function () {
@@ -109,6 +141,7 @@ LivingEntity.prototype.update = function () {
 
 function NonLivingEntity(game, locationX, locationY) {
     Entity.call(this, game, locationX, locationY);
+    this.name = "NonLiving";
     this.image = null;
 }
 
@@ -117,14 +150,16 @@ NonLivingEntity.prototype.constructor = NonLivingEntity;
 
 NonLivingEntity.prototype.setImage = function (image) {
     this.image = image;
+    console.log("Image set");
 }
 
 NonLivingEntity.prototype.setLocation = function (X, Y) {
     Entity.prototype.setLocation.call(this, X, Y);
 }
 
-NonLivingEntity.prototype.draw = function () {
-    this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+NonLivingEntity.prototype.draw = function (ctx) {
+  //  this.game.ctx.drawImage(this.image, 0, 0);
+  ctx.drawImage(this.image, 0, 0);
 
 }
 

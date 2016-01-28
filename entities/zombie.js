@@ -22,7 +22,7 @@ function Zombie(game, clone) {
             LivingEntity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1);
         }
     }
-    this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/demon.png"), 64, 64, .05, 8, true, false, 8)
+    this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/ZombieWalking.png"), 60, 60, .05, 25, true, false, 5);
         // Entity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2), this.radius + Math.random() * (800 - this.radius * 2));
     this.velocity = { x: Math.random() * 1000, y: Math.random() * 1000 };
     var speed = Math.sqrt(this.directionX * this.directionX + this.directionY * this.directionY);
@@ -105,7 +105,7 @@ Zombie.prototype.update = function () {
                 ent.x += ent.directionX * this.game.clockTick;
                 ent.y += ent.directionY * this.game.clockTick;
             }
-            if (ent.name !== "Zombie" && ent.name !== "Rock" && !ent.removeFromWorld) {
+            if (ent.name !== "Zombie" && ent.name !== "Rock" && ent.name !== "NonLiving" && !ent.removeFromWorld) {
                 ent.removeFromWorld = true;
                 console.log(ent.name + " kills: " + ent.kills);
                 var newZombie = new Zombie(this.game, ent);
@@ -162,7 +162,7 @@ Zombie.prototype.update = function () {
 	//console.log("this.directionX" + this.directionX + "this.directionY" + this.directionY + "this.x" + this.x + "this.y" + this.y);
 	this.angle = Math.atan2(this.directionY , this.directionX) * (180/Math.PI); //-  Math.atan2(this.x , this.y) * (180/Math.PI);
 	//this.angle = Math.atan2(-1 , -1) * (180/Math.PI) -  Math.atan2(0 , 0) * (180/Math.PI);
-	this.angle = this.angle + 90;
+	this.angle = this.angle + 260;
 	while (this.angle > 360) {
 		this.angle = this.angle - 360;
 	}
@@ -172,6 +172,10 @@ Zombie.prototype.update = function () {
     // this.currentAnimation = this.movingAnimation;
     // Entity.prototype.update.call(this);
 
+};
+
+    Zombie.prototype.draw = function (ctx) {
+        LivingEntity.prototype.draw.call(this, ctx);
 };
 
 // Zombie.prototype.draw = function (ctx) {

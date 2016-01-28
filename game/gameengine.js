@@ -40,6 +40,9 @@ function GameEngine() {
     this.ctx = null;
     this.click = null;
     this.mouse = null;
+    this.degree = null;
+    this.x = null;
+    this.y = null;
     this.wheel = null;
     this.surfaceWidth = null;
     this.surfaceHeight = null;
@@ -121,6 +124,21 @@ GameEngine.prototype.startInput = function () {
         //console.log("x: " + x + " y: " + y);
         return {x: x, y: y};
     }
+    // var getDegree = function(e) {
+    //     var x =  e.clientX - that.ctx.canvas.getBoundingClientRect().left;
+    //     var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top;
+    //     var rad = Math.atan2(y, x); 
+    //     var deg = rad * (180 / Math.PI);
+    //     return deg;
+    // }
+    var getX = function(e) {
+        var x =  e.clientX - that.ctx.canvas.getBoundingClientRect().left;
+        return x;
+    }
+    var getY = function(e) {
+        var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top;
+        return y;
+    }
     var getKeyDir = function(e) {
         //e = (KeyboardEvent) e
         //console.log(e);
@@ -165,6 +183,8 @@ GameEngine.prototype.startInput = function () {
         
         this.ctx.canvas.addEventListener("mousemove", function(e) {
             that.mouse = getXandY(e);       
+            that.x = getX(e);
+            that.y = getY(e);
         }, false);
     }
     window.addEventListener('keydown',function(e){

@@ -10,16 +10,17 @@ function playerControlled(game) {
     this.radius = 10;
     //this.rocks = 0;
     this.kills = 0;
+    this.game = game;
     this.name = "playerControlled";
-    this.color = "White";
+    this.color = "Black";
     this.cooldown = 0;
-  this.corners = [{x:0, y:0}, {x:800, y:0}, {x:0, y:800}, {x:800, y:800}]
-    Entity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2), this.radius + Math.random() * (800 - this.radius * 2));
-
+    this.corners = [{x:0, y:0}, {x:800, y:0}, {x:0, y:800}, {x:800, y:800}]
+    LivingEntity.call(this, game, 0, 0, 0, 0, this.radius + Math.random() * (800 - this.radius * 2), this.radius + Math.random() * (800 - this.radius * 2));
+    this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/Player2.png"), 80, 43, .05, 1, true, false, 1);
     this.velocity = { x: 0, y: 0 };
 };
 
-playerControlled.prototype = new Entity();
+playerControlled.prototype = new LivingEntity();
 playerControlled.prototype.constructor = playerControlled;
 
 // alter the code in this function to create your agent
@@ -201,9 +202,11 @@ playerControlled.prototype.update = function () {
 };
 
 playerControlled.prototype.draw = function (ctx) {
-    ctx.beginPath();
-    ctx.fillStyle = this.color;
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-    ctx.fill();
-    ctx.closePath();
+    // ctx.beginPath();
+    // ctx.fillStyle = this.color;
+    // ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+    // ctx.fill();
+    // ctx.closePath();
+    //console.log(this.game.mouse.clientX);
+    LivingEntity.prototype.draw.call(this, ctx);
 };

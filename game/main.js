@@ -1,19 +1,20 @@
 
-function Background(game) {
-    Entity.call(this, game, 0, 400);
+function Background(game, image) {
+    NonLivingEntity.call(this, game, 0, 400);
     this.radius = 200;
+    NonLivingEntity.prototype.setImage(image);
+   this.image = image;
 }
 
-Background.prototype = new Entity();
+Background.prototype = new NonLivingEntity();
 Background.prototype.constructor = Background;
 
 Background.prototype.update = function () {
+    
 }
 
 Background.prototype.draw = function (ctx) {
-    ctx.fillStyle = "SaddleBrown";
-    ctx.fillRect(0,500,800,300);
-    Entity.prototype.draw.call(this);
+     NonLivingEntity.prototype.draw.call(this, ctx);
 }
 
 // function Man(game, spritesheet) {
@@ -50,6 +51,9 @@ Background.prototype.draw = function (ctx) {
 /** From 435 */
 
 ASSET_MANAGER.queueDownload("./images/demon.png");
+ASSET_MANAGER.queueDownload("./images/ZombieWalking.png");
+ASSET_MANAGER.queueDownload("./images/Player2.png");
+ASSET_MANAGER.queueDownload("./images/background.jpg");
 
 ASSET_MANAGER.downloadAll(function () {
     console.log("starting up da sheild");
@@ -78,6 +82,8 @@ ASSET_MANAGER.downloadAll(function () {
     // }
 
     var player = new playerControlled(gameEngine);
+    var background = new Background(gameEngine, ASSET_MANAGER.getAsset("./images/background.jpg"));
+    gameEngine.addEntity(background);
     gameEngine.addEntity(player);
 
     gameEngine.init(ctx);
