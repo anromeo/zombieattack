@@ -41,29 +41,29 @@ playerControlled.prototype.selectAction = function () {
     var action = { direction: { x: 0, y: 0 }, throwRock: false, target: null};
     var acceleration = 1000000000;
   
-  if (this.game.keyState) {
-    var x = 0;
-    var y = 0;
-    //left
-    if (this.game.keyState[37]) {
-      x = -1;
-    }
-    //up
-    if (this.game.keyState[38]) {
-      y = -1;
-    }
-    //right
-    if (this.game.keyState[39]) {
-      x = 1;
-    }
-    //down
-    if (this.game.keyState[40]) {
-      y = 1;
-    } 
-    
-    action.direction.x += (x) * acceleration;
-    action.direction.y += (y) * acceleration;
-  }
+	if (this.game.keyState) {
+		var x = 0;
+		var y = 0;
+		//left
+		if (this.game.keyState[37]||this.game.keyState[65]||this.game.keyState[97]) { //leftarrow, a, A
+			x = -1;
+		}
+		//up
+		if (this.game.keyState[38]||this.game.keyState[87]||this.game.keyState[119]) {  //uparrow, w, W
+			y = -1;
+		}
+		//right
+		if (this.game.keyState[39]||this.game.keyState[68]||this.game.keyState[100]) {  //rightarrow, d, D
+			x = 1;
+		}
+		//down
+		if (this.game.keyState[40]||this.game.keyState[83]||this.game.keyState[115]) {  //downarrow, s, S
+			y = 1;
+		}	
+		
+		action.direction.x += (x) * acceleration;
+		action.direction.y += (y) * acceleration;
+	}
   
   if (this.game.click) {    
     action.target = this.game.click;
