@@ -3,13 +3,14 @@ function Zombie(game, clone) {
 
     this.player = 1;
     this.radius = 32;
-    this.visualRadius = 800;
+    this.visualRadius = 10000;
     this.name = "Zombie";
     this.color = "Red";
+    this.health = 100;
     this.maxSpeed = minSpeed + (maxSpeed - minSpeed) * Math.random();
     if (!clone) {
         LivingEntity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1);
-		this.x = this.game.surfaceWidth * Math.random();
+		this.x = 850;
 		this.y = this.game.surfaceHeight * Math.random();
 	} else {
         if (clone.x < 0) clone.x = 0;
@@ -41,19 +42,19 @@ Zombie.prototype.collide = function (other) {
 };
 
 Zombie.prototype.collideLeft = function () {
-    return (this.x - this.radius) < 0;
+    return false;//(this.x - this.radius) < 0;
 };
 
 Zombie.prototype.collideRight = function () {
-    return (this.x + this.radius) > 800;
+    return false;//(this.x + this.radius) > 800;
 };
 
 Zombie.prototype.collideTop = function () {
-    return (this.y - this.radius) < 0;
+    return false;//(this.y - this.radius) < 0;
 };
 
 Zombie.prototype.collideBottom = function () {
-    return (this.y + this.radius) > 800;
+    return false;//(this.y + this.radius) > 800;
 };
 
 Zombie.prototype.update = function () {
@@ -107,12 +108,17 @@ Zombie.prototype.update = function () {
             }
             if (ent.name !== "Zombie" && ent.name !== "Rock" && ent.name !== "NonLiving" && !ent.removeFromWorld) {
                 ent.removeFromWorld = true;
-                console.log(ent.name + " kills: " + ent.kills);
+//                console.log(ent.name + " kills: " + ent.kills);
                 var newZombie = new Zombie(this.game, ent);
                 this.game.addEntity(newZombie);
             }
             if (ent.name === "Rock" && ent.thrown) {
-                this.removeFromWorld = true;
+                ent.removeFromWorld = true;
+                this.health -= ent.strength;
+                if (this.health <= 0) {
+                    this.removeFromWorld = true;
+                }
+//                console.log("My health is " + this.health);
                 ent.thrown = false;
                 ent.directionX = 0;
                 ent.directionY = 0;

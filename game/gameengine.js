@@ -33,7 +33,7 @@ function GameEngine() {
     this.zombies = [];
     this.players = [];
     this.rocks = [];
-    this.zombieCooldownNum = 5;  //how often a zombie will appear
+    this.zombieCooldownNum = 3;  //how often a zombie will appear
 	this.zombieCooldown = this.zombieCooldownNum;
 
     this.showOutlines = false;
@@ -59,6 +59,7 @@ function GameEngine() {
 
 GameEngine.prototype.init = function (ctx) {
     this.ctx = ctx;
+    this.ctx.showOutlines = true;
     this.surfaceWidth = this.ctx.canvas.width;
     this.surfaceHeight = this.ctx.canvas.height;
     this.startInput();

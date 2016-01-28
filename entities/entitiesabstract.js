@@ -116,17 +116,27 @@ LivingEntity.prototype.draw = function (ctx) {
 	//console.log("angle LE draw: " + this.angle);
     if (this.movingAnimation && this.name === "playerControlled") {
 
-        console.log("Location: " + this.x + " " + this.y);
-        console.log("Mouse: " + this.game.x + " " + this.game.y);
+//        console.log("Location: " + this.x + " " + this.y);
+//        console.log("Mouse: " + this.game.x + " " + this.game.y);
 
         var rad = Math.atan2(this.game.y - this.y, this.game.x - this.x);
         var deg = rad * (180 / Math.PI);
 
-        this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x, this.y, deg);
+        this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius, this.y - this.radius, deg);
 
     } else if (this.movingAnimation) { // Zombies
-        this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x, this.y, this.angle);
+        this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius, this.y - this.radius, this.angle);
     }
+
+    if (ctx.showOutlines) {
+        ctx.beginPath();
+        ctx.strokeStyle = "white";
+        ctx.lineWidth = 1;
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+        ctx.closePath();
+        ctx.stroke();
+    }
+
 }
 
 LivingEntity.prototype.update = function () {

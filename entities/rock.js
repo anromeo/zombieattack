@@ -5,6 +5,7 @@ function Rock(game) {
     this.color = "Gray";
     this.maxSpeed = 200;
     this.thrown = false;
+    this.strength = 50;
 
     Entity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2), this.radius + Math.random() * (800 - this.radius * 2));
 
@@ -12,7 +13,7 @@ function Rock(game) {
 
 };
 
-Rock.prototype = new Entity();
+Rock.prototype = new LivingEntity();
 Rock.prototype.constructor = Rock;
 
 Rock.prototype.collide = function (other) {
