@@ -49,21 +49,31 @@ playerControlled.prototype.constructor = playerControlled;
      * @author Jens Seiler
      */
     playerControlled.prototype.calculateInterceptionPoint = function(a, v, b, s) {
+
+        // x difference between a and b
         var ox = a.x - b.x;
+        // y difference between a and b
         var oy = a.y - b.y;
- 
+//        console.log("X Diff: " + ox + " | Y Diff: " + oy);
+
         var h1 = v.x * v.x + v.y * v.y - s * s;
         var h2 = ox * v.x + oy * v.y;
         var t;
+        // console.log("h1: " + h1 + " | h2: " + h2);
+
         if (h1 == 0) { // problem collapses into a simple linear equation 
             t = -(ox * ox + oy * oy) / 2*h2;
+            // console.log(t); 
         } else { // solve the quadratic equation
-            var minusPHalf = -h2 / h1;
+            var minusPHalf = h2 / h1;
  
+//            console.log(minusPHalf);
             var discriminant = minusPHalf * minusPHalf - (ox * ox + oy * oy) / h1; // term in brackets is h3
+
             if (discriminant < 0) { // no (real) solution then...
                 return null;
             }
+//            console.log(discriminant);
  
             var root = Math.sqrt(discriminant);
  
@@ -124,82 +134,84 @@ playerControlled.prototype.selectAction = function () {
     		action.direction.y += (y) * acceleration;
     	}
       
-      if (this.game.click) {    
-        action.target = this.game.click;
+        if (this.game.click) {    
+            action.target = this.game.click;
             action.throwRock = true;
-        this.game.click = null;
+            this.game.click = null;
         }
       
         return action;
     } else {
-        var action = { direction: { x: 0, y: 0 }, throwRock: false, target: null};
+
+        // This is the action the zombie will perform
+        var action = { direction: { x: 0, y: 0 }, throwRock: true, target: null};
         var acceleration = 1000000000;
-        var closest = 1000;
+
+
+        // This is the target that the shooter will shoot
         var target = null;
-        this.visualRadius = 200;
-        var dist = 100;
-        var me = this;
+
+        // This is the visual radius of how far the shooter can shoot
+        this.visualRadius = 800;
+
+        var ai = this;
         var x = 1000;
         var y = 1000 / 2;
         var length = 400;
-        var angle_stepsize = .009;
 
+        // This is the distance which will be used to calculate the target zombie
+        var dist;
+
+        // This is the distance of the canvas which determines the closest zombie to shoot
+        var closest = 800;
+
+        // for every zombie
         for (var i = 0; i < this.game.zombies.length; i++) {
+
+            // determine if the zombie is the closest zombie to the AI
             var ent = this.game.zombies[i];
             dist = distance(ent, this);
+
+            // if the distance is closer than the currently closest zombie
             if (dist < closest) {
+
+                // reassign the closest distance the target
                 closest = dist;
                 target = ent;
             }
-            var zombRadius = 150;
-            if (this.game.zombies.length < 10) {
-                zombRadius = 800;
-            }
-            if (this.collide({x: ent.x, y: ent.y, radius: zombRadius})) {
-                var difX = (ent.x - this.x) / dist;
-                var difY = (ent.y - this.y) / dist;
-                if (this.rocks === 2 && this.game.zombies.length < 10 && dist > 100 && 0 === this.cooldown) {
-                    action.direction.x += difX * acceleration * 2 / (dist * dist);
-                    action.direction.y += difY * acceleration * 2 / (dist * dist);
-                } else {
-                    action.direction.x -= difX * acceleration * 2 / (dist * dist);
-                    action.direction.y -= difY * acceleration * 2 / (dist * dist);
-                }
-            }
         }
 
-        if (this.game.zombies.length > 10) {
-            if(this.angle < 2 * Math.PI)
-            {
-                action.direction.x += length * Math.cos(this.angle);
-                action.direction.y += length * Math.sin(this.angle);
+        // the radius we are determining if the target is close enough to approach
+        var zombRadius = 800;
+        // the space between the shooter and his target
+        var comfortZone = 200;
 
-                 this.angle += angle_stepsize;
+        // IF there exists a target closer than the closest
+        // AND the closest zombie is close enough to the shooter
+        if (target && this.collide({x: target.x, y: target.y, radius: zombRadius})) {
+
+            // take the target's x and the target's y and divide it by the distance
+            // numbers that will generally come out of this would be
+            // difX < 1 and around .5 with a comfort zone of 400
+            // difY > -1 and around -.4 with a comfort zone of 400
+            var difX = (target.x - this.x) / dist;
+            var difY = (target.y - this.y) / dist;
+
+            // IF the shooter is closer than the shooter's comfort zone
+            if (this.collide({x: target.x, y: target.y, radius: comfortZone})) {
+                // add it to the direction of the next move and back away
+                action.direction.x -= difX * acceleration * 2 / (dist * dist);
+                action.direction.y -= difY * acceleration * 2 / (dist * dist);
             } else {
-                 this.angle = 0;
+                // add it to the direction of the next move and get closer to the target
+                action.direction.x += difX * acceleration * 2 / (dist * dist);
+                action.direction.y += difY * acceleration * 2 / (dist * dist);
             }
         }
 
-        var rock;
-        var distRock = 200;
-        for (var i = 0; i < this.game.rocks.length; i++) {
-            var ent = this.game.rocks[i];
-            if (!rock) {
-                rock = ent;
-            }
-            if (!ent.removeFromWorld && dist > 200 && this.rocks < 2 && this.collide({ x: ent.x, y: ent.y, radius: 800 })) {
-                distRock = distance(this, ent);
-                if ((distRock > this.radius + ent.radius) && dist >= 50 && this.game.zombies.length < 10) {
-                    var difX = (ent.x - this.x) / distRock;
-                    var difY = (ent.y - this.y) / distRock;
-                    action.direction.x += difX * acceleration * 2 / (distRock * distRock);
-                    action.direction.y += difY * acceleration  * 2 / (distRock * distRock);
-                }
-            }
-        }
-
+        // prevent the shooter from touching corners
         for (var i = 0; i < 4; i++) {
-            if (this.collide({ x: this.corners[i].x, y: this.corners[i].y, radius: this.visualRadius }) && distRock > 75) {
+            if (this.collide({ x: this.corners[i].x, y: this.corners[i].y, radius: this.visualRadius })) {
                 dist = distance(this, this.corners[i]);
                 var difX = (this.corners[i].x - this.x) / dist;
                 var difY = (this.corners[i].y - this.y) / dist;
@@ -209,38 +221,101 @@ playerControlled.prototype.selectAction = function () {
         }
 
 
-        if (distRock > 150 && this.rocks < 2 && (this.x <= 200 || this.x >= 600)) {
+        // if the shooter is 200px away from either left or right side of the canvas
+        if (this.x <= 200 || this.x >= 600) {
+
+            // create an invisible wall
             var wall;
+            // if the x location of the shooter is less than 400px
             if (this.x < 400) {
+                // let that wall be the left most border of the screen
                 wall = {x: 0, y: this.y};
             } else {
+                // else let that wall be the right most border of the screen
                 wall = {x: 800, y: this.y};
             }
+
+            // get the distance between this object and the wall created
             var distWall = distance(this, wall);
+
+            // let the difference of the wall help to simulate a magnetic repulsion
             var difX = (wall.x - this.x) / distWall;
             var difY = (wall.y - this.y) / distWall;
             action.direction.x -= difX * acceleration / (distWall * distWall);
             action.direction.y -= difY * acceleration / (distWall * distWall);        
         }
 
-        if (distRock > 150 && this.rocks < 2 && (this.y <= 200 || this.y >= 600)) {
+        // if the shooter is 200px away from either the top or bottom of the canvas
+        if (this.y <= 200 || this.y >= 600) {
+
+            // create an invisible wall
             var wall;
+
+            // if the y location of the shooter is less than 400px
             if (this.y < 400) {
+                // let that wall be the top border of the canvas
                 wall = {x: this.x, y: 0};
             } else {
+                // else let that wall be the bottom border of the canvas
                 wall = {x: this.x, y: 800};
             }
+
+            // let the difference of the wall help to simulate a magnetic repulsion from the wall
             var distWall = distance(this, wall);
             var difX = (wall.x - this.x) / distWall;
             var difY = (wall.y - this.y) / distWall;
             action.direction.x -= difX * acceleration / (distWall* distWall);
             action.direction.y -= difY * acceleration / (distWall* distWall);        
         }
-        //calculate where the zombie will be
-        if (target && !target.removeFromWorld && 0 === this.cooldown && (distance(target, this) <= 800)) {
+
+        // for every zombie
+        for (var i = 0; i < this.game.zombies.length; i++) {
+
+            // determine if the zombie is the closest zombie to the AI
+            var ent = this.game.zombies[i];
+            dist = distance(ent, this);
+
+            // if the distance is closer than the currently closest zombie
+            if (dist < closest) {
+
+                // reassign the closest distance the target
+                closest = dist;
+                target = ent;
+            }
+        }
+
+        // the number of pixels that the shooter is comfortable
+        // with having another playable character
+        var personalBubble = 50;
+
+        // for every player controlled player on the board
+        for (var i = 0; i < this.game.players.length; i++) {
+
+            // get that playable character and the space between it and this playable character
+            var playableCharacter = this.game.players[i];
+            var space = distance(playableCharacter, this);
+//            console.log(space);
+            // if the space is smaller than this playable character's personal bubble
+            if (space > personalBubble) {
+
+                // backaway from the other character
+                var difX = (playableCharacter.x - this.x) / space;
+                var difY = (playableCharacter.y - this.y) / space;
+                action.direction.x -= difX * acceleration / (space * space);
+                action.direction.y -= difY * acceleration / (space * space);
+            }
+        }
+
+        // if there exists a target
+        if (target) {
+
+            // calculate where the zombie will be in order to determine where the target of the shot will be
             action.target = this.calculateInterceptionPoint(target, target.velocity, this, 200);
             action.throwRock = true;
-        }      
+       }
+        action.direction.x -= (1 - friction) * this.game.clockTick * this.directionX;
+        action.direction.y -= (1 - friction) * this.game.clockTick * this.directionY;
+
         return action;
     }
 };
@@ -326,7 +401,6 @@ playerControlled.prototype.update = function () {
                 var difX = (this.x - ent.x) / dist;
                 var difY = (this.y - ent.y) / dist;
 
-                console.log(ent.name);
                 this.x += difX * delta / 2;
                 this.y += difY * delta / 2;
                 ent.x -= difX * delta / 2;
@@ -348,25 +422,41 @@ playerControlled.prototype.update = function () {
         }
     }
     
-
+    var rock;
+    // if (!this.controlled) {
+    //     console.log(this.action);
+    // }
     if (this.cooldown === 0 && this.action.throwRock ) { //&& this.rocks > 0) {
-        this.cooldown = .25;
+        if (this.controlled) {
+            this.cooldown = .25;
+        } else {
+            this.cooldown = .75;
+        }
         //this.rocks--;
         var target = this.action.target;
-    var dir = null;
-    if (target != null) {
-      dir = direction(target, this);
-    }        
-    if (dir != null) {
-      var rock = new Rock(this.game);
-      rock.x = this.x + dir.x * (this.radius + rock.radius + 20);
-      rock.y = this.y + dir.y * (this.radius + rock.radius + 20);
-      rock.velocity.x = dir.x * rock.maxSpeed;
-      rock.velocity.y = dir.y * rock.maxSpeed;
-      rock.thrown = true;
-      rock.thrower = this;
-      this.game.addEntity(rock);
+        var dir = null;
+        if (target != null && (this.controlled === true || (target.x < 780 && target.x > 20))) {
+          dir = direction(target, this);
+        }        
+        if (dir != null) {
+          rock = new Rock(this.game);
+          rock.x = this.x + dir.x * (this.radius + rock.radius + 20);
+          rock.y = this.y + dir.y * (this.radius + rock.radius + 20);
+          rock.velocity.x = dir.x * rock.maxSpeed;
+          rock.velocity.y = dir.y * rock.maxSpeed;
+          rock.thrown = true;
+          rock.thrower = this;
+          this.game.addEntity(rock);
+        }
     }
+
+    if (this.action.target) {
+        this.angle = Math.atan2(this.action.target.x, this.action.target.y) * (180/Math.PI);
+        this.angle = this.angle - 100;
+        console.log(this.angle);
+        while (this.angle > 360) {
+            this.angle = this.angle - 360;
+        }
     }
 
     this.velocity.x -= (1 - friction) * this.game.clockTick * this.velocity.x;

@@ -114,7 +114,7 @@ LivingEntity.prototype.setDeathAnimation = function (spriteSheet, frameWidth, fr
 
 LivingEntity.prototype.draw = function (ctx) {
 	//console.log("angle LE draw: " + this.angle);
-    if (this.movingAnimation && this.name === "playerControlled") {
+    if (this.movingAnimation && this.name === "playerControlled" && this.controlled === true) {
 
 //        console.log("Location: " + this.x + " " + this.y);
 //        console.log("Mouse: " + this.game.x + " " + this.game.y);
@@ -124,7 +124,7 @@ LivingEntity.prototype.draw = function (ctx) {
 
         this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius, this.y - this.radius, deg);
 
-    } else if (this.movingAnimation) { // Zombies
+    } else { // Zombies
         this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius, this.y - this.radius, this.angle);
     }
 

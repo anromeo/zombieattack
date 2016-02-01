@@ -25,13 +25,22 @@ function Zombie(game, clone) {
     }
     this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/ZombieWalking.png"), 60, 60, .05, 25, true, false, 5);
         // Entity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2), this.radius + Math.random() * (800 - this.radius * 2));
+    // this.velocity = { x: Math.random() * 1000, y: Math.random() * 1000 };
+    // var speed = Math.sqrt(this.directionX * this.directionX + this.directionY * this.directionY);
+    // if (speed > this.maxSpeed) {
+    //     var ratio = this.maxSpeed / speed;
+    //     this.directionX *= ratio;
+    //     this.directionY *= ratio;
+    // }
+
     this.velocity = { x: Math.random() * 1000, y: Math.random() * 1000 };
-    var speed = Math.sqrt(this.directionX * this.directionX + this.directionY * this.directionY);
+    var speed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.y * this.velocity.y);
     if (speed > this.maxSpeed) {
         var ratio = this.maxSpeed / speed;
-        this.directionX *= ratio;
-        this.directionY *= ratio;
+        this.velocity.x *= ratio;
+        this.velocity.y *= ratio;
     }
+
 };
 
 Zombie.prototype = new LivingEntity();
