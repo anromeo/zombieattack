@@ -311,6 +311,10 @@ playerControlled.prototype.selectAction = function () {
 
             // calculate where the zombie will be in order to determine where the target of the shot will be
             action.target = this.calculateInterceptionPoint(target, target.velocity, this, 200);
+
+            action.target.x = action.target.x - this.radius;
+            action.target.y = action.target.y - this.radius;
+            
             action.throwRock = true;
        }
         action.direction.x -= (1 - friction) * this.game.clockTick * this.directionX;
