@@ -7,9 +7,12 @@
 
 function playerControlled(game) {
     this.player = 1;
+	this.spriteWidth = 80;
+	this.spriteHeight = 43;
     this.radius = 30;
     this.strength = 100;
     this.controlled = false;
+
     //this.rocks = 0;
     this.kills = 0;
     this.game = game;
@@ -17,9 +20,13 @@ function playerControlled(game) {
     this.color = "Black";
     this.cooldown = 0;
     this.corners = [{x:0, y:0}, {x:800, y:0}, {x:0, y:800}, {x:800, y:800}]
-    //LivingEntity.call(this, game, 0, 0, 0, 0, this.radius + Math.random() * (800 - this.radius * 2), this.radius + Math.random() * (800 - this.radius * 2));
-    LivingEntity.call(this, game, 0, 0, 0, 0, 200, 200);
-    this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/Player2.png"), 80, 43, .05, 1, true, false, 1);
+    //LivingEntity.call(this, game, 0, 0, 0, 0, this.radius + Math.random() * (800 - this.radius * 2), this.radius + Math.random() * (800 - this.radius * 2));	
+	LivingEntity.call(this, game, 0, 0, 0, 0, 200, 200);
+	this.CenterOffsetX = 10; // puts the center of the sprite in the center of the entity
+	this.CenterOffsetY = 10; // puts the center of the sprite in the center of the entity
+	this.SpriteRotateOffsetX = 8; //describes the point of rotation on the sprite changed from 1/2 width
+	this.SpriteRotateOffsetY = -7; //describes the point of rotation on the sprite changed from 1/2 height
+    this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/Player2.png"), this.spriteWidth, this.spriteHeight, .05, 1, true, false, 1);
     this.velocity = { x: 0, y: 0 };
 };
 

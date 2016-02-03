@@ -62,6 +62,16 @@ function LivingEntity(game, pointerX, pointerY, directionX, directionY, location
     this.pointerY = pointerY;
     this.directionX = directionX;
     this.directionY = directionY;
+	this.SpriteWidth = 60;  //default:60
+	this.SpriteHeight = 60;  //default:60
+		this.CenterOffsetX = 0; // puts the center of the sprite in the center of the entity
+	this.CenterOffsetY = 0;  //puts the center of the sprite in the center of the entity
+	this.SpriteRotateOffsetX = 0; //describes the point of rotation on the sprite changed from 1/2 width
+	this.SpriteRotateOffsetY = 0; //describes the point of rotation on the sprite changed from 1/2 height
+	// this.CenterOffsetX = CenterOffsetX; // puts the center of the sprite in the center of the entity
+	// this.CenterOffsetY = CenterOffsetY;  //puts the center of the sprite in the center of the entity
+	// this.SpriteRotateOffsetX = SpriteRotateOffsetX; //describes the point of rotation on the sprite changed from 1/2 width
+	// this.SpriteRotateOffsetY = SpriteRotateOffsetY; //describes the point of rotation on the sprite changed from 1/2 height
 	this.angle = 0;
     this.health = 100;
     this.strength = 25;
@@ -121,15 +131,55 @@ LivingEntity.prototype.draw = function (ctx) {
 
         var rad = Math.atan2(this.game.y - this.y, this.game.x - this.x);
         var deg = rad * (180 / Math.PI);
-
-        this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius, this.y - this.radius, deg);
+		//this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius, this.y - this.radius, deg);
+        this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius - this.CenterOffsetX, 
+		this.y - this.radius - this.CenterOffsetY, deg,
+		this.SpriteRotateOffsetX, this.SpriteRotateOffsetY);
+		//console.log("this.SpriteRotateOffsetX" + this.SpriteRotateOffsetX);
+		//console.log("this.CenterOffsetX" + this.CenterOffsetX);
 
     } else { // Zombies
+	//this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius, this.y - this.radius, this.angle);
         this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius, this.y - this.radius, this.angle);
     }
 
-    if (ctx.showOutlines) {
+    if (this.game.showOutlines) {
         ctx.beginPath();
+		ctx.strokeStyle = "red";
+        ctx.lineWidth = 1;
+        ctx.arc(this.x, this.y , 5, 0, Math.PI * 2, false);
+        ctx.closePath();
+		ctx.stroke();
+		
+		ctx.beginPath();
+		ctx.strokeStyle = "blue";
+        ctx.lineWidth = 1;
+        ctx.arc(this.x + this.SpriteWidth/2 + 2, this.y + this.SpriteHeight/2 + 2, 5, 0, Math.PI * 2, false);
+        ctx.closePath();
+		ctx.stroke();
+		
+		ctx.beginPath();
+		ctx.strokeStyle = "purple";
+        ctx.lineWidth = 1;
+        ctx.arc(this.x + this.CenterOffsetX, this.y + this.CenterOffsetY, 5, 0, Math.PI * 2, false);
+        ctx.closePath();
+		ctx.stroke();
+		
+		ctx.beginPath();
+		ctx.strokeStyle = "green";
+        ctx.lineWidth = 1;
+        ctx.arc(this.x + this.SpriteWidth, this.y + this.SpriteHeight, 5, 0, Math.PI * 2, false);
+        ctx.closePath();
+		ctx.stroke();
+		
+		ctx.beginPath();
+        ctx.strokeStyle = "pink";
+        ctx.lineWidth = 1;
+        ctx.arc(this.x + this.radius, this.y + this.radius, 5, 0, Math.PI * 2, false);
+        ctx.closePath();
+        ctx.stroke();
+		
+		ctx.beginPath();
         ctx.strokeStyle = "white";
         ctx.lineWidth = 1;
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);

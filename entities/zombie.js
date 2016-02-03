@@ -1,6 +1,7 @@
 function Zombie(game, clone) {
     this.radius = 64;
-
+	this.SpriteHeight = 60;
+	this.SpriteWidth = 60;
     this.player = 1;
     this.radius = 32;
     this.visualRadius = 10000;
@@ -23,7 +24,7 @@ function Zombie(game, clone) {
             LivingEntity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1);
         }
     }
-    this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/ZombieWalking.png"), 60, 60, .05, 25, true, false, 5);
+    this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/ZombieWalking.png"), this.SpriteHeight, this.SpriteWidth, .05, 25, true, false, 5);
         // Entity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2), this.radius + Math.random() * (800 - this.radius * 2));
     // this.velocity = { x: Math.random() * 1000, y: Math.random() * 1000 };
     // var speed = Math.sqrt(this.directionX * this.directionX + this.directionY * this.directionY);
