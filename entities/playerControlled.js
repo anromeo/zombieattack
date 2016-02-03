@@ -8,7 +8,7 @@
 function playerControlled(game) {
     this.player = 1;
     this.radius = 30;
-    this.strength = 50;
+    this.strength = 100;
     this.controlled = false;
     //this.rocks = 0;
     this.kills = 0;
@@ -17,7 +17,8 @@ function playerControlled(game) {
     this.color = "Black";
     this.cooldown = 0;
     this.corners = [{x:0, y:0}, {x:800, y:0}, {x:0, y:800}, {x:800, y:800}]
-    LivingEntity.call(this, game, 0, 0, 0, 0, this.radius + Math.random() * (800 - this.radius * 2), this.radius + Math.random() * (800 - this.radius * 2));
+    //LivingEntity.call(this, game, 0, 0, 0, 0, this.radius + Math.random() * (800 - this.radius * 2), this.radius + Math.random() * (800 - this.radius * 2));
+    LivingEntity.call(this, game, 0, 0, 0, 0, 200, 200);
     this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/Player2.png"), 80, 43, .05, 1, true, false, 1);
     this.velocity = { x: 0, y: 0 };
 };

@@ -83,11 +83,11 @@ ASSET_MANAGER.downloadAll(function () {
 
     var player = new playerControlled(gameEngine);
     var background = new Background(gameEngine, ASSET_MANAGER.getAsset("./images/background.jpg"));
-    gameEngine.addEntity(background);
+  //  gameEngine.addEntity(background);
     player.controlled = true;
     gameEngine.addEntity(player);
     var player2 = new playerControlled(gameEngine);
-    gameEngine.addEntity(player2);
+  //  gameEngine.addEntity(player2);
 
     gameEngine.init(ctx);
     gameEngine.start();

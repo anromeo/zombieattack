@@ -47,6 +47,9 @@ function GameEngine() {
     this.surfaceWidth = null;
     this.surfaceHeight = null;
 
+    this.windowX = 0;
+    this.windowY = 0;
+
     // Quinn's Additions
     this.keyState = null;
     this.keydown = null;
@@ -57,9 +60,37 @@ function GameEngine() {
     console.log('game initialized');
 }
 
+GameEngine.prototype.getWindowX = function() {
+    return this.windowX;
+}
+
+GameEngine.prototype.getWindowY = function() {
+    return this.windowY;
+}
+
+GameEngine.prototype.setWindowX = function(x) {
+    if (x < 0) {
+        this.windowX = 0;
+    } else if (x > 400) {
+        this.windowX = 400;
+    } else {
+        this.windowX = x;
+    }
+}
+
+GameEngine.prototype.setWindowY = function(y) {
+        if (y < 0) {
+        this.windowY = 0;
+    } else if (y > 400) {
+        this.windowY = 400;
+    } else {
+        this.windowY = y;
+    }
+}
+
 GameEngine.prototype.init = function (ctx) {
     this.ctx = ctx;
-    this.ctx.showOutlines = true;
+    this.ctx.showOutlines = false;
     this.surfaceWidth = this.ctx.canvas.width;
     this.surfaceHeight = this.ctx.canvas.height;
     this.startInput();
@@ -151,26 +182,31 @@ GameEngine.prototype.startInput = function () {
             key = "left"
             x = -1;
             //console.log(key + " " + e);
+            GameEngine.setWindowY(GameEngine.getWindowY() - 5);
             break;
             case 38:
             key = "up"
             y = -1;
             //console.log(key + " " + e);
+            GameEngine.setWindowX(GameEngine.getWindowX() - 5);
             break;
             case 39:
             key = "right"
             x = 1;
             //console.log(key + " " + e);
+            GameEngine.setWindowY(GameEngine.getWindowY() + 5);
             break;
             case 40:
             key = "down"
             y = 1;
             //console.log(key + " " + e);
+            GameEngine.setWindowX(GameEngine.getWindowX() + 5);
             break;
             default:
             console.log("default: " + e);
             break;          
         }       
+        console.log(GameEngine.getWindowX(), + " " + GameEngine.getWindowY());
         return {key:key, x: x, y: y};
     }
     var that = this;
@@ -191,7 +227,25 @@ GameEngine.prototype.startInput = function () {
     window.addEventListener('keydown',function(e){
         e.preventDefault();
         that.keyState[e.keyCode] = true;
-        //console.log("keyCode DOWN" + e.keyCode);
+        console.log("keyCode DOWN" + e.keyCode);
+        switch(e.keyCode) {
+            case 37:
+            that.setWindowX(that.getWindowX() - 5);
+            break;
+            case 38:
+            that.setWindowY(that.getWindowY() - 5);
+            break;
+            case 39:
+            that.setWindowX(that.getWindowX() + 5);
+            break;
+            case 40:
+            that.setWindowY(that.getWindowY() + 5);
+            break;
+            default:
+            //console.log("default: " + e);
+            break;          
+        }    
+         //console.log(that.getWindowX() + " " + that.getWindowY());
     },false);    
     window.addEventListener('keyup',function(e){
         e.preventDefault();
@@ -211,12 +265,15 @@ GameEngine.prototype.addEntity = function (entity) {
     else this.players.push(entity);
 }
 
-GameEngine.prototype.draw = function () {
+GameEngine.prototype.draw = function (top, left) {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     this.ctx.save();
+    //console.log(this.GameEngine.getWindowX() + " " + this.GameEngine.getWindowY());
+    this.ctx.drawImage(ASSET_MANAGER.getAsset("./images/background.jpg"), this.getWindowX(), this.getWindowY(), 400, 400, 0, 0, 400, 400);
     for (var i = 0; i < this.entities.length; i++) {
         this.entities[i].draw(this.ctx);
     }
+   // this.ctx.drawImage(ASSET_MANAGER.getAsset("./images/background.jpg"), 0, 0);
     this.ctx.restore();
 }
 
@@ -288,3 +345,63 @@ GameEngine.prototype.loop = function () {
     this.wheel = null;
     this.space = null;
 }
+
+
+
+        // var game = document.getElementById("game");
+        // var gameCtx = game.getContext("2d");
+
+        // var left = 20;
+        // var top = 20;
+
+        // var background = new Image();
+        // background.onload = function () {
+        //     gameCtx.fillStyle = "red";
+        //     gameCtx.strokeStyle = "blue";
+        //     gameCtx.lineWidth = 3;
+        //     move(top, left);
+        // }
+        // background.src = "https://dl.dropboxusercontent.com/u/139992952/stackoverflow/game.jpg";
+
+
+
+        // function move(direction) {
+        //     switch (direction) {
+        //         case "left":
+        //             left -= 5;
+        //             break;
+        //         case "up":
+        //             top -= 5;
+        //             break;
+        //         case "right":
+        //             left += 5;
+        //             break;
+        //         case "down":
+        //             top += 5
+        //             break;
+        //     }
+        //     draw(top, left);
+        // }
+
+        // function draw(top, left) {
+        //     gameCtx.clearRect(0, 0, game.width, game.height);
+        //     gameCtx.drawImage(background, left, top, 250, 150, 0, 0, 250, 150);
+        //     gameCtx.beginPath();
+        //     gameCtx.arc(125, 75, 10, 0, Math.PI * 2, false);
+        //     gameCtx.closePath();
+        //     gameCtx.fill();
+        //     gameCtx.stroke();
+        // }
+
+        // $("#moveLeft").click(function () {
+        //     move("left");
+        // });
+        // $("#moveRight").click(function () {
+        //     move("right");
+        // });
+        // $("#moveUp").click(function () {
+        //     move("up");
+        // });
+        // $("#moveDown").click(function () {
+        //     move("down");
+        // });
