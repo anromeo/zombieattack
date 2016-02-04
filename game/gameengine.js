@@ -283,7 +283,7 @@ GameEngine.prototype.draw = function (top, left) {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     this.ctx.save();
     //console.log(this.GameEngine.getWindowX() + " " + this.GameEngine.getWindowY());
-    this.ctx.drawImage(ASSET_MANAGER.getAsset("./images/background.jpg"), this.getWindowX(), this.getWindowY(), 400, 400, 0, 0, 400, 400);
+    this.ctx.drawImage(ASSET_MANAGER.getAsset("./images/background.jpg"), this.getWindowX(), this.getWindowY(), 400, 400, 0, 0, 800, 800);
     for (var i = 0; i < this.entities.length; i++) {
         this.entities[i].draw(this.ctx);
     }
