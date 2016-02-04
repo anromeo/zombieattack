@@ -148,11 +148,21 @@ GameEngine.prototype.start = function () {
 
 GameEngine.prototype.startInput = function () {
     console.log('Starting input');
+	//var that = this;
     var getXandY = function(e) {
         // var x =  e.clientX - that.ctx.canvas.getBoundingClientRect().left - (that.ctx.canvas.width/2);
         // var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top - (that.ctx.canvas.height/2);
         var x =  e.clientX - that.ctx.canvas.getBoundingClientRect().left;
         var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top;
+        //console.log("x: " + x + " y: " + y);
+        return {x: x, y: y};
+    }
+	
+	    var getXandYWithWindowOffset = function(e) {
+        // var x =  e.clientX - that.ctx.canvas.getBoundingClientRect().left - (that.ctx.canvas.width/2);
+        // var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top - (that.ctx.canvas.height/2);
+        var x =  e.clientX - that.ctx.canvas.getBoundingClientRect().left + that.getWindowX();
+        var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top + that.getWindowY();
         //console.log("x: " + x + " y: " + y);
         return {x: x, y: y};
     }
@@ -213,15 +223,19 @@ GameEngine.prototype.startInput = function () {
 
     if (this.ctx) {
         this.ctx.canvas.addEventListener("click", function(e) {
-            that.click = getXandY(e);
+            //that.click = getXandY(e);
+			that.click = getXandYWithWindowOffset(e);
             e.stopPropagation();
             e.preventDefault();
         }, false);
         
         this.ctx.canvas.addEventListener("mousemove", function(e) {
-            that.mouse = getXandY(e);       
-            that.x = getX(e);
-            that.y = getY(e);
+            //that.mouse = getXandY(e);       
+			that.mouse = getXandYWithWindowOffset(e); 
+			that.x = that.mouse.x;
+            that.y = that.mouse.y;
+            // that.x = getX(e);
+            // that.y = getY(e);
         }, false);
     }
     window.addEventListener('keydown',function(e){
