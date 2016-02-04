@@ -33,6 +33,7 @@ function Animation(spriteSheet, frameWidth, frameHeight, frameDuration, frames, 
 // }
 
 Animation.prototype.drawFrameRotate = function (tick, ctx, x, y, theAngle, xOffset, yOffset) {
+
     if (xOffset === undefined) {
         xOffset = 0;
     }
