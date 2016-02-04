@@ -124,22 +124,18 @@ playerControlled.prototype.selectAction = function () {
     		//left
     		if (this.game.keyState[37]||this.game.keyState[65]||this.game.keyState[97]) { //leftarrow, a, A
     			x = -1;
-				//this.game.setWindowX(this.game.getWindowX() - 5);
     		}
     		//up
     		if (this.game.keyState[38]||this.game.keyState[87]||this.game.keyState[119]) {  //uparrow, w, W
     			y = -1;
-				//this.game.setWindowY(this.game.getWindowY() - 5);
     		}
     		//right
     		if (this.game.keyState[39]||this.game.keyState[68]||this.game.keyState[100]) {  //rightarrow, d, D
     			x = 1;
-				//this.game.setWindowX(this.game.getWindowX() + 5);
     		}
     		//down
     		if (this.game.keyState[40]||this.game.keyState[83]||this.game.keyState[115]) {  //downarrow, s, S
     			y = 1;
-				//this.game.setWindowY(this.game.getWindowY() + 5);
     		}	
     		
     		action.direction.x += (x) * acceleration;
@@ -480,9 +476,6 @@ playerControlled.prototype.update = function () {
 };
 
 playerControlled.prototype.draw = function (ctx) {
-	var ratio = 0;
-	this.game.setWindowX(this.x - 200);
-	this.game.setWindowY(this.y - 200);
     // ctx.beginPath();
     // ctx.fillStyle = this.color;
     // ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
