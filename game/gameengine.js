@@ -181,44 +181,44 @@ GameEngine.prototype.startInput = function () {
         var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top;
         return y;
     }
-    var getKeyDir = function(e) {
-        //e = (KeyboardEvent) e
-        //console.log(e);
-        var key =  "";
-        var x = 0;
-        var y = 0;
-        switch(e.keyCode) {
-            case 37:
-            key = "left"
-            x = -1;
-            //console.log(key + " " + e);
-            GameEngine.setWindowY(GameEngine.getWindowY() - 5);
-            break;
-            case 38:
-            key = "up"
-            y = -1;
-            //console.log(key + " " + e);
-            GameEngine.setWindowX(GameEngine.getWindowX() - 5);
-            break;
-            case 39:
-            key = "right"
-            x = 1;
-            //console.log(key + " " + e);
-            GameEngine.setWindowY(GameEngine.getWindowY() + 5);
-            break;
-            case 40:
-            key = "down"
-            y = 1;
-            //console.log(key + " " + e);
-            GameEngine.setWindowX(GameEngine.getWindowX() + 5);
-            break;
-            default:
-            console.log("default: " + e);
-            break;          
-        }       
-        console.log(GameEngine.getWindowX(), + " " + GameEngine.getWindowY());
-        return {key:key, x: x, y: y};
-    }
+    // var getKeyDir = function(e) {
+        // //e = (KeyboardEvent) e
+        // //console.log(e);
+        // var key =  "";
+        // var x = 0;
+        // var y = 0;
+        // switch(e.keyCode) {
+            // case 37:
+            // key = "left"
+            // x = -1;
+            // //console.log(key + " " + e);
+            // GameEngine.setWindowY(GameEngine.getWindowY() - 5);
+            // break;
+            // case 38:
+            // key = "up"
+            // y = -1;
+            // //console.log(key + " " + e);
+            // GameEngine.setWindowX(GameEngine.getWindowX() - 5);
+            // break;
+            // case 39:
+            // key = "right"
+            // x = 1;
+            // //console.log(key + " " + e);
+            // GameEngine.setWindowY(GameEngine.getWindowY() + 5);
+            // break;
+            // case 40:
+            // key = "down"
+            // y = 1;
+            // //console.log(key + " " + e);
+            // GameEngine.setWindowX(GameEngine.getWindowX() + 5);
+            // break;
+            // default:
+            // console.log("default: " + e);
+            // break;          
+        // }       
+        // console.log(GameEngine.getWindowX(), + " " + GameEngine.getWindowY());
+        // return {key:key, x: x, y: y};
+    // }
     var that = this;
 
     if (this.ctx) {
@@ -241,24 +241,24 @@ GameEngine.prototype.startInput = function () {
     window.addEventListener('keydown',function(e){
         e.preventDefault();
         that.keyState[e.keyCode] = true;
-        console.log("keyCode DOWN" + e.keyCode);
-        switch(e.keyCode) {
-            case 37:
-            that.setWindowX(that.getWindowX() - 5);
-            break;
-            case 38:
-            that.setWindowY(that.getWindowY() - 5);
-            break;
-            case 39:
-            that.setWindowX(that.getWindowX() + 5);
-            break;
-            case 40:
-            that.setWindowY(that.getWindowY() + 5);
-            break;
-            default:
-            //console.log("default: " + e);
-            break;          
-        }    
+        // console.log("keyCode DOWN" + e.keyCode);
+        // switch(e.keyCode) {
+            // case 37:
+            // that.setWindowX(that.getWindowX() - 5);
+            // break;
+            // case 38:
+            // that.setWindowY(that.getWindowY() - 5);
+            // break;
+            // case 39:
+            // that.setWindowX(that.getWindowX() + 5);
+            // break;
+            // case 40:
+            // that.setWindowY(that.getWindowY() + 5);
+            // break;
+            // default:
+            // //console.log("default: " + e);
+            // break;          
+        // }    
          //console.log(that.getWindowX() + " " + that.getWindowY());
     },false);    
     window.addEventListener('keyup',function(e){
@@ -283,7 +283,8 @@ GameEngine.prototype.draw = function (top, left) {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     this.ctx.save();
     //console.log(this.GameEngine.getWindowX() + " " + this.GameEngine.getWindowY());
-    this.ctx.drawImage(ASSET_MANAGER.getAsset("./images/background.jpg"), this.getWindowX(), this.getWindowY(), 400, 400, 0, 0, 400, 400);
+	var ratio = 1.1; //1.2
+    this.ctx.drawImage(ASSET_MANAGER.getAsset("./images/background.jpg"), this.getWindowX() * ratio, this.getWindowY() * ratio, 400, 400, 0, 0, 400, 400);
     for (var i = 0; i < this.entities.length; i++) {
         this.entities[i].draw(this.ctx);
     }
