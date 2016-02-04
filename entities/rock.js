@@ -41,7 +41,7 @@ Rock.prototype.update = function () {
     //  console.log(this.velocity);
 
     this.x += this.velocity.x * this.game.clockTick;
-    this.y += this.velocity.y * this.game.clockTick;
+    this.y += this.velocity.y * this.game.clockTick ;
 
     if (this.collideLeft() || this.collideRight()) {
 		this.removeFromWorld = true;
@@ -100,7 +100,7 @@ Rock.prototype.update = function () {
 Rock.prototype.draw = function (ctx) {
     ctx.beginPath();
     ctx.fillStyle = this.color;
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+    ctx.arc(this.x - this.game.getWindowX(), this.y - this.game.getWindowY(), this.radius, 0, Math.PI * 2, false);
     ctx.fill();
     ctx.closePath();
 

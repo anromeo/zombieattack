@@ -140,7 +140,7 @@ LivingEntity.prototype.draw = function (ctx) {
 
     } else { // Zombies
 	//this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius, this.y - this.radius, this.angle);
-        this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius, this.y - this.radius, this.angle);
+        this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius - this.game.getWindowX(), this.y - this.radius - this.game.getWindowY(), this.angle);
     }
 
     if (this.game.showOutlines) {
