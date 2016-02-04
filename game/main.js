@@ -54,6 +54,7 @@ ASSET_MANAGER.queueDownload("./images/demon.png");
 ASSET_MANAGER.queueDownload("./images/ZombieWalking.png");
 ASSET_MANAGER.queueDownload("./images/Player2.png");
 ASSET_MANAGER.queueDownload("./images/background.jpg");
+ASSET_MANAGER.queueDownload("./images/boss.png");
 
 ASSET_MANAGER.downloadAll(function () {
     console.log("starting up da sheild");
@@ -83,6 +84,8 @@ ASSET_MANAGER.downloadAll(function () {
 
     var player = new playerControlled(gameEngine);
     var background = new Background(gameEngine, ASSET_MANAGER.getAsset("./images/background.jpg"));
+    var boss = new Boss(gameEngine, ASSET_MANAGER.getAsset("./images/boss.png"));
+    gameEngine.addEntity(boss);
   //  gameEngine.addEntity(background);
     player.controlled = true;
     gameEngine.addEntity(player);

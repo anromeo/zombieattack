@@ -21,7 +21,7 @@ function playerControlled(game) {
     this.cooldown = 0;
     this.corners = [{x:0, y:0}, {x:800, y:0}, {x:0, y:800}, {x:800, y:800}]
     //LivingEntity.call(this, game, 0, 0, 0, 0, this.radius + Math.random() * (800 - this.radius * 2), this.radius + Math.random() * (800 - this.radius * 2));	
-	LivingEntity.call(this, game, 0, 0, 0, 0, 200, 200);
+	LivingEntity.call(this, game, 0, 0, 0, 0, 400, 400);
 	this.CenterOffsetX = 10; // puts the center of the sprite in the center of the entity
 	this.CenterOffsetY = 10; // puts the center of the sprite in the center of the entity
 	this.SpriteRotateOffsetX = 8; //describes the point of rotation on the sprite changed from 1/2 width
@@ -476,8 +476,8 @@ playerControlled.prototype.update = function () {
 };
 
 playerControlled.prototype.draw = function (ctx) {
-	this.game.setWindowX(this.x - 200);
-	this.game.setWindowY(this.y - 200);
+	this.game.setWindowX(this.x - 400);
+	this.game.setWindowY(this.y - 400);
     // ctx.beginPath();
     // ctx.fillStyle = this.color;
     // ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
