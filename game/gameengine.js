@@ -71,8 +71,8 @@ GameEngine.prototype.getWindowY = function() {
 GameEngine.prototype.setWindowX = function(x) {
     if (x < 0) {
         this.windowX = 0;
-    } else if (x > 400) {
-        this.windowX = 400;
+    } else if (x > 800) {
+        this.windowX = 800;
     } else {
         this.windowX = x;
     }
@@ -81,8 +81,8 @@ GameEngine.prototype.setWindowX = function(x) {
 GameEngine.prototype.setWindowY = function(y) {
         if (y < 0) {
         this.windowY = 0;
-    } else if (y > 400) {
-        this.windowY = 400;
+    } else if (y > 800) {
+        this.windowY = 800;
     } else {
         this.windowY = y;
     }
@@ -283,7 +283,7 @@ GameEngine.prototype.draw = function (top, left) {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     this.ctx.save();
     //console.log(this.GameEngine.getWindowX() + " " + this.GameEngine.getWindowY());
-    this.ctx.drawImage(ASSET_MANAGER.getAsset("./images/background.jpg"), this.getWindowX(), this.getWindowY(), 400, 400, 0, 0, 400, 400);
+    this.ctx.drawImage(ASSET_MANAGER.getAsset("./images/background.jpg"), this.getWindowX(), this.getWindowY(), 400, 400, 0, 0, 800, 800);
     for (var i = 0; i < this.entities.length; i++) {
         this.entities[i].draw(this.ctx);
     }
