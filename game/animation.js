@@ -32,7 +32,14 @@ function Animation(spriteSheet, frameWidth, frameHeight, frameDuration, frames, 
 //                  this.frameHeight);
 // }
 
-Animation.prototype.drawFrameRotate = function (tick, ctx, x, y, theAngle, xOffset = 0, yOffset = 0) {
+Animation.prototype.drawFrameRotate = function (tick, ctx, x, y, theAngle, xOffset, yOffset) {
+    if (xOffset === undefined) {
+        xOffset = 0;
+    }
+    if (yOffset = 0) {
+        yOffset = 0;
+    }
+
     var angle = Math.floor(theAngle);
 	this.elapsedTime += tick;
     if (this.isDone()) {
@@ -59,7 +66,13 @@ Animation.prototype.drawFrameRotate = function (tick, ctx, x, y, theAngle, xOffs
     }
 }
 
-Animation.prototype.rotateAndCache = function (angle, xindex, yindex, translatex = 0, translatey = 0) {
+Animation.prototype.rotateAndCache = function (angle, xindex, yindex, translatex, translatey) {
+    if (translatex === undefined) {
+        translatex = 0;
+    }
+    if (translatey === undefined) {
+        translatey = 0
+    }
     //console.log("Rotating and Caching");
     var offscreenCanvas = document.createElement('canvas');
     var size = Math.max(this.frameWidth, this.frameHeight);
