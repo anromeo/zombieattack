@@ -476,6 +476,8 @@ playerControlled.prototype.update = function () {
 };
 
 playerControlled.prototype.draw = function (ctx) {
+	this.game.setWindowX(this.x - 200);
+	this.game.setWindowY(this.y - 200);
     // ctx.beginPath();
     // ctx.fillStyle = this.color;
     // ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);

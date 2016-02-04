@@ -132,8 +132,8 @@ LivingEntity.prototype.draw = function (ctx) {
         var rad = Math.atan2(this.game.y - this.y, this.game.x - this.x);
         var deg = rad * (180 / Math.PI);
 		//this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius, this.y - this.radius, deg);
-        this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius - this.CenterOffsetX, 
-		this.y - this.radius - this.CenterOffsetY, deg,
+        this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius - this.CenterOffsetX - this.game.getWindowX(), 
+		this.y - this.radius - this.CenterOffsetY - this.game.getWindowY(), deg,
 		this.SpriteRotateOffsetX, this.SpriteRotateOffsetY);
 		//console.log("this.SpriteRotateOffsetX" + this.SpriteRotateOffsetX);
 		//console.log("this.CenterOffsetX" + this.CenterOffsetX);
