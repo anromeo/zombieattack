@@ -6,6 +6,8 @@
 // Source Used: http://jaran.de/goodbits/2011/07/17/calculating-an-intercept-course-to-a-target-with-constant-direction-and-velocity-in-a-2-dimensional-plane/
 
 function playerControlled(game) {
+	//LivingEntity.call(this, game, 0, 0, 0, 0, this.radius + Math.random() * (800 - this.radius * 2), this.radius + Math.random() * (800 - this.radius * 2));	
+	LivingEntity.call(this, game, 0, 0, 0, 0, game.surfaceWidth/2, game.surfaceHeight/2);
     this.player = 1;
 	this.spriteWidth = 80;
 	this.spriteHeight = 43;
@@ -13,15 +15,13 @@ function playerControlled(game) {
     this.strength = 100;
     this.controlled = false;
 
-    //this.rocks = 0;
-    this.kills = 0;
     this.game = game;
     this.name = "playerControlled";
     this.color = "Black";
     this.cooldown = 0;
-    this.corners = [{x:0, y:0}, {x:800, y:0}, {x:0, y:800}, {x:800, y:800}]
-    //LivingEntity.call(this, game, 0, 0, 0, 0, this.radius + Math.random() * (800 - this.radius * 2), this.radius + Math.random() * (800 - this.radius * 2));	
-	LivingEntity.call(this, game, 0, 0, 0, 0, 400, 400);
+    //this.corners = [{x:0, y:0}, {x:800, y:0}, {x:0, y:800}, {x:800, y:800}]
+    
+	
 	this.CenterOffsetX = 10; // puts the center of the sprite in the center of the entity
 	this.CenterOffsetY = 10; // puts the center of the sprite in the center of the entity
 	this.SpriteRotateOffsetX = 8; //describes the point of rotation on the sprite changed from 1/2 width
@@ -230,7 +230,7 @@ playerControlled.prototype.selectAction = function () {
 
 
         // if the shooter is 200px away from either left or right side of the canvas
-        if (this.x <= 200 || this.x >= 600) {
+        if (this.x <= 200 || this.x >= this.game.surfaceWidth - 200) {
 
             // create an invisible wall
             var wall;
@@ -240,7 +240,7 @@ playerControlled.prototype.selectAction = function () {
                 wall = {x: 0, y: this.y};
             } else {
                 // else let that wall be the right most border of the screen
-                wall = {x: 800, y: this.y};
+                wall = {x: this.game.surfaceWidth, y: this.y};
             }
 
             // get the distance between this object and the wall created
@@ -254,7 +254,7 @@ playerControlled.prototype.selectAction = function () {
         }
 
         // if the shooter is 200px away from either the top or bottom of the canvas
-        if (this.y <= 200 || this.y >= 600) {
+        if (this.y <= 200 || this.y >= this.game.surfaceHeight - 200) {
 
             // create an invisible wall
             var wall;
@@ -265,7 +265,7 @@ playerControlled.prototype.selectAction = function () {
                 wall = {x: this.x, y: 0};
             } else {
                 // else let that wall be the bottom border of the canvas
-                wall = {x: this.x, y: 800};
+                wall = {x: this.x, y: this.game.surfaceHeight };
             }
 
             // let the difference of the wall help to simulate a magnetic repulsion from the wall
@@ -343,7 +343,7 @@ playerControlled.prototype.collideLeft = function () {
 };
 
 playerControlled.prototype.collideRight = function () {
-    return (this.x + this.radius) > 800;
+    return (this.x + this.radius) > this.game.surfaceWidth;
 };
 
 playerControlled.prototype.collideTop = function () {
@@ -351,7 +351,7 @@ playerControlled.prototype.collideTop = function () {
 };
 
 playerControlled.prototype.collideBottom = function () {
-    return (this.y + this.radius) > 800;
+    return (this.y + this.radius) > this.game.surfaceHeight;
 };
 
 playerControlled.prototype.update = function () {
@@ -390,7 +390,7 @@ playerControlled.prototype.update = function () {
     if (this.collideLeft() || this.collideRight()) {
         this.velocity.x = -this.velocity.x * friction;
         if (this.collideLeft()) this.x = this.radius;
-        if (this.collideRight()) this.x = 800 - this.radius;
+        if (this.collideRight()) this.x = this.game.surfaceWidth - this.radius;
         this.x += this.velocity.x * this.game.clockTick;
         this.y += this.velocity.y * this.game.clockTick;
     }
@@ -398,7 +398,7 @@ playerControlled.prototype.update = function () {
     if (this.collideTop() || this.collideBottom()) {
         this.velocity.y = -this.velocity.y * friction;
         if (this.collideTop()) this.y = this.radius;
-        if (this.collideBottom()) this.y = 800 - this.radius;
+        if (this.collideBottom()) this.y = this.game.surfaceHeight - this.radius;
         this.x += this.velocity.x * this.game.clockTick;
         this.y += this.velocity.y * this.game.clockTick;
     }
@@ -465,7 +465,7 @@ playerControlled.prototype.update = function () {
     if (this.action.target) {
         this.angle = Math.atan2(this.action.target.x, this.action.target.y) * (180/Math.PI);
         this.angle = this.angle - 100;
-        console.log(this.angle);
+        //console.log(this.angle);
         while (this.angle > 360) {
             this.angle = this.angle - 360;
         }

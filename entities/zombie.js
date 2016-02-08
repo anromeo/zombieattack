@@ -1,15 +1,6 @@
 function Zombie(game, clone) {
     this.radius = 64;
-	this.SpriteHeight = 60;
-	this.SpriteWidth = 60;
-    this.player = 1;
-    this.radius = 32;
-    this.visualRadius = 10000;
-    this.name = "Zombie";
-    this.color = "Red";
-    this.health = 100;
-    this.maxSpeed = minSpeed + (maxSpeed - minSpeed) * Math.random();
-    if (!clone) {
+	if (!clone) {
         LivingEntity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1);
 		this.x = 850;
 		this.y = this.game.surfaceHeight * Math.random();
@@ -24,6 +15,19 @@ function Zombie(game, clone) {
             LivingEntity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1);
         }
     }
+	
+	this.radius = 64;
+	this.SpriteHeight = 60;
+	this.SpriteWidth = 60;
+    this.player = 1;
+    this.radius = 32;
+    this.visualRadius = 10000;
+    this.name = "Zombie";
+    this.color = "Red";
+
+    this.maxSpeed = minSpeed + (maxSpeed - minSpeed) * Math.random();
+    this.healthMAX = 100;
+	this.health = this.healthMAX;
     this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/ZombieWalking.png"), this.SpriteHeight, this.SpriteWidth, .05, 25, true, false, 5);
         // Entity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2), this.radius + Math.random() * (800 - this.radius * 2));
     // this.velocity = { x: Math.random() * 1000, y: Math.random() * 1000 };
@@ -127,6 +131,7 @@ Zombie.prototype.update = function () {
                 this.health -= ent.strength;
                 if (this.health <= 0) {
                     this.removeFromWorld = true;
+					this.game.kills++;
                 }
 //                console.log("My health is " + this.health);
                 ent.thrown = false;

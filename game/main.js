@@ -53,7 +53,7 @@ Background.prototype.draw = function (ctx) {
 ASSET_MANAGER.queueDownload("./images/demon.png");
 ASSET_MANAGER.queueDownload("./images/ZombieWalking.png");
 ASSET_MANAGER.queueDownload("./images/Player2.png");
-ASSET_MANAGER.queueDownload("./images/background.jpg");
+ASSET_MANAGER.queueDownload("./images/background.png");
 ASSET_MANAGER.queueDownload("./images/boss.png");
 
 ASSET_MANAGER.downloadAll(function () {
@@ -66,6 +66,7 @@ ASSET_MANAGER.downloadAll(function () {
     //var numRocks = 12;
 
     var gameEngine = new GameEngine();
+	gameEngine.init(ctx);
     var circle;
     // for (var i = 0; i < numPlayers; i++) {
         // circle = new friendlyAI(gameEngine);
@@ -83,16 +84,14 @@ ASSET_MANAGER.downloadAll(function () {
     // }
 
     var player = new playerControlled(gameEngine);
-    var background = new Background(gameEngine, ASSET_MANAGER.getAsset("./images/background.jpg"));
+    var background = new Background(gameEngine, ASSET_MANAGER.getAsset("./images/background.png"));
     var boss = new Boss(gameEngine, ASSET_MANAGER.getAsset("./images/boss.png"));
-    gameEngine.addEntity(boss);
+    //gameEngine.addEntity(boss);
   //  gameEngine.addEntity(background);
     player.controlled = true;
     gameEngine.addEntity(player);
     var player2 = new playerControlled(gameEngine);
-  //  gameEngine.addEntity(player2);
-
-    gameEngine.init(ctx);
+  //  gameEngine.addEntity(player2);   
     gameEngine.start();
 });
 

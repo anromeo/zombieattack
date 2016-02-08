@@ -5,8 +5,11 @@ var minSpeed = 5;
 
 function Entity(game, x, y) {
     this.game = game;
+	this.radius = 10;
     this.x = x;
     this.y = y;
+	this.canvasX = x;
+	this.canvasY = y;
     if(this.game) {
         this.ctx = game.ctx;
     }
@@ -23,6 +26,9 @@ Entity.prototype.setRemoved = function (bool) {
 }
 
 Entity.prototype.update = function () {
+	//console.log("updating");
+	this.canvasX = this.x - this.radius - this.game.getWindowX();
+	this.canvasY = this.y - this.radius - this.game.getWindowY()
 }
 
 Entity.prototype.draw = function (ctx) {
@@ -64,7 +70,7 @@ function LivingEntity(game, pointerX, pointerY, directionX, directionY, location
     this.directionY = directionY;
 	this.SpriteWidth = 60;  //default:60
 	this.SpriteHeight = 60;  //default:60
-		this.CenterOffsetX = 0; // puts the center of the sprite in the center of the entity
+	this.CenterOffsetX = 0; // puts the center of the sprite in the center of the entity
 	this.CenterOffsetY = 0;  //puts the center of the sprite in the center of the entity
 	this.SpriteRotateOffsetX = 0; //describes the point of rotation on the sprite changed from 1/2 width
 	this.SpriteRotateOffsetY = 0; //describes the point of rotation on the sprite changed from 1/2 height
@@ -72,6 +78,10 @@ function LivingEntity(game, pointerX, pointerY, directionX, directionY, location
 	// this.CenterOffsetY = CenterOffsetY;  //puts the center of the sprite in the center of the entity
 	// this.SpriteRotateOffsetX = SpriteRotateOffsetX; //describes the point of rotation on the sprite changed from 1/2 width
 	// this.SpriteRotateOffsetY = SpriteRotateOffsetY; //describes the point of rotation on the sprite changed from 1/2 height
+	this.showHealthBar = true;
+	this.healthBarCoords = {BeginX: 5, BeginY : -5, Width : 50, Height : 7};
+	this.healthMAX = 100;
+	this.health = this.healthMAX;
 	this.angle = 0;
     this.health = 100;
     this.strength = 25;
@@ -142,6 +152,53 @@ LivingEntity.prototype.draw = function (ctx) {
 	//this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius, this.y - this.radius, this.angle);
         this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius - this.game.getWindowX(), this.y - this.radius - this.game.getWindowY(), this.angle);
     }
+	
+	//show kills
+	ctx.beginPath();
+	ctx.fillStyle = "Red";
+	ctx.font = "48px serif";
+	//console.log(this.game.kills);
+	var message = "Kills: " + this.game.kills;
+	ctx.fillText(message, 10, 50);
+	ctx.stroke(); 
+	
+	if (this.showHealthBar) {			
+		//black background
+		ctx.beginPath();
+		ctx.fillStyle = "black";
+		ctx.fillRect(this.healthBarCoords.BeginX + this.canvasX, this.healthBarCoords.BeginY + this.canvasY, this.healthBarCoords.Width, this.healthBarCoords.Height);
+		ctx.stroke(); 
+		
+		//actual health bar
+		var tempHealth = this.health;
+		if (tempHealth > this.healthMAX) {
+			tempHealth = this.healthMAX;
+		} else if (tempHealth < 0) {
+			tempHealth = 0;
+		}
+		var healthPercent = (tempHealth / this.healthMAX);
+		var healthGreenAbove = .7;
+		var healthYellowAbove = .4;
+		ctx.beginPath();
+		if (healthPercent > healthGreenAbove) {
+			ctx.fillStyle = "green";
+		}else if (healthPercent > healthYellowAbove) {
+			ctx.fillStyle = "yellow";
+		} else {
+			ctx.fillStyle = "red";
+		}
+		var calculatex = this.healthBarCoords.BeginX + this.canvasX;
+		var calculatey = this.healthBarCoords.BeginY + this.canvasY;
+		var calculatewidth = this.healthBarCoords.Width * healthPercent;
+		ctx.fillRect(calculatex, calculatey, calculatewidth, this.healthBarCoords.Height);
+		ctx.stroke(); 
+		
+		//outline of health bar
+		ctx.beginPath();
+		ctx.strokeStyle = "white";
+		ctx.rect(this.healthBarCoords.BeginX + this.canvasX ,this.healthBarCoords.BeginY + this.canvasY,this.healthBarCoords.Width,this.healthBarCoords.Height);
+		ctx.stroke(); 
+	}
 
     if (this.game.showOutlines) {
         ctx.beginPath();
