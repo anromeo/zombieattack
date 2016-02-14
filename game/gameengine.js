@@ -253,13 +253,50 @@ GameEngine.prototype.draw = function (top, left) {
 //     }
 // }
 
+// Get the PlayerControlled Player
+GameEngine.prototype.getPlayer = function() {
+
+    // For every player
+    for (var i = 0; i < this.players.length; i++) {
+
+        // If that player is currently being controlled
+        if (this.players[i].controlled) {
+            // return that player
+            return this.players[i];
+        }
+    }
+    // otherwise return null
+    return null;
+}
+
 // added from 435 ZOMBIE AI Project
 GameEngine.prototype.update = function () {
     var entitiesCount = this.entities.length;
 
+    // Sets the player to the current player
+    this.player = this.getPlayer();
+
     this.zombieCooldown -= this.clockTick;
     if (this.zombieCooldown < 0) {
         this.zombieCooldown = this.zombieCooldownNum;
+
+        // IF there exists a player on the board
+        // AND the player is not removed from world
+        if (this.player && !this.player.removeFromWorld) {
+
+            // decrease the zombieCooldownNum
+            // exponentially as the distance between the player and the
+            // origin of the gameboard goes down 
+            var dist = distance(this.player, {x:0, y:0});
+            if (dist !== 0) {
+
+                // the half life used to project the spawn rate of the zombies.
+                var halfLife = 3000;
+                // the formula for the curent zombie cooldown.
+                this.zombieCooldownNum = 3 * Math.pow((1/2), dist / halfLife);
+            }
+        }
+
         var zom = new Zombie(this);
         this.addEntity(zom);
     }
