@@ -22,6 +22,28 @@
     <script type="text/javascript" src="./game/main.js"></script>
 </head>
 <body>
+    <div style="float:right;width:400px; margin: 20px;">
+        <h1>Changes I made to the game:</h1>
+        <h2>Player Controlled AI</h2>
+        <p>
+            The player controlled AI now moves closer to you
+            as you move farther away from its vision. To adjust the
+            distance of the player controlled AI in reference to the player,
+            change the variable: <strong>spaceBetweenPlayerControlled</strong>. 
+        </p>
+        <h2>Spawning Speed Increase</h2>
+        <p>
+            The spawning speed or the zombieCooldownNum starts to go down
+            as the player gets farther and farther away from the origin (top-left corner) of the game.
+        </p>
+        <h2>Swap Player Controlled Players</h2>
+        <p>
+            You can now swap player controlled characters. Just press
+            one of the numbers. You start with player controlled 1, and then
+            you can press 2 to swap to player controlled 2. Or three if there was
+            a third player controlled character.
+        </p>
+    </div>
     <canvas id="gameWorld" tabindex="1" width="800" height="800" style="border: 1px solid brown; background: lightskyblue"></canvas>
 </body>
 </html>

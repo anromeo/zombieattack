@@ -331,6 +331,36 @@ playerControlled.prototype.aiSelectAction = function() {
         return action; 
 }
 
+// Swaps the player controlled if possible and if pressed
+playerControlled.prototype.swapIfCanSwap = function(game) {
+
+
+    var indexOfSwappingPlayerControlled;
+    var offset = 49;
+
+    for (var i = 0; i < 9; i++) {
+        if (game.keyState[i + offset]) {
+            indexOfSwappingPlayerControlled = i;
+        }
+    }
+
+    // if '1' through '9' is pressed
+    // AND this.players[whatever-was-pressed - 1]
+    // exists, then swap control to that PlayerControlled
+    // object
+    if (indexOfSwappingPlayerControlled >= 0
+        && indexOfSwappingPlayerControlled <= 57
+        && game.players[indexOfSwappingPlayerControlled]
+        && !game.players[indexOfSwappingPlayerControlled].controlled) {
+
+        for(var i = 0; i < game.players.length; i++) {
+            game.players[i].controlled = false;
+        }
+        game.players[indexOfSwappingPlayerControlled].controlled = true;
+        console.log("SWAPPED");
+    }
+}
+
 playerControlled.prototype.selectAction = function () {
     if (!this.controlled) {
         return this.aiSelectAction();
@@ -343,6 +373,11 @@ playerControlled.prototype.selectAction = function () {
     	if (this.game.keyState) {
     		var x = 0;
     		var y = 0;
+
+            // If the player has pressed a key '1' to '9' then swap players if
+            // the other player exists
+            this.swapIfCanSwap(this.game);            
+
     		//left
     		if (this.game.keyState[37]||this.game.keyState[65]||this.game.keyState[97]) { //leftarrow, a, A
     			x = -1;
