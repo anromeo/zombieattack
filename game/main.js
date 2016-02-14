@@ -91,7 +91,7 @@ ASSET_MANAGER.downloadAll(function () {
     player.controlled = true;
     gameEngine.addEntity(player);
     var player2 = new playerControlled(gameEngine);
-  //  gameEngine.addEntity(player2);   
+    gameEngine.addEntity(player2);   
     gameEngine.start();
 });
 

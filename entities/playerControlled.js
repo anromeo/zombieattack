@@ -19,6 +19,7 @@ function playerControlled(game) {
     this.name = "playerControlled";
     this.color = "Black";
     this.cooldown = 0;
+    this.team = "blue";
     //this.corners = [{x:0, y:0}, {x:800, y:0}, {x:0, y:800}, {x:800, y:800}]
     
 	
@@ -33,6 +34,19 @@ function playerControlled(game) {
 playerControlled.prototype = new LivingEntity();
 playerControlled.prototype.constructor = playerControlled;
 
+// This function will eventually move to the shooter class.
+playerControlled.prototype.attack = function(dir) {
+
+    rock = new Rock(this.game);
+    rock.x = this.x + dir.x * (this.radius + rock.radius + 20);
+    rock.y = this.y + dir.y * (this.radius + rock.radius + 20);
+    rock.velocity.x = dir.x * rock.maxSpeed;
+    rock.velocity.y = dir.y * rock.maxSpeed;
+    rock.thrown = true;
+    rock.thrower = this;
+    this.game.addEntity(rock);
+
+}
     /**
      * Calculates the point of interception for one object starting at point
      * <code>a</code> with speed vector <code>v</code> and another object
@@ -100,56 +114,12 @@ playerControlled.prototype.constructor = playerControlled;
         // calculate the point of interception using the found intercept time and return it
         return answer = {x : (a.x + t * v.x), y : (a.y + t * v.y)};
     };
-// alter the code in this function to create your agent
-// you may check the state but do not change the state of these variables:
-//    this.rocks
-//    this.cooldown
-//    this.x
-//    this.y
-//    this.velocity
-//    this.game and any of its properties
 
-// you may access a list of zombies from this.game.zombies
-// you may access a list of rocks from this.game.rocks
-// you may access a list of players from this.game.players
 
-playerControlled.prototype.selectAction = function () {
-    if (this.controlled) {
-        var action = { direction: { x: 0, y: 0 }, throwRock: false, target: null};
-        var acceleration = 1000000000;
-      
-    	if (this.game.keyState) {
-    		var x = 0;
-    		var y = 0;
-    		//left
-    		if (this.game.keyState[37]||this.game.keyState[65]||this.game.keyState[97]) { //leftarrow, a, A
-    			x = -1;
-    		}
-    		//up
-    		if (this.game.keyState[38]||this.game.keyState[87]||this.game.keyState[119]) {  //uparrow, w, W
-    			y = -1;
-    		}
-    		//right
-    		if (this.game.keyState[39]||this.game.keyState[68]||this.game.keyState[100]) {  //rightarrow, d, D
-    			x = 1;
-    		}
-    		//down
-    		if (this.game.keyState[40]||this.game.keyState[83]||this.game.keyState[115]) {  //downarrow, s, S
-    			y = 1;
-    		}	
-    		
-    		action.direction.x += (x) * acceleration;
-    		action.direction.y += (y) * acceleration;
-    	}
-      
-        if (this.game.click) {    
-            action.target = this.game.click;
-            action.throwRock = true;
-            this.game.click = null;
-        }
-      
-        return action;
-    } else {
+
+playerControlled.prototype.aiSelectAction = function() {
+    
+//        this.corners = [{x:0, y:0}, {x:800, y:0}, {x:0, y:800}, {x:800, y:800}]
 
         // This is the action the zombie will perform
         var action = { direction: { x: 0, y: 0 }, throwRock: true, target: null};
@@ -218,63 +188,63 @@ playerControlled.prototype.selectAction = function () {
         }
 
         // prevent the shooter from touching corners
-        for (var i = 0; i < 4; i++) {
-            if (this.collide({ x: this.corners[i].x, y: this.corners[i].y, radius: this.visualRadius })) {
-                dist = distance(this, this.corners[i]);
-                var difX = (this.corners[i].x - this.x) / dist;
-                var difY = (this.corners[i].y - this.y) / dist;
-                action.direction.x -= difX * acceleration / (dist * dist);
-                action.direction.y -= difY * acceleration / (dist * dist);
-            }
-        }
+        // for (var i = 0; i < 4; i++) {
+        //     if (this.collide({ x: this.corners[i].x, y: this.corners[i].y, radius: this.visualRadius })) {
+        //         dist = distance(this, this.corners[i]);
+        //         var difX = (this.corners[i].x - this.x) / dist;
+        //         var difY = (this.corners[i].y - this.y) / dist;
+        //         action.direction.x -= difX * acceleration / (dist * dist);
+        //         action.direction.y -= difY * acceleration / (dist * dist);
+        //     }
+        // }
 
 
-        // if the shooter is 200px away from either left or right side of the canvas
-        if (this.x <= 200 || this.x >= this.game.surfaceWidth - 200) {
+        // // if the shooter is 200px away from either left or right side of the canvas
+        // if (this.x <= (200 +  || this.x >= this.game.surfaceWidth - 200) {
 
-            // create an invisible wall
-            var wall;
-            // if the x location of the shooter is less than 400px
-            if (this.x < 400) {
-                // let that wall be the left most border of the screen
-                wall = {x: 0, y: this.y};
-            } else {
-                // else let that wall be the right most border of the screen
-                wall = {x: this.game.surfaceWidth, y: this.y};
-            }
+        //     // create an invisible wall
+        //     var wall;
+        //     // if the x location of the shooter is less than 400px
+        //     if (this.x < 400) {
+        //         // let that wall be the left most border of the screen
+        //         wall = {x: 0, y: this.y};
+        //     } else {
+        //         // else let that wall be the right most border of the screen
+        //         wall = {x: this.game.surfaceWidth, y: this.y};
+        //     }
 
-            // get the distance between this object and the wall created
-            var distWall = distance(this, wall);
+        //     // get the distance between this object and the wall created
+        //     var distWall = distance(this, wall);
 
-            // let the difference of the wall help to simulate a magnetic repulsion
-            var difX = (wall.x - this.x) / distWall;
-            var difY = (wall.y - this.y) / distWall;
-            action.direction.x -= difX * acceleration / (distWall * distWall);
-            action.direction.y -= difY * acceleration / (distWall * distWall);        
-        }
+        //     // let the difference of the wall help to simulate a magnetic repulsion
+        //     var difX = (wall.x - this.x) / distWall;
+        //     var difY = (wall.y - this.y) / distWall;
+        //     action.direction.x -= difX * acceleration / (distWall * distWall);
+        //     action.direction.y -= difY * acceleration / (distWall * distWall);        
+        // }
 
-        // if the shooter is 200px away from either the top or bottom of the canvas
-        if (this.y <= 200 || this.y >= this.game.surfaceHeight - 200) {
+        // // if the shooter is 200px away from either the top or bottom of the canvas
+        // if (this.y <= 200 || this.y >= this.game.surfaceHeight - 200) {
 
-            // create an invisible wall
-            var wall;
+        //     // create an invisible wall
+        //     var wall;
 
-            // if the y location of the shooter is less than 400px
-            if (this.y < 400) {
-                // let that wall be the top border of the canvas
-                wall = {x: this.x, y: 0};
-            } else {
-                // else let that wall be the bottom border of the canvas
-                wall = {x: this.x, y: this.game.surfaceHeight };
-            }
+        //     // if the y location of the shooter is less than 400px
+        //     if (this.y < 400) {
+        //         // let that wall be the top border of the canvas
+        //         wall = {x: this.x, y: 0};
+        //     } else {
+        //         // else let that wall be the bottom border of the canvas
+        //         wall = {x: this.x, y: this.game.surfaceHeight };
+        //     }
 
-            // let the difference of the wall help to simulate a magnetic repulsion from the wall
-            var distWall = distance(this, wall);
-            var difX = (wall.x - this.x) / distWall;
-            var difY = (wall.y - this.y) / distWall;
-            action.direction.x -= difX * acceleration / (distWall* distWall);
-            action.direction.y -= difY * acceleration / (distWall* distWall);        
-        }
+        //     // let the difference of the wall help to simulate a magnetic repulsion from the wall
+        //     var distWall = distance(this, wall);
+        //     var difX = (wall.x - this.x) / distWall;
+        //     var difY = (wall.y - this.y) / distWall;
+        //     action.direction.x -= difX * acceleration / (distWall* distWall);
+        //     action.direction.y -= difY * acceleration / (distWall* distWall);        
+        // }
 
         // for every zombie
         for (var i = 0; i < this.game.zombies.length; i++) {
@@ -296,12 +266,23 @@ playerControlled.prototype.selectAction = function () {
         // with having another playable character
         var personalBubble = 50;
 
+        // This will be the PlayerControlled object.
+        // There will only ever be one fully PlayerControlled object.
+        var player = null;
+
         // for every player controlled player on the board
         for (var i = 0; i < this.game.players.length; i++) {
 
             // get that playable character and the space between it and this playable character
             var playableCharacter = this.game.players[i];
             var space = distance(playableCharacter, this);
+
+            // If this is the PlayerControlled object
+            // but the PlayerControlled object is not this object
+            if (this.game.players[i].controlled === true
+                && this.game.players[i].controlled != this) {
+                var player = this.game.players[i];
+            }
 //            console.log(space);
             // if the space is smaller than this playable character's personal bubble
             if (space > personalBubble) {
@@ -312,6 +293,25 @@ playerControlled.prototype.selectAction = function () {
                 action.direction.x -= difX * acceleration / (space * space);
                 action.direction.y -= difY * acceleration / (space * space);
             }
+        }
+
+
+        // This is the highest distance of the space between the Friendly AI
+        // and the PlayerControlled objects
+        var spaceBetweenPlayerControlled = 275;
+
+        // console.log(this);
+
+        // console.log(player);
+        // If the player exists and the player is moving outside of the
+        // PlayerControlled object's space.
+        if (player && !this.collide({x: player.x, y: player.y, radius: spaceBetweenPlayerControlled})) {
+
+            // Then move the player closer to the Player Controlled Object
+            var difX = (player.x - this.x) / spaceBetweenPlayerControlled;
+            var difY = (player.y - this.y) / spaceBetweenPlayerControlled;
+            action.direction.x += 100 * difX * acceleration / (spaceBetweenPlayerControlled * spaceBetweenPlayerControlled);
+            action.direction.y += 100 * difY * acceleration / (spaceBetweenPlayerControlled * spaceBetweenPlayerControlled);
         }
 
         // if there exists a target
@@ -328,6 +328,48 @@ playerControlled.prototype.selectAction = function () {
         action.direction.x -= (1 - friction) * this.game.clockTick * this.directionX;
         action.direction.y -= (1 - friction) * this.game.clockTick * this.directionY;
 
+        return action; 
+}
+
+playerControlled.prototype.selectAction = function () {
+    if (!this.controlled) {
+        return this.aiSelectAction();
+    }
+
+    if (this.controlled) {
+        var action = { direction: { x: 0, y: 0 }, throwRock: false, target: null};
+        var acceleration = 1000000000;
+      
+    	if (this.game.keyState) {
+    		var x = 0;
+    		var y = 0;
+    		//left
+    		if (this.game.keyState[37]||this.game.keyState[65]||this.game.keyState[97]) { //leftarrow, a, A
+    			x = -1;
+    		}
+    		//up
+    		if (this.game.keyState[38]||this.game.keyState[87]||this.game.keyState[119]) {  //uparrow, w, W
+    			y = -1;
+    		}
+    		//right
+    		if (this.game.keyState[39]||this.game.keyState[68]||this.game.keyState[100]) {  //rightarrow, d, D
+    			x = 1;
+    		}
+    		//down
+    		if (this.game.keyState[40]||this.game.keyState[83]||this.game.keyState[115]) {  //downarrow, s, S
+    			y = 1;
+    		}	
+    		
+    		action.direction.x += (x) * acceleration;
+    		action.direction.y += (y) * acceleration;
+    	}
+      
+        if (this.game.click) {    
+            action.target = this.game.click;
+            action.throwRock = true;
+            this.game.click = null;
+        }
+      
         return action;
     }
 };
@@ -354,7 +396,124 @@ playerControlled.prototype.collideBottom = function () {
     return (this.y + this.radius) > this.game.surfaceHeight;
 };
 
+playerControlled.prototype.aiUpdate = function() {
+        Entity.prototype.update.call(this);
+    // console.log(this.velocity);
+    if (this.cooldown > 0) this.cooldown -= this.game.clockTick;
+    if (this.cooldown < 0) this.cooldown = 0;
+    this.action = this.selectAction();
+    //if (this.cooldown > 0) console.log(this.action);
+
+    // if (drag.y > action.direction.y) drag.y = action.direction.y;
+    // if (drag.x > action.direction.x) drag.x = action.direction.x;
+    // action.direction.x -= drag.x;
+    // action.direction.y -= drag.y;
+    this.velocity.x += this.action.direction.x;
+    this.velocity.y += this.action.direction.y;
+  //drag
+  var dragPercent = 0.05;
+  this.velocity.x -= this.velocity.x * dragPercent;
+  this.velocity.y -= this.velocity.y * dragPercent;
+
+    var speed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.y * this.velocity.y);
+    if (speed > maxSpeed) {
+        var ratio = maxSpeed / speed;
+        this.velocity.x *= ratio;
+        this.velocity.y *= ratio;
+    } 
+  // else if (speed < 0) {
+    // this.velocity.x *= 0;
+        // this.velocity.y *= 0;
+  // }
+
+    this.x += this.velocity.x * this.game.clockTick;
+    this.y += this.velocity.y * this.game.clockTick;
+
+    if (this.collideLeft() || this.collideRight()) {
+        this.velocity.x = -this.velocity.x * friction;
+        if (this.collideLeft()) this.x = this.radius;
+        if (this.collideRight()) this.x = this.game.surfaceWidth - this.radius;
+        this.x += this.velocity.x * this.game.clockTick;
+        this.y += this.velocity.y * this.game.clockTick;
+    }
+
+    if (this.collideTop() || this.collideBottom()) {
+        this.velocity.y = -this.velocity.y * friction;
+        if (this.collideTop()) this.y = this.radius;
+        if (this.collideBottom()) this.y = this.game.surfaceHeight - this.radius;
+        this.x += this.velocity.x * this.game.clockTick;
+        this.y += this.velocity.y * this.game.clockTick;
+    }
+
+    // for (var i = 0; i < this.game.entities.length; i++) {
+    //     var ent = this.game.entities[i];
+    //     if (ent !== this && this.collide(ent)) {
+    //         if (ent.name !== "Zombie" && ent.name !== "Rock" && ent.name !== "NonLiving") {
+    //             var temp = { x: this.velocity.x, y: this.velocity.y };
+    //             var dist = distance(this, ent);
+    //             var delta = this.radius + ent.radius - dist;
+    //             var difX = (this.x - ent.x) / dist;
+    //             var difY = (this.y - ent.y) / dist;
+
+    //             this.x += difX * delta / 2;
+    //             this.y += difY * delta / 2;
+    //             ent.x -= difX * delta / 2;
+    //             ent.y -= difY * delta / 2;
+
+    //             this.velocity.x = ent.velocity.x * friction;
+    //             this.velocity.y = ent.velocity.y * friction;
+    //             ent.velocity.x = temp.x * friction;
+    //             ent.velocity.y = temp.y * friction;
+    //             this.x += this.velocity.x * this.game.clockTick;
+    //             this.y += this.velocity.y * this.game.clockTick;
+    //             ent.x += ent.velocity.x * this.game.clockTick;
+    //             ent.y += ent.velocity.y * this.game.clockTick;
+    //         }
+    //         // if (ent.name === "Rock" && this.rocks < 2) {
+    //             // this.rocks++;
+    //             // ent.removeFromWorld = true;
+    //         // }
+    //     }
+    // }
+    
+    var rock;
+    // if (!this.controlled) {
+    //     console.log(this.action);
+    // }
+    if (this.cooldown === 0 && this.action.throwRock) { //&& this.rocks > 0) {
+        if (this.controlled) {
+            this.cooldown = .25;
+        } else {
+            this.cooldown = .75;
+        }
+        //this.rocks--;
+        var target = this.action.target;
+        var dir = null;
+        if (target != null && (this.controlled === true || (target.x < 780 && target.x > 20))) {
+          dir = direction(target, this);
+          this.attack(dir);
+        }        
+    }
+
+    if (this.action.target) {
+        this.angle = Math.atan2(this.action.target.x, this.action.target.y) * (180/Math.PI);
+        this.angle = this.angle - 100;
+        //console.log(this.angle);
+        while (this.angle > 360) {
+            this.angle = this.angle - 360;
+        }
+    }
+
+    this.velocity.x -= (1 - friction) * this.game.clockTick * this.velocity.x;
+    this.velocity.y -= (1 - friction) * this.game.clockTick * this.velocity.y;
+}
+
 playerControlled.prototype.update = function () {
+
+    if (!this.controlled) {
+        this.aiUpdate();
+        return;
+    }
     Entity.prototype.update.call(this);
     // console.log(this.velocity);
     if (this.cooldown > 0) this.cooldown -= this.game.clockTick;
@@ -410,22 +569,26 @@ playerControlled.prototype.update = function () {
                 var temp = { x: this.velocity.x, y: this.velocity.y };
                 var dist = distance(this, ent);
                 var delta = this.radius + ent.radius - dist;
-                var difX = (this.x - ent.x) / dist;
-                var difY = (this.y - ent.y) / dist;
 
-                this.x += difX * delta / 2;
-                this.y += difY * delta / 2;
-                ent.x -= difX * delta / 2;
-                ent.y -= difY * delta / 2;
+                if (dist) {
+                    var difX = (this.x - ent.x) / dist;
+                    var difY = (this.y - ent.y) / dist;
 
-                this.velocity.x = ent.velocity.x * friction;
-                this.velocity.y = ent.velocity.y * friction;
-                ent.velocity.x = temp.x * friction;
-                ent.velocity.y = temp.y * friction;
-                this.x += this.velocity.x * this.game.clockTick;
-                this.y += this.velocity.y * this.game.clockTick;
-                ent.x += ent.velocity.x * this.game.clockTick;
-                ent.y += ent.velocity.y * this.game.clockTick;
+
+                    this.x += difX * delta / 2;
+                    this.y += difY * delta / 2;
+                    ent.x -= difX * delta / 2;
+                    ent.y -= difY * delta / 2;
+
+                    this.velocity.x = ent.velocity.x * friction;
+                    this.velocity.y = ent.velocity.y * friction;
+                    ent.velocity.x = temp.x * friction;
+                    ent.velocity.y = temp.y * friction;
+                    this.x += this.velocity.x * this.game.clockTick;
+                    this.y += this.velocity.y * this.game.clockTick;
+                    ent.x += ent.velocity.x * this.game.clockTick;
+                    ent.y += ent.velocity.y * this.game.clockTick;
+                }
             }
             // if (ent.name === "Rock" && this.rocks < 2) {
                 // this.rocks++;
@@ -476,8 +639,10 @@ playerControlled.prototype.update = function () {
 };
 
 playerControlled.prototype.draw = function (ctx) {
-	this.game.setWindowX(this.x - 400);
-	this.game.setWindowY(this.y - 400);
+    if (this.controlled) {
+    	this.game.setWindowX(this.x - 400);
+    	this.game.setWindowY(this.y - 400);
+    }
     // ctx.beginPath();
     // ctx.fillStyle = this.color;
     // ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
