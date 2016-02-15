@@ -235,6 +235,57 @@ GameEngine.prototype.draw = function (top, left) {
     //console.log(this.GameEngine.getWindowX() + " " + this.GameEngine.getWindowY());
 	var ratio = .5; //1.2
     this.ctx.drawImage(ASSET_MANAGER.getAsset("./images/background.png"), this.getWindowX() * ratio, this.getWindowY() * ratio, 400, 400, 0, 0, 800, 800);
+
+    // this.ctx.beginPath();
+    // this.ctx.strokeStyle="black";
+    // this.ctx.rect(0 - this.getWindowX(),0 - this.getWindowY(), 100, 150);
+    // this.ctx.fill();
+
+    // this.ctx.beginPath();
+    // this.ctx.strokeStyle="black";
+    // this.ctx.rect(0 - this.getWindowX(),200 - this.getWindowY(), 110, 130);
+    // this.ctx.fill();
+
+    // this.ctx.beginPath();
+    // this.ctx.strokeStyle="black";
+    // this.ctx.rect(200 - this.getWindowX(),0- this.getWindowY(), 40, 500);
+    // this.ctx.fill();
+
+    // this.ctx.beginPath();
+    // this.ctx.strokeStyle="black";
+    // this.ctx.rect(200 - this.getWindowX(),0- this.getWindowY(), 40, 500);
+    // this.ctx.fill();
+
+    // this.ctx.beginPath();
+    // this.ctx.strokeStyle="black";
+    // this.ctx.rect(200 - this.getWindowX(),500- this.getWindowY(), 500, 40);
+    // this.ctx.fill();
+
+    // this.ctx.beginPath();
+    // this.ctx.strokeStyle="black";
+    // this.ctx.rect(450 - this.getWindowX(),0- this.getWindowY(), 100, 200);
+    // this.ctx.fill();
+
+    // this.ctx.beginPath();
+    // this.ctx.strokeStyle="black";
+    // this.ctx.rect(450 - this.getWindowX(),0- this.getWindowY(), 100, 200);
+    // this.ctx.fill();
+
+    // this.ctx.beginPath();
+    // this.ctx.strokeStyle="black";
+    // this.ctx.rect(400 - this.getWindowX(),300- this.getWindowY(), 80, 120);
+    // this.ctx.fill();
+
+    // this.ctx.beginPath();
+    // this.ctx.strokeStyle="black";
+    // this.ctx.rect(400 - this.getWindowX(),300- this.getWindowY(), 80, 120);
+    // this.ctx.fill();
+
+    // this.ctx.beginPath();
+    // this.ctx.strokeStyle="black";
+    // this.ctx.rect(450 - this.getWindowX(),500- this.getWindowY(), 40, 200);
+    // this.ctx.fill();
+
     for (var i = 0; i < this.entities.length; i++) {
         this.entities[i].draw(this.ctx);
     }

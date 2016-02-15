@@ -120,7 +120,7 @@ Zombie.prototype.update = function () {
                 ent.x += ent.directionX * this.game.clockTick;
                 ent.y += ent.directionY * this.game.clockTick;
             }
-            if (ent.name !== "Zombie" && ent.name !== "Flame" && ent.name !== "Rock" && ent.name !== "NonLiving" && !ent.removeFromWorld) {
+            if (ent.name !== "Zombie" && ent.name !== "Flame" && ent.name !== "Rock" && ent.name !== "FlameThrower" && ent.name !== "NonLiving" && !ent.removeFromWorld) {
                 ent.removeFromWorld = true;
 //                console.log(ent.name + " kills: " + ent.kills);
                 var newZombie = new Zombie(this.game, ent);
