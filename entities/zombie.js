@@ -120,13 +120,13 @@ Zombie.prototype.update = function () {
                 ent.x += ent.directionX * this.game.clockTick;
                 ent.y += ent.directionY * this.game.clockTick;
             }
-            if (ent.name !== "Zombie" && ent.name !== "Rock" && ent.name !== "NonLiving" && !ent.removeFromWorld) {
+            if (ent.name !== "Zombie" && ent.name !== "Flame" && ent.name !== "Rock" && ent.name !== "NonLiving" && !ent.removeFromWorld) {
                 ent.removeFromWorld = true;
 //                console.log(ent.name + " kills: " + ent.kills);
                 var newZombie = new Zombie(this.game, ent);
                 this.game.addEntity(newZombie);
             }
-            if (ent.name === "Rock" && ent.thrown) {
+            if ((ent.name === "Flame" && ent.thrown) || (ent.thrown && ent.name === "Rock")) {
                 ent.removeFromWorld = true;
                 this.health -= ent.strength;
                 if (this.health <= 0) {
@@ -142,7 +142,7 @@ Zombie.prototype.update = function () {
         }
         var acceleration = 1000000;
 
-        if (ent.name !== "Zombie" && ent.name !== "Rock" && this.collide({ x: ent.x, y: ent.y, radius: this.visualRadius })) {
+        if (ent.name !== "Zombie" && ent.name !== "Flame" && ent.name !== "Rock" && ent.name !== "NonLiving" && this.collide({ x: ent.x, y: ent.y, radius: this.visualRadius })) {
             var dist = distance(this, ent);
             if (dist > this.radius + ent.radius + 2) {
                 var difX = (ent.x - this.x)/dist;

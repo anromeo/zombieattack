@@ -29,6 +29,8 @@ Timer.prototype.tick = function () {
 function GameEngine() {
     this.entities = [];
 
+    this.weapons = [];
+
     // added from 435 ZOMBIE AI Project
     this.zombies = [];
     this.players = [];
@@ -49,6 +51,9 @@ function GameEngine() {
 
     this.windowX = 0;
     this.windowY = 0;
+
+    this.playerX = null;
+    this.playerY = null;
 
     // Quinn's Additions
     this.keyState = null;
@@ -92,6 +97,8 @@ GameEngine.prototype.init = function (ctx) {
     this.ctx.showOutlines = false;
     this.surfaceWidth = this.ctx.canvas.width;
     this.surfaceHeight = this.ctx.canvas.height;
+    this.playerX = this.surfaceWidth/2;
+    this.playerY = this.surfaceHeight/2;
 	console.log("surface: " + this.surfaceWidth + " " + this.surfaceHeight)
     this.startInput();
     this.timer = new Timer();
@@ -214,9 +221,9 @@ GameEngine.prototype.startInput = function () {
 }
 
 GameEngine.prototype.addEntity = function (entity) {
-    
     // added from 435 ZOMBIE AI Project
     this.entities.push(entity);
+    if (entity.name === "FlameThrower") this.weapons.push(entity);
     if (entity.name === "Zombie") this.zombies.push(entity);
     if (entity.name === "Rock") this.rocks.push(entity);
     else this.players.push(entity);

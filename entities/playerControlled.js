@@ -14,6 +14,7 @@ function playerControlled(game) {
     this.radius = 30;
     this.strength = 100;
     this.controlled = false;
+    this.weapon = null;
 
     this.game = game;
     this.name = "playerControlled";
@@ -22,7 +23,6 @@ function playerControlled(game) {
     this.team = "blue";
     //this.corners = [{x:0, y:0}, {x:800, y:0}, {x:0, y:800}, {x:800, y:800}]
     
-	
 	this.CenterOffsetX = 10; // puts the center of the sprite in the center of the entity
 	this.CenterOffsetY = 10; // puts the center of the sprite in the center of the entity
 	this.SpriteRotateOffsetX = 8; //describes the point of rotation on the sprite changed from 1/2 width
@@ -117,9 +117,14 @@ playerControlled.prototype.attack = function(dir) {
 
 
 
+
 playerControlled.prototype.aiSelectAction = function() {
     
-//        this.corners = [{x:0, y:0}, {x:800, y:0}, {x:0, y:800}, {x:800, y:800}]
+        this.corners = [{x:0, y:0}, {x:800, y:0}, {x:0, y:800}, {x:800, y:800}]
+
+        var action = { direction: { x: 0, y: 0 }, throwRock: false, target: null};
+        var acceleration = 1000000000;
+
 
         // This is the action the zombie will perform
         var action = { direction: { x: 0, y: 0 }, throwRock: true, target: null};
@@ -328,9 +333,8 @@ playerControlled.prototype.aiSelectAction = function() {
         action.direction.x -= (1 - friction) * this.game.clockTick * this.directionX;
         action.direction.y -= (1 - friction) * this.game.clockTick * this.directionY;
 
-        return action; 
+        return action;
 }
-
 // Swaps the player controlled if possible and if pressed
 playerControlled.prototype.swapIfCanSwap = function(game) {
 
@@ -545,11 +549,29 @@ playerControlled.prototype.aiUpdate = function() {
 
 playerControlled.prototype.update = function () {
 
+
     if (!this.controlled) {
         this.aiUpdate();
         return;
     }
+
+    // console.log(this.game.playerX + " " + this.game.playerY);
+
     Entity.prototype.update.call(this);
+
+    // Weapon collision
+    for (i = 0; i < this.game.weapons.length; i++) {
+        var weap = this.game.weapons[i];
+        if (!(((this.y + 54) < (weap.y)) ||
+        (this.y > (weap.y + 20))||
+        ((this.x + 54) < weap.x) ||
+        (this.x > (weap.x + 50)))) {
+            weap.removeFromWorld = true;
+            this.weapon = weap.name;
+        }
+    }
+
+
     // console.log(this.velocity);
     if (this.cooldown > 0) this.cooldown -= this.game.clockTick;
     if (this.cooldown < 0) this.cooldown = 0;
@@ -597,42 +619,77 @@ playerControlled.prototype.update = function () {
         this.y += this.velocity.y * this.game.clockTick;
     }
 
-    for (var i = 0; i < this.game.entities.length; i++) {
-        var ent = this.game.entities[i];
-        if (ent !== this && this.collide(ent)) {
-            if (ent.name !== "Zombie" && ent.name !== "Rock" && ent.name !== "NonLiving") {
-                var temp = { x: this.velocity.x, y: this.velocity.y };
-                var dist = distance(this, ent);
-                var delta = this.radius + ent.radius - dist;
+    // Removed by Vlad, stupid loop makes the game crash
 
-                if (dist) {
-                    var difX = (this.x - ent.x) / dist;
-                    var difY = (this.y - ent.y) / dist;
+    // for (var i = 0; i < this.game.entities.length; i++) {
+    //     var ent = this.game.entities[i];
+    //     if (ent !== this && this.collide(ent)) {
+    //         if (ent.name !== "Zombie" && ent.name !== "Rock" && ent.name !== "NonLiving") {
+    //             var temp = { x: this.velocity.x, y: this.velocity.y };
+    //             var dist = distance(this, ent);
+    //             var delta = this.radius + ent.radius - dist;
+
+    //             if (dist) {
+    //                 var difX = (this.x - ent.x) / dist;
+    //                 var difY = (this.y - ent.y) / dist;
 
 
-                    this.x += difX * delta / 2;
-                    this.y += difY * delta / 2;
-                    ent.x -= difX * delta / 2;
-                    ent.y -= difY * delta / 2;
+    //                 this.x += difX * delta / 2;
+    //                 this.y += difY * delta / 2;
+    //                 ent.x -= difX * delta / 2;
+    //                 ent.y -= difY * delta / 2;
 
-                    this.velocity.x = ent.velocity.x * friction;
-                    this.velocity.y = ent.velocity.y * friction;
-                    ent.velocity.x = temp.x * friction;
-                    ent.velocity.y = temp.y * friction;
-                    this.x += this.velocity.x * this.game.clockTick;
-                    this.y += this.velocity.y * this.game.clockTick;
-                    ent.x += ent.velocity.x * this.game.clockTick;
-                    ent.y += ent.velocity.y * this.game.clockTick;
-                }
-            }
-            // if (ent.name === "Rock" && this.rocks < 2) {
-                // this.rocks++;
-                // ent.removeFromWorld = true;
-            // }
-        }
-    }
+    //                 this.velocity.x = ent.velocity.x * friction;
+    //                 this.velocity.y = ent.velocity.y * friction;
+    //                 ent.velocity.x = temp.x * friction;
+    //                 ent.velocity.y = temp.y * friction;
+    //                 this.x += this.velocity.x * this.game.clockTick;
+    //                 this.y += this.velocity.y * this.game.clockTick;
+    //                 ent.x += ent.velocity.x * this.game.clockTick;
+    //                 ent.y += ent.velocity.y * this.game.clockTick;
+    //             }
+    //         }
+    //         // if (ent.name === "Rock" && this.rocks < 2) {
+    //             // this.rocks++;
+    //             // ent.removeFromWorld = true;
+    //         // }
+    //     }
+    // }
+
+    // for (var i = 0; i < this.game.entities.length; i++) {
+    //     var ent = this.game.entities[i];
+    //     if (ent !== this && this.collide(ent)) {
+    //         if (ent.name !== "Zombie" && ent.name !== "Rock" && ent.name !== "NonLiving") {
+    //             var temp = { x: this.velocity.x, y: this.velocity.y };
+    //             var dist = distance(this, ent);
+    //             var delta = this.radius + ent.radius - dist;
+    //             var difX = (this.x - ent.x) / dist;
+    //             var difY = (this.y - ent.y) / dist;
+
+    //             this.x += difX * delta / 2;
+    //             this.y += difY * delta / 2;
+    //             ent.x -= difX * delta / 2;
+    //             ent.y -= difY * delta / 2;
+
+    //             this.velocity.x = ent.velocity.x * friction;
+    //             this.velocity.y = ent.velocity.y * friction;
+    //             ent.velocity.x = temp.x * friction;
+    //             ent.velocity.y = temp.y * friction;
+    //             this.x += this.velocity.x * this.game.clockTick;
+    //             this.y += this.velocity.y * this.game.clockTick;
+    //             ent.x += ent.velocity.x * this.game.clockTick;
+    //             ent.y += ent.velocity.y * this.game.clockTick;
+    //         }
+    //         // if (ent.name === "Rock" && this.rocks < 2) {
+    //             // this.rocks++;
+    //             // ent.removeFromWorld = true;
+    //         // }
+    //     }
+    // }
+
     
     var rock;
+    var flame;
     // if (!this.controlled) {
     //     console.log(this.action);
     // }
@@ -649,6 +706,18 @@ playerControlled.prototype.update = function () {
           dir = direction(target, this);
         }        
         if (dir != null) {
+
+          if (this.weapon === "FlameThrower") {
+          flame = new Flame(this.game, ASSET_MANAGER.getAsset("./images/flame2.png"));
+          flame.x = this.x + dir.x * (this.radius + flame.radius + 20);
+          flame.y = this.y + dir.y * (this.radius + flame.radius + 20);
+          flame.velocity.x = dir.x * flame.maxSpeed;
+          flame.velocity.y = dir.y * flame.maxSpeed;
+          flame.thrown = true;
+          flame.thrower = this;
+          this.game.addEntity(flame);
+
+          } else {
           rock = new Rock(this.game);
           rock.x = this.x + dir.x * (this.radius + rock.radius + 20);
           rock.y = this.y + dir.y * (this.radius + rock.radius + 20);
@@ -657,6 +726,7 @@ playerControlled.prototype.update = function () {
           rock.thrown = true;
           rock.thrower = this;
           this.game.addEntity(rock);
+        }
         }
     }
 
@@ -671,6 +741,12 @@ playerControlled.prototype.update = function () {
 
     this.velocity.x -= (1 - friction) * this.game.clockTick * this.velocity.x;
     this.velocity.y -= (1 - friction) * this.game.clockTick * this.velocity.y;
+
+    if (flame) {
+          var Distance = distance(this, flame);
+          console.log(Distance);
+          }
+
 };
 
 playerControlled.prototype.draw = function (ctx) {
@@ -685,11 +761,11 @@ playerControlled.prototype.draw = function (ctx) {
     // ctx.closePath();
     //console.log(this.game.mouse.clientX);
 	
-	ctx.beginPath();
-    ctx.fillStyle = "grey";
-    ctx.arc(300 - this.game.getWindowX(), 300 - this.game.getWindowY(), this.radius, 0, Math.PI * 2, false);
-    ctx.fill();
-    ctx.closePath();
+	// ctx.beginPath();
+ //    ctx.fillStyle = "grey";
+ //    ctx.arc(300 - this.game.getWindowX(), 300 - this.game.getWindowY(), this.radius, 0, Math.PI * 2, false);
+ //    ctx.fill();
+ //    ctx.closePath();
 
 	
     LivingEntity.prototype.draw.call(this, ctx);

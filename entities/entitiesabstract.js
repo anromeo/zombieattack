@@ -10,10 +10,15 @@ function Entity(game, x, y) {
     this.y = y;
 	this.canvasX = x;
 	this.canvasY = y;
+	this.nonLiving = false;
     if(this.game) {
         this.ctx = game.ctx;
     }
     this.removeFromWorld = false;
+}
+
+Entity.prototype.setNonLiving = function (bool) {
+	this.nonLiving = bool;
 }
 
 Entity.prototype.setLocation = function (X, Y) {
@@ -27,8 +32,11 @@ Entity.prototype.setRemoved = function (bool) {
 
 Entity.prototype.update = function () {
 	//console.log("updating");
+	if (!this.nonLiving) {
+	if (this.name !== "playerControlled" && this.name !== "Zombie")	console.log(this.name);
 	this.canvasX = this.x - this.radius - this.game.getWindowX();
-	this.canvasY = this.y - this.radius - this.game.getWindowY()
+	this.canvasY = this.y - this.radius - this.game.getWindowY();
+}
 }
 
 Entity.prototype.draw = function (ctx) {
@@ -274,12 +282,13 @@ NonLivingEntity.prototype.setLocation = function (X, Y) {
     Entity.prototype.setLocation.call(this, X, Y);
 }
 
-NonLivingEntity.prototype.draw = function (ctx) {
-  //  this.game.ctx.drawImage(this.image, 0, 0);
-  ctx.drawImage(this.image, 0, 0);
+NonLivingEntity.prototype.setNonLiving = function (bool) {
+	Entity.prototype.setNonLiving.call(this, true);
+}
 
+NonLivingEntity.prototype.draw = function (ctx) {
+    ctx.drawImage(this.image, this.x - this.radius - this.game.getWindowX(), this.y - this.radius - this.game.getWindowY());
 }
 
 NonLivingEntity.prototype.update = function () {
-    
 }
