@@ -10,10 +10,15 @@ function Entity(game, x, y) {
     this.y = y;
 	this.canvasX = x;
 	this.canvasY = y;
+	this.nonLiving = false;
     if(this.game) {
         this.ctx = game.ctx;
     }
     this.removeFromWorld = false;
+}
+
+Entity.prototype.setNonLiving = function (bool) {
+	this.nonLiving = bool;
 }
 
 Entity.prototype.setLocation = function (X, Y) {
@@ -26,8 +31,14 @@ Entity.prototype.setRemoved = function (bool) {
 }
 
 Entity.prototype.update = function () {
+	//console.log("updating");
+	if (!this.nonLiving) {
+	if (this.name !== "playerControlled" && this.name !== "Zombie"){
+		//console.log(this.name);
+	}	
 	this.canvasX = this.x - this.game.getWindowX();
 	this.canvasY = this.y - this.game.getWindowY();
+}
 }
 
 Entity.prototype.draw = function (ctx) {
@@ -82,6 +93,7 @@ function LivingEntity(game, pointerX, pointerY, directionX, directionY, location
 	this.healthBarCoords = {BeginX: 5, BeginY : -5, Width : 50, Height : 7};
 	this.healthMAX = 100;
 	this.health = this.healthMAX;
+	this.angle = 0;
     this.strength = 25;
     this.speed = 10;
     this.movingAnimation = null;
@@ -214,6 +226,7 @@ LivingEntity.prototype.draw = function (ctx) {
 		ctx.strokeStyle = "red";
         ctx.lineWidth = 1;
         ctx.arc(this.canvasX, this.canvasY , 5, 0, Math.PI * 2, false);
+        //ctx.arc(this.x, this.y , 5, 0, Math.PI * 2, false);
         ctx.closePath();
 		ctx.stroke();
 		
@@ -221,6 +234,7 @@ LivingEntity.prototype.draw = function (ctx) {
 		ctx.strokeStyle = "blue";
         ctx.lineWidth = 1;
         ctx.arc(this.canvasX + this.SpriteWidth/2 + 2, this.canvasY + this.SpriteHeight/2 + 2, 5, 0, Math.PI * 2, false);
+        //ctx.arc(this.x + this.SpriteWidth/2 + 2, this.y + this.SpriteHeight/2 + 2, 5, 0, Math.PI * 2, false);
         ctx.closePath();
 		ctx.stroke();
 		
@@ -228,6 +242,7 @@ LivingEntity.prototype.draw = function (ctx) {
 		ctx.strokeStyle = "purple";
         ctx.lineWidth = 1;
         ctx.arc(this.canvasX + this.CenterOffsetX, this.canvasY + this.CenterOffsetY, 5, 0, Math.PI * 2, false);
+        //ctx.arc(this.x + this.CenterOffsetX, this.y + this.CenterOffsetY, 5, 0, Math.PI * 2, false);
         ctx.closePath();
 		ctx.stroke();
 		
@@ -235,6 +250,7 @@ LivingEntity.prototype.draw = function (ctx) {
 		ctx.strokeStyle = "green";
         ctx.lineWidth = 1;
         ctx.arc(this.canvasX + this.SpriteWidth, this.canvasY + this.SpriteHeight, 5, 0, Math.PI * 2, false);
+        //ctx.arc(this.x + this.SpriteWidth, this.y + this.SpriteHeight, 5, 0, Math.PI * 2, false);
         ctx.closePath();
 		ctx.stroke();
 		
@@ -242,6 +258,7 @@ LivingEntity.prototype.draw = function (ctx) {
         ctx.strokeStyle = "pink";
         ctx.lineWidth = 1;
         ctx.arc(this.canvasX + this.radius, this.canvasY + this.radius, 5, 0, Math.PI * 2, false);
+        //ctx.arc(this.x + this.radius, this.y + this.radius, 5, 0, Math.PI * 2, false);
         ctx.closePath();
         ctx.stroke();
 		
@@ -249,6 +266,7 @@ LivingEntity.prototype.draw = function (ctx) {
         ctx.strokeStyle = "white";
         ctx.lineWidth = 1;
         ctx.arc(this.canvasX, this.canvasY, this.radius, 0, Math.PI * 2, false);
+        //ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
         ctx.closePath();
         ctx.stroke();
     }
@@ -284,12 +302,15 @@ NonLivingEntity.prototype.setLocation = function (X, Y) {
     Entity.prototype.setLocation.call(this, X, Y);
 }
 
+NonLivingEntity.prototype.setNonLiving = function (bool) {
+	Entity.prototype.setNonLiving.call(this, true);
+}
+
 NonLivingEntity.prototype.draw = function (ctx) {
   //  this.game.ctx.drawImage(this.image, 0, 0);
   ctx.drawImage(this.image, 0, 0);
-
+  //ctx.drawImage(this.image, this.x - this.radius - this.game.getWindowX(), this.y - this.radius - this.game.getWindowY());
 }
 
 NonLivingEntity.prototype.update = function () {
-    
 }

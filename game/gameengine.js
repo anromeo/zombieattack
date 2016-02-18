@@ -28,7 +28,7 @@ Timer.prototype.tick = function () {
 
 function GameEngine() {
     this.entities = [];
-
+    this.weapons = [];
     // added from 435 ZOMBIE AI Project
     this.zombies = [];
     this.players = [];
@@ -47,10 +47,14 @@ function GameEngine() {
     this.wheel = null;
     this.surfaceWidth = null;
     this.surfaceHeight = null;
+
 	this.worldWidth = 1600;
 	this.worldHeight = 1600;
     this.windowX = 0;
     this.windowY = 0;
+
+    this.playerX = null;
+    this.playerY = null;
 
     // Quinn's Additions
     this.keyState = null;
@@ -70,6 +74,7 @@ GameEngine.prototype.getWindowY = function() {
 }
 
 GameEngine.prototype.setWindowX = function(x) {
+
     var maxX = this.worldWidth - this.surfaceWidth;
 	if (x < 0) {
         this.windowX = 0;
@@ -93,13 +98,17 @@ GameEngine.prototype.setWindowY = function(y) {
 
 GameEngine.prototype.init = function (ctx) {
     this.ctx = ctx;
+    this.ctx.showOutlines = false;
     this.surfaceWidth = this.ctx.canvas.width;
     this.surfaceHeight = this.ctx.canvas.height;
+    this.playerX = this.surfaceWidth/2;
+    this.playerY = this.surfaceHeight/2;
 	console.log("surface: " + this.surfaceWidth + " " + this.surfaceHeight)
     this.startInput();
     this.timer = new Timer();
 	this.kills = 0;
     console.log('game initialized');
+
 }
 
 GameEngine.prototype.start = function () {
@@ -193,6 +202,7 @@ GameEngine.prototype.startInput = function () {
     if (this.ctx) {
         this.ctx.canvas.addEventListener("click", function(e) {
             //that.click = getXandY(e);
+			//console.log("click");
 			that.click = getXandYWithWindowOffset(e);
             e.stopPropagation();
             e.preventDefault();
@@ -232,10 +242,10 @@ GameEngine.prototype.startInput = function () {
     console.log('Input started');
 }
 
-GameEngine.prototype.addEntity = function (entity) {
-    
+GameEngine.prototype.addEntity = function (entity) {  
     // added from 435 ZOMBIE AI Project
     this.entities.push(entity);
+    if (entity.name === "FlameThrower") this.weapons.push(entity);
     if (entity.name === "Zombie") this.zombies.push(entity);
     if (entity.name === "Rock") this.rocks.push(entity);
     else this.players.push(entity);
@@ -249,7 +259,61 @@ GameEngine.prototype.draw = function (top, left) {
 	var ratio = 2; //1.2
     this.ctx.drawImage(ASSET_MANAGER.getAsset("./images/ForestLevelBig.png"), this.getWindowX() * ratio, this.getWindowY() * ratio, 1600, 1600, 0, 0, 800, 800);
      //this.ctx.drawImage(ASSET_MANAGER.getAsset("./images/background.png"), this.getWindowX() * ratio, this.getWindowY() * ratio, 400, 400, 0, 0, 800, 800);
-	for (var i = 0; i < this.entities.length; i++) {
+    //console.log(this.GameEngine.getWindowX() + " " + this.GameEngine.getWindowY());
+	
+
+
+    // this.ctx.beginPath();
+    // this.ctx.strokeStyle="black";
+    // this.ctx.rect(0 - this.getWindowX(),0 - this.getWindowY(), 100, 150);
+    // this.ctx.fill();
+
+    // this.ctx.beginPath();
+    // this.ctx.strokeStyle="black";
+    // this.ctx.rect(0 - this.getWindowX(),200 - this.getWindowY(), 110, 130);
+    // this.ctx.fill();
+
+    // this.ctx.beginPath();
+    // this.ctx.strokeStyle="black";
+    // this.ctx.rect(200 - this.getWindowX(),0- this.getWindowY(), 40, 500);
+    // this.ctx.fill();
+
+    // this.ctx.beginPath();
+    // this.ctx.strokeStyle="black";
+    // this.ctx.rect(200 - this.getWindowX(),0- this.getWindowY(), 40, 500);
+    // this.ctx.fill();
+
+    // this.ctx.beginPath();
+    // this.ctx.strokeStyle="black";
+    // this.ctx.rect(200 - this.getWindowX(),500- this.getWindowY(), 500, 40);
+    // this.ctx.fill();
+
+    // this.ctx.beginPath();
+    // this.ctx.strokeStyle="black";
+    // this.ctx.rect(450 - this.getWindowX(),0- this.getWindowY(), 100, 200);
+    // this.ctx.fill();
+
+    // this.ctx.beginPath();
+    // this.ctx.strokeStyle="black";
+    // this.ctx.rect(450 - this.getWindowX(),0- this.getWindowY(), 100, 200);
+    // this.ctx.fill();
+
+    // this.ctx.beginPath();
+    // this.ctx.strokeStyle="black";
+    // this.ctx.rect(400 - this.getWindowX(),300- this.getWindowY(), 80, 120);
+    // this.ctx.fill();
+
+    // this.ctx.beginPath();
+    // this.ctx.strokeStyle="black";
+    // this.ctx.rect(400 - this.getWindowX(),300- this.getWindowY(), 80, 120);
+    // this.ctx.fill();
+
+    // this.ctx.beginPath();
+    // this.ctx.strokeStyle="black";
+    // this.ctx.rect(450 - this.getWindowX(),500- this.getWindowY(), 40, 200);
+    // this.ctx.fill();
+
+    for (var i = 0; i < this.entities.length; i++) {
         this.entities[i].draw(this.ctx);
     }
    // this.ctx.drawImage(ASSET_MANAGER.getAsset("./images/background.jpg"), 0, 0);
@@ -274,15 +338,52 @@ GameEngine.prototype.draw = function (top, left) {
 //     }
 // }
 
+
+// Get the PlayerControlled Player
+GameEngine.prototype.getPlayer = function() {
+
+    // For every player
+    for (var i = 0; i < this.players.length; i++) {
+
+        // If that player is currently being controlled
+        if (this.players[i].controlled) {
+            // return that player
+            return this.players[i];
+        }
+    }
+    // otherwise return null
+    return null;
+}
+
 // added from 435 ZOMBIE AI Project
 GameEngine.prototype.update = function () {
     var entitiesCount = this.entities.length;
+    // Sets the player to the current player
+    this.player = this.getPlayer();
 
     this.zombieCooldown -= this.clockTick;
     if (this.zombieCooldown < 0) {
         this.zombieCooldown = this.zombieCooldownNum;
+
+        // IF there exists a player on the board
+        // AND the player is not removed from world
+        if (this.player && !this.player.removeFromWorld) {
+
+            // decrease the zombieCooldownNum
+            // exponentially as the distance between the player and the
+            // origin of the gameboard goes down 
+            var dist = distance(this.player, {x:0, y:0});
+            if (dist !== 0) {
+
+                // the half life used to project the spawn rate of the zombies.
+                var halfLife = 3000;
+                // the formula for the curent zombie cooldown.
+                this.zombieCooldownNum = 3 * Math.pow((1/2), dist / halfLife);
+            }
+        }
+
         var zom = new Zombie(this);
-        //this.addEntity(zom);
+        this.addEntity(zom);
     }
 
     for (var i = 0; i < entitiesCount; i++) {
