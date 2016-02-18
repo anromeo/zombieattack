@@ -3,11 +3,13 @@ function FlameThrower(game, image) {
     NonLivingEntity.prototype.setNonLiving.call(this, true);
     this.image = image;
     this.game = game;
-    this.x = Math.random() * 750;
-    this.y = Math.random() * 750;
+    this.x = Math.random() * 600;
+    this.y = Math.random() * 600;
     this.shooting = false;
     this.radius = 30;
     this.name = "FlameThrower";
+    this.newTemp = 0;
+    this.newTemp2 = 0;
 }
 
 FlameThrower.prototype = new NonLivingEntity();
@@ -69,9 +71,15 @@ Flame.prototype.collideBottom = function () {
 Flame.prototype.update = function () {
     Entity.prototype.update.call(this);
     //console.log(this.velocity);
+    var temp = this.velocity.x * this.game.clockTick;
+    var temp2 = this.velocity.y * this.game.clockTick;
+    this.newTemp += temp;
+    this.newTemp2 += temp2;
+    this.x += temp;
+    this.y += temp2;
 
-    this.x += this.velocity.x * this.game.clockTick;
-    this.y += this.velocity.y * this.game.clockTick;
+    if (this.newTemp > 7) this.removeFromWorld = true;
+    if (this.newTemp2 > 7) this.removeFromWorld = true;
 
     if (this.collideLeft() || this.collideRight()) {
         this.removeFromWorld = true;
@@ -125,6 +133,8 @@ Flame.prototype.update = function () {
 
     this.velocity.x -= (1 - friction) * this.game.clockTick * this.velocity.x;
     this.velocity.y -= (1 - friction) * this.game.clockTick * this.velocity.y;
+    this.newTemp = 0;
+    this.newTemp2 = 0;
 }
 
 Flame.prototype.draw = function (ctx) {

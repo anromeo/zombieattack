@@ -104,6 +104,7 @@ GameEngine.prototype.init = function (ctx) {
     this.timer = new Timer();
 	this.kills = 0;
     console.log('game initialized');
+
 }
 
 GameEngine.prototype.start = function () {
@@ -193,6 +194,7 @@ GameEngine.prototype.startInput = function () {
     if (this.ctx) {
         this.ctx.canvas.addEventListener("click", function(e) {
             //that.click = getXandY(e);
+
 			that.click = getXandYWithWindowOffset(e);
             e.stopPropagation();
             e.preventDefault();
@@ -235,6 +237,7 @@ GameEngine.prototype.draw = function (top, left) {
     //console.log(this.GameEngine.getWindowX() + " " + this.GameEngine.getWindowY());
 	var ratio = .5; //1.2
     this.ctx.drawImage(ASSET_MANAGER.getAsset("./images/background.png"), this.getWindowX() * ratio, this.getWindowY() * ratio, 400, 400, 0, 0, 800, 800);
+
 
     // this.ctx.beginPath();
     // this.ctx.strokeStyle="black";

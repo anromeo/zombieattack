@@ -40,6 +40,7 @@ ASSET_MANAGER.queueDownload("./images/background.png");
 ASSET_MANAGER.queueDownload("./images/boss.png");
 ASSET_MANAGER.queueDownload("./images/flamethrower.png");
 ASSET_MANAGER.queueDownload("./images/flame2.png");
+ASSET_MANAGER.queueDownload("./images/cone.png");
 
 ASSET_MANAGER.downloadAll(function () {
     console.log("starting up da sheild");
