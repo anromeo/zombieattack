@@ -194,11 +194,7 @@ GameEngine.prototype.startInput = function () {
     if (this.ctx) {
         this.ctx.canvas.addEventListener("click", function(e) {
             //that.click = getXandY(e);
-<<<<<<< Updated upstream
-
-=======
-			console.log("click");
->>>>>>> Stashed changes
+			//console.log("click");
 			that.click = getXandYWithWindowOffset(e);
             e.stopPropagation();
             e.preventDefault();
