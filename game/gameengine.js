@@ -1,5 +1,4 @@
 // This game shell was happily copied from Googler Seth Ladd's "Bad Aliens" game and his Google IO talk in 2011
-//source used: http://stackoverflow.com/questions/12273451/how-to-fix-delay-in-javascript-keydown
 window.requestAnimFrame = (function () {
     return window.requestAnimationFrame ||
             window.webkitRequestAnimationFrame ||
@@ -10,7 +9,6 @@ window.requestAnimFrame = (function () {
                 window.setTimeout(callback, 1000 / 60);
             };
 })();
-
 
 function Timer() {
     this.gameTime = 0;
@@ -30,29 +28,77 @@ Timer.prototype.tick = function () {
 
 function GameEngine() {
     this.entities = [];
+
+    // added from 435 ZOMBIE AI Project
     this.zombies = [];
     this.players = [];
     this.rocks = [];
-    this.zombieCooldown = 1;
-    this.showOutlines = false;
+    this.zombieCooldownNum = 3;  //how often a zombie will appear
+	this.zombieCooldown = this.zombieCooldownNum;
+	this.kills = null;
+    this.showOutlines = true;
     this.ctx = null;
     this.click = null;
-    this.mouse = null;
-	this.keyState = null;
-	this.keydown = null;
+    //this.mouse = {x:0, y:0, canvasx: 0, canvasy: 0, mousedown:false};
+	this.mouse = {x:0, y:0, mousedown:false};
+    this.degree = null;
+    this.x = null;
+    this.y = null;
     this.wheel = null;
     this.surfaceWidth = null;
     this.surfaceHeight = null;
+	this.worldWidth = 1600;
+	this.worldHeight = 1600;
+    this.windowX = 0;
+    this.windowY = 0;
+
+    // Quinn's Additions
+    this.keyState = null;
+    this.keydown = null;
+    this.timer = new Timer();
+    this.keydown = {key:"", x:0, y:0};
+    this.keyState = {};
+    console.log('game created');
+}
+
+GameEngine.prototype.getWindowX = function() {
+    return this.windowX;
+}
+
+GameEngine.prototype.getWindowY = function() {
+    return this.windowY;
+}
+
+GameEngine.prototype.setWindowX = function(x) {
+    var maxX = this.worldWidth - this.surfaceWidth;
+	if (x < 0) {
+        this.windowX = 0;
+    } else if (x > maxX) {
+        this.windowX = maxX;
+    } else {
+        this.windowX = x;
+    }
+}
+
+GameEngine.prototype.setWindowY = function(y) {
+	var maxY = this.worldHeight - this.surfaceHeight;
+	if (y < 0) {
+        this.windowY = 0;
+    } else if (y > maxY) {
+        this.windowY = maxY;
+    } else {
+        this.windowY = y;
+    }
 }
 
 GameEngine.prototype.init = function (ctx) {
     this.ctx = ctx;
     this.surfaceWidth = this.ctx.canvas.width;
     this.surfaceHeight = this.ctx.canvas.height;
+	console.log("surface: " + this.surfaceWidth + " " + this.surfaceHeight)
     this.startInput();
     this.timer = new Timer();
-	this.keydown = {key:"", x:0, y:0};
-	this.keyState = {};
+	this.kills = 0;
     console.log('game initialized');
 }
 
@@ -65,100 +111,180 @@ GameEngine.prototype.start = function () {
     })();
 }
 
+// Marriot's code. Could be useful later.
+// GameEngine.prototype.startInput = function () {
+//     console.log('Starting input');
+//     var that = this;
+
+//     var getXandY = function (e) {
+//         var x = e.clientX - that.ctx.canvas.getBoundingClientRect().left;
+//         var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top;
+
+//         return { x: x, y: y };
+//     }
+
+//     this.ctx.canvas.addEventListener("mousemove", function (e) {
+//         //console.log(getXandY(e));
+//         that.mouse = getXandY(e);
+//     }, false);
+
+//     this.ctx.canvas.addEventListener("click", function (e) {
+//         //console.log(getXandY(e));
+//         that.click = getXandY(e);
+//     }, false);
+
+//     this.ctx.canvas.addEventListener("wheel", function (e) {
+//         //console.log(getXandY(e));
+//         that.wheel = e;
+//         //       console.log(e.wheelDelta);
+//         e.preventDefault();
+//     }, false);
+
+//     this.ctx.canvas.addEventListener("contextmenu", function (e) {
+//         //console.log(getXandY(e));
+//         that.rightclick = getXandY(e);
+//         e.preventDefault();
+//     }, false);
+
+//     console.log('Input started');
+// }
+
+
 GameEngine.prototype.startInput = function () {
     console.log('Starting input');
+	//var that = this;
     var getXandY = function(e) {
         // var x =  e.clientX - that.ctx.canvas.getBoundingClientRect().left - (that.ctx.canvas.width/2);
         // var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top - (that.ctx.canvas.height/2);
-		var x =  e.clientX - that.ctx.canvas.getBoundingClientRect().left;
+        var x =  e.clientX - that.ctx.canvas.getBoundingClientRect().left;
         var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top;
-		//console.log("x: " + x + " y: " + y);
-        return {x: x, y: y};
+		var canvasx = e.clientX;
+		var canvasy = e.clientY;
+        //console.log("x: " + x + " y: " + y);
+        return {x: x, y: y, canvasx: canvasx, canvasy: canvasy};
     }
-	var getKeyDir = function(e) {
-		//e = (KeyboardEvent) e
-		//console.log(e);
-        var key =  "";
-		var x = 0;
-		var y = 0;
-		switch(e.keyCode) {
-			case 37:
-			key = "left"
-			x = -1;
-			//console.log(key + " " + e);
-			break;
-			case 38:
-			key = "up"
-			y = -1;
-			//console.log(key + " " + e);
-			break;
-			case 39:
-			key = "right"
-			x = 1;
-			//console.log(key + " " + e);
-			break;
-			case 40:
-			key = "down"
-			y = 1;
-			//console.log(key + " " + e);
-			break;
-			default:
-			console.log("default: " + e);
-			break;			
-		}		
-        return {key:key, x: x, y: y};
+	
+	    var getXandYWithWindowOffset = function(e) {
+        // var x =  e.clientX - that.ctx.canvas.getBoundingClientRect().left - (that.ctx.canvas.width/2);
+        // var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top - (that.ctx.canvas.height/2);
+        var x =  e.clientX - that.ctx.canvas.getBoundingClientRect().left + that.getWindowX();
+        var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top + that.getWindowY();
+        //console.log("x: " + x + " y: " + y);
+		var canvasx = e.clientX;
+		var canvasy = e.clientY;
+        return {x: x, y: y, canvasx: canvasx, canvasy: canvasy};
+    }
+    // var getDegree = function(e) {
+    //     var x =  e.clientX - that.ctx.canvas.getBoundingClientRect().left;
+    //     var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top;
+    //     var rad = Math.atan2(y, x); 
+    //     var deg = rad * (180 / Math.PI);
+    //     return deg;
+    // }
+    var getX = function(e) {
+        var x =  e.clientX - that.ctx.canvas.getBoundingClientRect().left;
+        return x;
+    }
+    var getY = function(e) {
+        var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top;
+        return y;
     }
     var that = this;
-
-    this.ctx.canvas.addEventListener("click", function(e) {
-        that.click = getXandY(e);
-        e.stopPropagation();
+    if (this.ctx) {
+        this.ctx.canvas.addEventListener("click", function(e) {
+            //that.click = getXandY(e);
+			that.click = getXandYWithWindowOffset(e);
+            e.stopPropagation();
+            e.preventDefault();
+        }, false);
+        
+        this.ctx.canvas.addEventListener("mousemove", function(e) {
+            //that.mouse = getXandY(e);   
+			var tempmousedown = that.mouse.mousedown;			
+			that.mouse = getXandYWithWindowOffset(e); 
+			that.mouse.mousedown = tempmousedown;
+			that.x = that.mouse.x;
+            that.y = that.mouse.y;
+            // that.x = getX(e);
+            // that.y = getY(e);
+        }, false);
+		
+		this.ctx.canvas.addEventListener("mouseup", function(e) {      
+			console.log("mouseup");
+			that.mouse.mousedown = false; 
+        }, false);
+		
+		this.ctx.canvas.addEventListener("mousedown", function(e) {
+			console.log("mousedown");
+			that.mouse.mousedown = true; 
+        }, false);
+    }
+    window.addEventListener('keydown',function(e){
         e.preventDefault();
-    }, false);
-    
-    this.ctx.canvas.addEventListener("mousemove", function(e) {
-        that.mouse = getXandY(e);		
-    }, false);
-	window.addEventListener('keydown',function(e){
-		e.preventDefault();
-		that.keyState[e.keyCode] = true;
-		//console.log("keyCode DOWN" + e.keyCode);
-	},false);    
-	window.addEventListener('keyup',function(e){
-		e.preventDefault();
-		that.keyState[e.keyCode] = false;
-		//console.log("keyCode UP" + e.keyCode);
-	},false);
+        that.keyState[e.keyCode] = true;
+    },false);    
+    window.addEventListener('keyup',function(e){
+        e.preventDefault();
+        that.keyState[e.keyCode] = false;
+        //console.log("keyCode UP" + e.keyCode);
+    },false);
 
     console.log('Input started');
 }
 
 GameEngine.prototype.addEntity = function (entity) {
-    //console.log('added entity');
+    
+    // added from 435 ZOMBIE AI Project
     this.entities.push(entity);
     if (entity.name === "Zombie") this.zombies.push(entity);
     if (entity.name === "Rock") this.rocks.push(entity);
     else this.players.push(entity);
 }
 
-GameEngine.prototype.draw = function () {
+GameEngine.prototype.draw = function (top, left) {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     this.ctx.save();
-    for (var i = 0; i < this.entities.length; i++) {
+    //console.log(this.GameEngine.getWindowX() + " " + this.GameEngine.getWindowY());
+	//var ratio = .5; //1.2
+	var ratio = 2; //1.2
+    this.ctx.drawImage(ASSET_MANAGER.getAsset("./images/ForestLevelBig.png"), this.getWindowX() * ratio, this.getWindowY() * ratio, 1600, 1600, 0, 0, 800, 800);
+     //this.ctx.drawImage(ASSET_MANAGER.getAsset("./images/background.png"), this.getWindowX() * ratio, this.getWindowY() * ratio, 400, 400, 0, 0, 800, 800);
+	for (var i = 0; i < this.entities.length; i++) {
         this.entities[i].draw(this.ctx);
     }
+   // this.ctx.drawImage(ASSET_MANAGER.getAsset("./images/background.jpg"), 0, 0);
     this.ctx.restore();
 }
 
+// GameEngine.prototype.update = function () {
+//     var entitiesCount = this.entities.length;
+
+//     for (var i = 0; i < entitiesCount; i++) {
+//         var entity = this.entities[i];
+
+//         if (!entity.removeFromWorld) {
+//             entity.update();
+//         }
+//     }
+
+//     for (var i = this.entities.length - 1; i >= 0; --i) {
+//         if (this.entities[i].removeFromWorld) {
+//             this.entities.splice(i, 1);
+//         }
+//     }
+// }
+
+// added from 435 ZOMBIE AI Project
 GameEngine.prototype.update = function () {
     var entitiesCount = this.entities.length;
 
     this.zombieCooldown -= this.clockTick;
     if (this.zombieCooldown < 0) {
-        this.zombieCooldown = 1;
+        this.zombieCooldown = this.zombieCooldownNum;
         var zom = new Zombie(this);
-        this.addEntity(zom);
+        //this.addEntity(zom);
     }
+
     for (var i = 0; i < entitiesCount; i++) {
         var entity = this.entities[i];
 
@@ -199,118 +325,62 @@ GameEngine.prototype.loop = function () {
     this.space = null;
 }
 
-// function Entity(game, x, y) {
-    // this.game = game;
-    // this.x = x;
-    // this.y = y;
-    // this.removeFromWorld = false;
-// }
-
-// Entity.prototype.setLocation = function (X, Y) {
-    // this.x = X;
-    // this.y = Y;
-// }
-
-// Entity.prototype.update = function () {
-// }
-
-// Entity.prototype.draw = function (ctx) {
-    // if (this.game.showOutlines && this.radius) {
-        // this.game.ctx.beginPath();
-        // this.game.ctx.strokeStyle = "green";
-        // this.game.ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-        // this.game.ctx.stroke();
-        // this.game.ctx.closePath();
-    // }
-// }
-
-// Entity.prototype.rotateAndCache = function (image, angle) {
-    // var offscreenCanvas = document.createElement('canvas');
-    // var size = Math.max(image.width, image.height);
-    // offscreenCanvas.width = size;
-    // offscreenCanvas.height = size;
-    // var offscreenCtx = offscreenCanvas.getContext('2d');
-    // offscreenCtx.save();
-    // offscreenCtx.translate(size / 2, size / 2);
-    // offscreenCtx.rotate(angle);
-    // offscreenCtx.translate(0, 0);
-    // offscreenCtx.drawImage(image, -(image.width / 2), -(image.height / 2));
-    // offscreenCtx.restore();
-    // //offscreenCtx.strokeStyle = "red";
-    // //offscreenCtx.strokeRect(0,0,size,size);
-    // return offscreenCanvas;
-// }
-
-// function LivingEntity(game, pointerX, pointerY, directionX, directionY, locationX, locationY) {
-    // Entity.call(this, game, locationX, locationY);
-    // this.pointerX = pointerX;
-    // this.pointerY = pointerY;
-    // this.directionX = directionX;
-    // this.directionY = directionY;
-    // this.health = 100;
-    // this.strength = 25;
-    // this.speed = 10;
-    // this.movingAnimation = null;
-    // this.attackAnimation = null;
-    // this.struckAnimation = null;
-    // this.deathAnimation = null;
-    // this.currentAnimation = movingAnimation;
-// }
-
-// LivingEntity.prototype = new Entity();
-// LivingEntity.prototype.constructor = LivingEntity;
-
-// LivingEntity.prototype.setMovingAnimation = function (spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
-    // this.movingAnimation = new Animation(spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse);
-// }
-
-// LivingEntity.prototype.setAttackAnimation = function (spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
-    // this.attackAnimation = new Animation(spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse);
-// }
-
-// LivingEntity.prototype.setStruckAnimation = function (spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
-    // this.struckAnimation = new Animation(spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse);
-// }
-
-// LivingEntity.prototype.setDeathAnimation = function (spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
-    // this.deathAnimation = new Animation(spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse);
-// }
-
-// LivingEntity.prototype.draw = function () {
-    // this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
-// }
-
-// LivingEntity.prototype.update = function () {
-    // // if (this.health === 0) {
-    // //     this.currentAnimation = this.deathAnimation;
-    // // } else if (/* Attack button is pressed */) {
-    // //     this.currentAnimation = this.attackAnimation;
-    // // } else {
-    // //     this.currentAnimation = this.movingAnimation;
-    // // }
-// }
 
 
-// function NonLivingEntity(game, locationX, locationY) {
-    // Entity.call(this, game, locationX, locationY);
-    // this.image = null;
-// }
+        // var game = document.getElementById("game");
+        // var gameCtx = game.getContext("2d");
 
-// NonLivingEntity.prototype = new Entity();
-// NonLivingEntity.prototype.constructor = NonLivingEntity;
+        // var left = 20;
+        // var top = 20;
 
-// NonLivingEntity.prototype.setImage = function (image) {
-    // this.image = image;
-// }
+        // var background = new Image();
+        // background.onload = function () {
+        //     gameCtx.fillStyle = "red";
+        //     gameCtx.strokeStyle = "blue";
+        //     gameCtx.lineWidth = 3;
+        //     move(top, left);
+        // }
+        // background.src = "https://dl.dropboxusercontent.com/u/139992952/stackoverflow/game.jpg";
 
-// NonLivingEntity.prototype.setLocation = function (X, Y) {
-    // Entity.prototype.setLocation.call(this, X, Y);
-// }
 
-// NonLivingEntity.prototype.draw = function () {
-    // this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
-// }
 
-// NonLivingEntity.prototype.update = function () {
-    
-// }
+        // function move(direction) {
+        //     switch (direction) {
+        //         case "left":
+        //             left -= 5;
+        //             break;
+        //         case "up":
+        //             top -= 5;
+        //             break;
+        //         case "right":
+        //             left += 5;
+        //             break;
+        //         case "down":
+        //             top += 5
+        //             break;
+        //     }
+        //     draw(top, left);
+        // }
+
+        // function draw(top, left) {
+        //     gameCtx.clearRect(0, 0, game.width, game.height);
+        //     gameCtx.drawImage(background, left, top, 250, 150, 0, 0, 250, 150);
+        //     gameCtx.beginPath();
+        //     gameCtx.arc(125, 75, 10, 0, Math.PI * 2, false);
+        //     gameCtx.closePath();
+        //     gameCtx.fill();
+        //     gameCtx.stroke();
+        // }
+
+        // $("#moveLeft").click(function () {
+        //     move("left");
+        // });
+        // $("#moveRight").click(function () {
+        //     move("right");
+        // });
+        // $("#moveUp").click(function () {
+        //     move("up");
+        // });
+        // $("#moveDown").click(function () {
+        //     move("down");
+        // });
