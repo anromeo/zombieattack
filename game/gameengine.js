@@ -34,21 +34,22 @@ function GameEngine() {
     this.players = [];
     this.rocks = [];
     this.zombieCooldownNum = 3;  //how often a zombie will appear
-	this.zombieCooldown = this.zombieCooldownNum;
-	this.kills = null;
+    this.zombieCooldown = this.zombieCooldownNum;
+    this.kills = null;
     this.showOutlines = true;
     this.ctx = null;
     this.click = null;
     //this.mouse = {x:0, y:0, canvasx: 0, canvasy: 0, mousedown:false};
-	this.mouse = {x:0, y:0, mousedown:false};
+    this.mouse = {x:0, y:0, mousedown:false};
     this.degree = null;
     this.x = null;
     this.y = null;
     this.wheel = null;
     this.surfaceWidth = null;
     this.surfaceHeight = null;
-	this.worldWidth = 1600;
-	this.worldHeight = 1600;
+
+    this.worldWidth = 1600;
+    this.worldHeight = 1600;
     this.windowX = 0;
     this.windowY = 0;
 
@@ -73,13 +74,9 @@ GameEngine.prototype.getWindowY = function() {
 }
 
 GameEngine.prototype.setWindowX = function(x) {
-    // var maxWindowX = 672;
-    // if (x < 0) {
-    //     this.windowX = 0;
-    // } else if (x > maxWindowX) {
-    //     this.windowX = maxWindowX;
+
     var maxX = this.worldWidth - this.surfaceWidth;
-	if (x < 0) {
+    if (x < 0) {
         this.windowX = 0;
     } else if (x > maxX) {
         this.windowX = maxX;
@@ -89,13 +86,8 @@ GameEngine.prototype.setWindowX = function(x) {
 }
 
 GameEngine.prototype.setWindowY = function(y) {
-    // var maxWindowY = 554;
-    // if (y < 0) {
-    //     this.windowY = 0;
-    // } else if (y > maxWindowY) {
-    //     this.windowY = maxWindowY;
-	var maxY = this.worldHeight - this.surfaceHeight;
-	if (y < 0) {
+    var maxY = this.worldHeight - this.surfaceHeight;
+    if (y < 0) {
         this.windowY = 0;
     } else if (y > maxY) {
         this.windowY = maxY;
@@ -107,14 +99,14 @@ GameEngine.prototype.setWindowY = function(y) {
 GameEngine.prototype.init = function (ctx) {
     this.ctx = ctx;
     this.ctx.showOutlines = false;
-    this.surfaceWidth = 1000;
-    this.surfaceHeight = 1000;
+    this.surfaceWidth = this.ctx.canvas.width;
+    this.surfaceHeight = this.ctx.canvas.height;
     this.playerX = this.surfaceWidth/2;
     this.playerY = this.surfaceHeight/2;
-	console.log("surface: " + this.surfaceWidth + " " + this.surfaceHeight)
+    console.log("surface: " + this.surfaceWidth + " " + this.surfaceHeight)
     this.startInput();
     this.timer = new Timer();
-	this.kills = 0;
+    this.kills = 0;
     console.log('game initialized');
 
 }
@@ -169,6 +161,7 @@ GameEngine.prototype.start = function () {
 
 GameEngine.prototype.startInput = function () {
     console.log('Starting input');
+    //var that = this;
     var getXandY = function(e) {
         // var x =  e.clientX - that.ctx.canvas.getBoundingClientRect().left - (that.ctx.canvas.width/2);
         // var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top - (that.ctx.canvas.height/2);
@@ -234,7 +227,6 @@ GameEngine.prototype.startInput = function () {
         this.ctx.canvas.addEventListener("mousedown", function(e) {
             console.log("mousedown");
             that.mouse.mousedown = true; 
-
         }, false);
     }
     window.addEventListener('keydown',function(e){
@@ -263,11 +255,9 @@ GameEngine.prototype.draw = function (top, left) {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     this.ctx.save();
     //console.log(this.GameEngine.getWindowX() + " " + this.GameEngine.getWindowY());
-	//var ratio = .5; //1.2
-	var ratio = 2; //1.2
+    //var ratio = .5; //1.2
+    var ratio = 2; //1.2
     this.ctx.drawImage(ASSET_MANAGER.getAsset("./images/ForestLevelBig.png"), this.getWindowX() * ratio, this.getWindowY() * ratio, 1600, 1600, 0, 0, 800, 800);
-     //this.ctx.drawImage(ASSET_MANAGER.getAsset("./images/background.png"), this.getWindowX() * ratio, this.getWindowY() * ratio, 400, 400, 0, 0, 800, 800);
-    //console.log(this.GameEngine.getWindowX() + " " + this.GameEngine.getWindowY());
      //this.ctx.drawImage(ASSET_MANAGER.getAsset("./images/background.png"), this.getWindowX() * ratio, this.getWindowY() * ratio, 400, 400, 0, 0, 800, 800);
     //console.log(this.GameEngine.getWindowX() + " " + this.GameEngine.getWindowY());
     
@@ -347,6 +337,7 @@ GameEngine.prototype.draw = function (top, left) {
 //         }
 //     }
 // }
+
 
 // Get the PlayerControlled Player
 GameEngine.prototype.getPlayer = function() {
