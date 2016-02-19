@@ -7,6 +7,7 @@
 
 
 function playerControlled(game) {
+
 	//LivingEntity.call(this, game, 0, 0, 0, 0, this.radius + Math.random() * (800 - this.radius * 2), this.radius + Math.random() * (800 - this.radius * 2));	
 	LivingEntity.call(this, game, 0, 0, 0, 0, game.surfaceWidth/2, game.surfaceHeight/2);
     this.player = 1;
@@ -24,14 +25,26 @@ function playerControlled(game) {
     this.name = "playerControlled";
     this.color = "Black";
 
+	this.action;
+	this.weapon = null;
+    this.game = game;
+    this.name = "playerControlled";
+    this.color = "Black";
+	this.team = "blue";
+	this.shootingLine = true;
+	this.angleOffset = 0;
     this.cooldown = 0;
-    this.team = "blue";
+	this.randomLine = {x:0, y:0};
+	this.linecooldown = .002;
+	this.linecooldownstart = .002;
+	this.cooldownStartControlled = .45;
+	this.cooldownStartNotControlled = .75;
     //this.corners = [{x:0, y:0}, {x:800, y:0}, {x:0, y:800}, {x:800, y:800}]
     
-	this.CenterOffsetX = 10; // puts the center of the sprite in the center of the entity
-	this.CenterOffsetY = 10; // puts the center of the sprite in the center of the entity
-	this.SpriteRotateOffsetX = 8; //describes the point of rotation on the sprite changed from 1/2 width
-	this.SpriteRotateOffsetY = -7; //describes the point of rotation on the sprite changed from 1/2 height
+    this.CenterOffsetX = 10; // puts the center of the sprite in the center of the entity
+    this.CenterOffsetY = 10; // puts the center of the sprite in the center of the entity
+    this.SpriteRotateOffsetX = 8; //describes the point of rotation on the sprite changed from 1/2 width
+    this.SpriteRotateOffsetY = -7; //describes the point of rotation on the sprite changed from 1/2 height
     this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/Player2.png"), this.spriteWidth, this.spriteHeight, .05, 1, true, false, 1);
     this.velocity = { x: 0, y: 0 };
 };
@@ -94,6 +107,7 @@ playerControlled.prototype.attack = function(dir) {
     this.game.addEntity(rock);
 
 }
+
     /**
      * Calculates the point of interception for one object starting at point
      * <code>a</code> with speed vector <code>v</code> and another object
@@ -163,6 +177,48 @@ playerControlled.prototype.attack = function(dir) {
     };
 
 
+playerControlled.prototype.selectAction = function () {
+    if (this.controlled) {
+        var action = { direction: { x: 0, y: 0 }, throwRock: false, target: null};
+        var acceleration = 1000000000;
+      
+    	if (this.game.keyState) {
+    		var x = 0;
+    		var y = 0;
+    		//left
+    		if (this.game.keyState[37]||this.game.keyState[65]||this.game.keyState[97]) { //leftarrow, a, A
+    			x = -1;
+    		}
+    		//up
+    		if (this.game.keyState[38]||this.game.keyState[87]||this.game.keyState[119]) {  //uparrow, w, W
+    			y = -1;
+    		}
+    		//right
+    		if (this.game.keyState[39]||this.game.keyState[68]||this.game.keyState[100]) {  //rightarrow, d, D
+    			x = 1;
+    		}
+    		//down
+    		if (this.game.keyState[40]||this.game.keyState[83]||this.game.keyState[115]) {  //downarrow, s, S
+    			y = 1;
+    		}	
+    		
+    		action.direction.x += (x) * acceleration;
+    		action.direction.y += (y) * acceleration;
+    	}
+		//console.log(this.game.mouse);
+		//console.log(this.game.mouse.mousedown);
+		//console.log(this.game.mouse && this.game.mouse.mousedown);
+        if (this.game.mouse.mousedown) {    
+            action.target = {x:this.game.mouse.x, y:this.game.mouse.y};
+            action.throwRock = true;
+            //this.game.click = null;
+        }
+      
+        return action;
+    } 
+};
+
+
 
 
 playerControlled.prototype.aiSelectAction = function() {
@@ -171,12 +227,6 @@ playerControlled.prototype.aiSelectAction = function() {
 
         var action = { direction: { x: 0, y: 0 }, throwRock: false, target: null};
         var acceleration = 1000000000;
-
-
-        // This is the action the zombie will perform
-        var action = { direction: { x: 0, y: 0 }, throwRock: true, target: null};
-        var acceleration = 1000000000;
-
 
         // This is the target that the shooter will shoot
         var target = null;
@@ -331,9 +381,11 @@ playerControlled.prototype.aiSelectAction = function() {
         // with having another playable character
         var personalBubble = 50;
 
+
         // This will be the PlayerControlled object.
         // There will only ever be one fully PlayerControlled object.
         var player = null;
+
 
         // for every player controlled player on the board
         for (var i = 0; i < this.game.players.length; i++) {
@@ -342,12 +394,14 @@ playerControlled.prototype.aiSelectAction = function() {
             var playableCharacter = this.game.players[i];
             var space = distance(playableCharacter, this);
 
+
             // If this is the PlayerControlled object
             // but the PlayerControlled object is not this object
             if (this.game.players[i].controlled === true
                 && this.game.players[i].controlled != this) {
                 var player = this.game.players[i];
             }
+
 //            console.log(space);
             // if the space is smaller than this playable character's personal bubble
             if (space > personalBubble) {
@@ -359,6 +413,7 @@ playerControlled.prototype.aiSelectAction = function() {
                 action.direction.y -= difY * acceleration / (space * space);
             }
         }
+
 
 
         // This is the highest distance of the space between the Friendly AI
@@ -379,6 +434,7 @@ playerControlled.prototype.aiSelectAction = function() {
             action.direction.y += 100 * difY * acceleration / (spaceBetweenPlayerControlled * spaceBetweenPlayerControlled);
         }
 
+
         // if there exists a target
         if (target) {
 
@@ -394,7 +450,9 @@ playerControlled.prototype.aiSelectAction = function() {
         action.direction.y -= (1 - friction) * this.game.clockTick * this.directionY;
 
         return action;
-}
+};
+
+
 // Swaps the player controlled if possible and if pressed
 playerControlled.prototype.swapIfCanSwap = function(game) {
 
@@ -477,8 +535,6 @@ playerControlled.prototype.selectAction = function () {
     }
 };
 
-// do not change code beyond this point
-
 playerControlled.prototype.collide = function (other) {
     return distance(this, other) < this.radius + other.radius;
 };
@@ -505,7 +561,10 @@ playerControlled.prototype.collideLeft = function () {
 };
 
 playerControlled.prototype.collideRight = function () {
-   return (this.x - this.CenterOffsetX - this.game.getWindowX()) > 672;
+   // return (this.x - this.CenterOffsetX - this.game.getWindowX()) > 672;
+    // return (this.x + this.radius) > 800;
+//    return (this.x + this.radius) > this.game.surfaceWidth;
+    return (this.x + this.radius) > this.game.worldWidth;
 };
 
 playerControlled.prototype.collideTop = function () {
@@ -513,7 +572,14 @@ playerControlled.prototype.collideTop = function () {
 };
 
 playerControlled.prototype.collideBottom = function () {
-   return (this.y - this.CenterOffsetY - this.game.getWindowY()) > 526;
+   // return (this.y - this.CenterOffsetY - this.game.getWindowY()) > 526;
+    // return (this.y + this.radius) > 800;
+    return (this.y + this.radius) > this.game.worldHeight;
+};
+
+playerControlled.prototype.update = function () {
+    Entity.prototype.update.call(this);
+    return (this.y + this.radius) > this.game.surfaceHeight;
 };
 
 playerControlled.prototype.aiUpdate = function() {
@@ -540,11 +606,13 @@ playerControlled.prototype.aiUpdate = function() {
         var ratio = maxSpeed / speed;
         this.velocity.x *= ratio;
         this.velocity.y *= ratio;
+
     } 
   // else if (speed < 0) {
     // this.velocity.x *= 0;
         // this.velocity.y *= 0;
   // }
+
 
     this.x += this.velocity.x * this.game.clockTick;
     this.y += this.velocity.y * this.game.clockTick;
@@ -552,7 +620,8 @@ playerControlled.prototype.aiUpdate = function() {
     if (this.collideLeft() || this.collideRight()) {
         this.velocity.x = -this.velocity.x * friction;
         if (this.collideLeft()) this.x = this.radius;
-        if (this.collideRight()) this.x = 900 - this.radius;
+        // if (this.collideRight()) this.x = 900 - this.radius;
+        if (this.collideRight()) this.x = this.game.worldWidth - this.radius;
         this.x += this.velocity.x * this.game.clockTick;
         this.y += this.velocity.y * this.game.clockTick;
     }
@@ -560,7 +629,8 @@ playerControlled.prototype.aiUpdate = function() {
     if (this.collideTop() || this.collideBottom()) {
         this.velocity.y = -this.velocity.y * friction;
         if (this.collideTop()) this.y = this.radius;
-        if (this.collideBottom()) this.y = 900 - this.radius;
+        // if (this.collideBottom()) this.y = 900 - this.radius;
+        if (this.collideBottom()) this.y = this.game.worldWidth - this.radius;
         this.x += this.velocity.x * this.game.clockTick;
         this.y += this.velocity.y * this.game.clockTick;
     }
@@ -664,16 +734,16 @@ playerControlled.prototype.update = function () {
     this.action = this.selectAction();
     //if (this.cooldown > 0) console.log(this.action);
 
-    // if (drag.y > action.direction.y) drag.y = action.direction.y;
-    // if (drag.x > action.direction.x) drag.x = action.direction.x;
-    // action.direction.x -= drag.x;
-    // action.direction.y -= drag.y;
+		// if (drag.y > action.direction.y) drag.y = action.direction.y;
+		// if (drag.x > action.direction.x) drag.x = action.direction.x;
+		// action.direction.x -= drag.x;
+		// action.direction.y -= drag.y;
     this.velocity.x += this.action.direction.x;
     this.velocity.y += this.action.direction.y;
-  //drag
-  var dragPercent = 0.05;
-  this.velocity.x -= this.velocity.x * dragPercent;
-  this.velocity.y -= this.velocity.y * dragPercent;
+	//drag
+	var dragPercent = 0.05;
+	this.velocity.x -= this.velocity.x * dragPercent
+	this.velocity.y -= this.velocity.y * dragPercent
 
     var speed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.y * this.velocity.y);
     if (speed > maxSpeed) {
@@ -692,7 +762,9 @@ playerControlled.prototype.update = function () {
     if (this.collideLeft() || this.collideRight()) {
         this.velocity.x = -this.velocity.x * friction;
         if (this.collideLeft()) this.x = this.radius;
-        if (this.collideRight()) this.x = this.game.surfaceWidth - this.radius;
+        // if (this.collideRight()) this.x = 800 - this.radius;
+        // if (this.collideRight()) this.x = this.game.surfaceWidth - this.radius;
+        if (this.collideRight()) this.x = this.game.worldWidth - this.radius;
         this.x += this.velocity.x * this.game.clockTick;
         this.y += this.velocity.y * this.game.clockTick;
     }
@@ -700,11 +772,63 @@ playerControlled.prototype.update = function () {
     if (this.collideTop() || this.collideBottom()) {
         this.velocity.y = -this.velocity.y * friction;
         if (this.collideTop()) this.y = this.radius;
-        if (this.collideBottom()) this.y = this.game.surfaceHeight - this.radius;
+        // if (this.collideBottom()) this.y = 800 - this.radius;
+        // if (this.collideBottom()) this.y = this.game.surfaceHeight - this.radius;
+        if (this.collideBottom()) this.y = this.game.worldHeight - this.radius;
         this.x += this.velocity.x * this.game.clockTick;
         this.y += this.velocity.y * this.game.clockTick;
     }
 
+  //   for (var i = 0; i < this.game.entities.length; i++) {
+  //       var ent = this.game.entities[i];
+  //       if (ent !== this && this.collide(ent)) {
+  //           if (ent.name !== "Zombie" && ent.name !== "Rock") {
+  //               var temp = { x: this.velocity.x, y: this.velocity.y };
+  //               var dist = distance(this, ent);
+  //               var delta = this.radius + ent.radius - dist;
+  //               var difX = (this.x - ent.x) / dist;
+  //               var difY = (this.y - ent.y) / dist;
+
+  //               this.x += difX * delta / 2;
+  //               this.y += difY * delta / 2;
+  //               ent.x -= difX * delta / 2;
+  //               ent.y -= difY * delta / 2;
+
+  //               this.velocity.x = ent.velocity.x * friction;
+  //               this.velocity.y = ent.velocity.y * friction;
+  //               ent.velocity.x = temp.x * friction;
+  //               ent.velocity.y = temp.y * friction;
+  //               this.x += this.velocity.x * this.game.clockTick;
+  //               this.y += this.velocity.y * this.game.clockTick;
+  //               ent.x += ent.velocity.x * this.game.clockTick;
+  //               ent.y += ent.velocity.y * this.game.clockTick;
+  //           }
+  //           if (ent.name === "Rock" && this.rocks < 2) {
+  //               this.rocks++;
+  //               ent.removeFromWorld = true;
+  //           }
+  //       }
+  //   }
+    
+
+  //   if (this.cooldown === 0 && this.action.throwRock && this.rocks > 0) {
+  //       this.cooldown = 1;
+  //       this.rocks--;
+  //       var target = this.action.target;
+		// var dir = null;
+		// if (target != null) {
+		// 	dir = direction(target, this);
+		// }        
+		// if (dir != null) {
+		// 	var rock = new Rock(this.game);
+		// 	rock.x = this.x + dir.x * (this.radius + rock.radius + 20);
+		// 	rock.y = this.y + dir.y * (this.radius + rock.radius + 20);
+		// 	rock.velocity.x = dir.x * rock.maxSpeed;
+		// 	rock.velocity.y = dir.y * rock.maxSpeed;
+		// 	rock.thrown = true;
+		// 	rock.thrower = this;
+		// 	this.game.addEntity(rock);
+		// }
     // Removed by Vlad, stupid loop makes the game crash
 
     // for (var i = 0; i < this.game.entities.length; i++) {
@@ -846,7 +970,7 @@ playerControlled.prototype.update = function () {
           rock.thrown = true;
           rock.thrower = this;
           this.game.addEntity(rock);
-        }
+			}	
         }
     }
 
@@ -870,23 +994,87 @@ playerControlled.prototype.update = function () {
 };
 
 playerControlled.prototype.draw = function (ctx) {
-    if (this.controlled) {
-    	this.game.setWindowX(this.x - 400);
-    	this.game.setWindowY(this.y - 400);
-    }
+    ctx.beginPath();
+    ctx.fillStyle = this.color;
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+    ctx.fill();
+    ctx.closePath();
+
+
+// playerControlled.prototype.draw = function (ctx) {
+//     if (this.controlled) {
+//     	this.game.setWindowX(this.x - 400);
+//     	this.game.setWindowY(this.y - 400);
+//     }
     // ctx.beginPath();
     // ctx.fillStyle = this.color;
     // ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
     // ctx.fill();
     // ctx.closePath();
     //console.log(this.game.mouse.clientX);
-	
+
 	// ctx.beginPath();
+    // ctx.fillStyle = "grey";
+    // ctx.arc(300 - this.game.getWindowX(), 300 - this.game.getWindowY(), this.radius, 0, Math.PI * 2, false);
+    // ctx.fill();
+    // ctx.closePath();
+
+		//shooting line
+	if (this.game.mouse && this.shootingLine && this.controlled) {
+		ctx.beginPath();
+		var lineBeginX = this.canvasX + this.radius;
+		var lineBeginY = this.canvasY + this.radius;
+		var lineEndX = this.game.mouse.canvasx;
+		var lineEndY = this.game.mouse.canvasy;
+		ctx.strokeStyle = "pink";
+		ctx.moveTo(lineBeginX,lineBeginY);
+		ctx.lineTo(lineEndX, lineEndY);
+		ctx.stroke();
+	}
+
+	if (this.linecooldown > 0 && this.game.mouse.mousedown) this.linecooldown -= this.game.clockTick;
+    if (this.linecooldown < 0 || !this.game.mouse.mousedown) this.linecooldown = 0;
+	// console.log(this.linecooldown == 0 && this.game.mouse.mousedown);
+	// console.log("this.linecooldown " + (this.linecooldown == 0));
+	// console.log("this.game.mouse.mousedown " + this.game.mouse.mousedown);
+	if ((this.linecooldown == 0) && this.game.mouse.mousedown) {
+		this.randomLine.x = Math.random() * 20 - 10;
+		this.randomLine.y = Math.random() * 20 - 10;
+		this.linecooldown = this.linecooldownstart;
+	}
+
+
+	if (this.game.mouse && this.game.mouse.mousedown && this.controlled) {
+		ctx.beginPath();
+		var lineBeginX = this.canvasX + this.radius;
+		var lineBeginY = this.canvasY + this.radius;
+		var lineEndX =  this.game.mouse.canvasx + this.randomLine.x;
+		var lineEndY = this.game.mouse.canvasy + this.randomLine.y;
+		ctx.strokeStyle = "yellow";
+		ctx.moveTo(lineBeginX,lineBeginY);
+		ctx.lineTo(lineEndX, lineEndY);
+		ctx.stroke();
+		// console.log(ctx);
+		// console.log(document.body);
+		// console.log(document.getElementById('gameWorld'));
+		//console.log(window);
+	}
+	
+		//this.angle = Math.atan2(this.action.target.x, this.action.target.y) * (180/Math.PI);
+	// this.angle = Math.atan2(this.game.y - this.y, this.game.x - this.x) * (180/Math.PI);
+	// var dir = direction(this.mouse, this);
+	// this.angleOffset = Math.tan(this.radius/dist) * (180/Math.PI);		
+	// this.angle = this.angle - 100;
+	// console.log(this.angle);
+	// while (this.angle > 360) {
+		// this.angle = this.angle - 360;
+	// }
+	
+		// ctx.beginPath();
  //    ctx.fillStyle = "grey";
  //    ctx.arc(300 - this.game.getWindowX(), 300 - this.game.getWindowY(), this.radius, 0, Math.PI * 2, false);
  //    ctx.fill();
  //    ctx.closePath();
-
-	
+ 
     LivingEntity.prototype.draw.call(this, ctx);
 };

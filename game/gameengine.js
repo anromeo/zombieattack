@@ -28,9 +28,7 @@ Timer.prototype.tick = function () {
 
 function GameEngine() {
     this.entities = [];
-
     this.weapons = [];
-
     // added from 435 ZOMBIE AI Project
     this.zombies = [];
     this.players = [];
@@ -41,14 +39,16 @@ function GameEngine() {
     this.showOutlines = true;
     this.ctx = null;
     this.click = null;
-    this.mouse = null;
+    //this.mouse = {x:0, y:0, canvasx: 0, canvasy: 0, mousedown:false};
+	this.mouse = {x:0, y:0, mousedown:false};
     this.degree = null;
     this.x = null;
     this.y = null;
     this.wheel = null;
     this.surfaceWidth = null;
     this.surfaceHeight = null;
-
+	this.worldWidth = 1600;
+	this.worldHeight = 1600;
     this.windowX = 0;
     this.windowY = 0;
 
@@ -73,22 +73,32 @@ GameEngine.prototype.getWindowY = function() {
 }
 
 GameEngine.prototype.setWindowX = function(x) {
-    var maxWindowX = 672;
-    if (x < 0) {
+    // var maxWindowX = 672;
+    // if (x < 0) {
+    //     this.windowX = 0;
+    // } else if (x > maxWindowX) {
+    //     this.windowX = maxWindowX;
+    var maxX = this.worldWidth - this.surfaceWidth;
+	if (x < 0) {
         this.windowX = 0;
-    } else if (x > maxWindowX) {
-        this.windowX = maxWindowX;
+    } else if (x > maxX) {
+        this.windowX = maxX;
     } else {
         this.windowX = x;
     }
 }
 
 GameEngine.prototype.setWindowY = function(y) {
-    var maxWindowY = 554;
-    if (y < 0) {
+    // var maxWindowY = 554;
+    // if (y < 0) {
+    //     this.windowY = 0;
+    // } else if (y > maxWindowY) {
+    //     this.windowY = maxWindowY;
+	var maxY = this.worldHeight - this.surfaceHeight;
+	if (y < 0) {
         this.windowY = 0;
-    } else if (y > maxWindowY) {
-        this.windowY = maxWindowY;
+    } else if (y > maxY) {
+        this.windowY = maxY;
     } else {
         this.windowY = y;
     }
@@ -159,23 +169,26 @@ GameEngine.prototype.start = function () {
 
 GameEngine.prototype.startInput = function () {
     console.log('Starting input');
-	//var that = this;
     var getXandY = function(e) {
         // var x =  e.clientX - that.ctx.canvas.getBoundingClientRect().left - (that.ctx.canvas.width/2);
         // var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top - (that.ctx.canvas.height/2);
         var x =  e.clientX - that.ctx.canvas.getBoundingClientRect().left;
         var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top;
+        var canvasx = e.clientX;
+        var canvasy = e.clientY;
         //console.log("x: " + x + " y: " + y);
-        return {x: x, y: y};
+        return {x: x, y: y, canvasx: canvasx, canvasy: canvasy};
     }
-	
-	    var getXandYWithWindowOffset = function(e) {
+    
+        var getXandYWithWindowOffset = function(e) {
         // var x =  e.clientX - that.ctx.canvas.getBoundingClientRect().left - (that.ctx.canvas.width/2);
         // var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top - (that.ctx.canvas.height/2);
         var x =  e.clientX - that.ctx.canvas.getBoundingClientRect().left + that.getWindowX();
         var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top + that.getWindowY();
         //console.log("x: " + x + " y: " + y);
-        return {x: x, y: y};
+        var canvasx = e.clientX;
+        var canvasy = e.clientY;
+        return {x: x, y: y, canvasx: canvasx, canvasy: canvasy};
     }
     // var getDegree = function(e) {
     //     var x =  e.clientX - that.ctx.canvas.getBoundingClientRect().left;
@@ -196,19 +209,32 @@ GameEngine.prototype.startInput = function () {
     if (this.ctx) {
         this.ctx.canvas.addEventListener("click", function(e) {
             //that.click = getXandY(e);
-
-			that.click = getXandYWithWindowOffset(e);
+            //console.log("click");
+            that.click = getXandYWithWindowOffset(e);
             e.stopPropagation();
             e.preventDefault();
         }, false);
         
         this.ctx.canvas.addEventListener("mousemove", function(e) {
-            //that.mouse = getXandY(e);       
-			that.mouse = getXandYWithWindowOffset(e); 
-			that.x = that.mouse.x;
+            //that.mouse = getXandY(e);   
+            var tempmousedown = that.mouse.mousedown;           
+            that.mouse = getXandYWithWindowOffset(e); 
+            that.mouse.mousedown = tempmousedown;
+            that.x = that.mouse.x;
             that.y = that.mouse.y;
             // that.x = getX(e);
             // that.y = getY(e);
+        }, false);
+        
+        this.ctx.canvas.addEventListener("mouseup", function(e) {      
+            console.log("mouseup");
+            that.mouse.mousedown = false; 
+        }, false);
+        
+        this.ctx.canvas.addEventListener("mousedown", function(e) {
+            console.log("mousedown");
+            that.mouse.mousedown = true; 
+
         }, false);
     }
     window.addEventListener('keydown',function(e){
@@ -224,7 +250,7 @@ GameEngine.prototype.startInput = function () {
     console.log('Input started');
 }
 
-GameEngine.prototype.addEntity = function (entity) {
+GameEngine.prototype.addEntity = function (entity) {  
     // added from 435 ZOMBIE AI Project
     this.entities.push(entity);
     if (entity.name === "FlameThrower") this.weapons.push(entity);
@@ -237,8 +263,14 @@ GameEngine.prototype.draw = function (top, left) {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     this.ctx.save();
     //console.log(this.GameEngine.getWindowX() + " " + this.GameEngine.getWindowY());
-	var ratio = .5; //1.2
-    this.ctx.drawImage(ASSET_MANAGER.getAsset("./images/background.png"), this.getWindowX() * ratio, this.getWindowY() * ratio, 400, 400, 0, 0, 800, 800);
+	//var ratio = .5; //1.2
+	var ratio = 2; //1.2
+    this.ctx.drawImage(ASSET_MANAGER.getAsset("./images/ForestLevelBig.png"), this.getWindowX() * ratio, this.getWindowY() * ratio, 1600, 1600, 0, 0, 800, 800);
+     //this.ctx.drawImage(ASSET_MANAGER.getAsset("./images/background.png"), this.getWindowX() * ratio, this.getWindowY() * ratio, 400, 400, 0, 0, 800, 800);
+    //console.log(this.GameEngine.getWindowX() + " " + this.GameEngine.getWindowY());
+     //this.ctx.drawImage(ASSET_MANAGER.getAsset("./images/background.png"), this.getWindowX() * ratio, this.getWindowY() * ratio, 400, 400, 0, 0, 800, 800);
+    //console.log(this.GameEngine.getWindowX() + " " + this.GameEngine.getWindowY());
+    
 
 
     // this.ctx.beginPath();
@@ -335,7 +367,6 @@ GameEngine.prototype.getPlayer = function() {
 // added from 435 ZOMBIE AI Project
 GameEngine.prototype.update = function () {
     var entitiesCount = this.entities.length;
-
     // Sets the player to the current player
     this.player = this.getPlayer();
 

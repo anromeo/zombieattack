@@ -24,7 +24,7 @@ Rock.prototype.collideLeft = function () {
 };
 
 Rock.prototype.collideRight = function () {
-    return (this.x + this.radius) > 800;
+    return (this.x + this.radius) > this.game.worldWidth;
 };
 
 Rock.prototype.collideTop = function () {
@@ -32,7 +32,7 @@ Rock.prototype.collideTop = function () {
 };
 
 Rock.prototype.collideBottom = function () {
-    return (this.y + this.radius) > 800;
+    return (this.y + this.radius) > this.game.worldHeight;
 };
 
 Rock.prototype.update = function () {
@@ -44,18 +44,10 @@ Rock.prototype.update = function () {
 
     if (this.collideLeft() || this.collideRight()) {
 		this.removeFromWorld = true;
-        this.velocity.x = 0;
-        this.velocity.y = 0;
-        if (this.collideLeft()) this.x = this.radius;
-        if (this.collideRight()) this.x = 800 - this.radius;
     }
 
     if (this.collideTop() || this.collideBottom()) {
 		this.removeFromWorld = true;
-        this.velocity.x = 0;
-        this.velocity.y = 0;
-        if (this.collideTop()) this.y = this.radius;
-        if (this.collideBottom()) this.y = 800 - this.radius;
     }
 
     var chasing = false;

@@ -33,9 +33,11 @@ Entity.prototype.setRemoved = function (bool) {
 Entity.prototype.update = function () {
 	//console.log("updating");
 	if (!this.nonLiving) {
-	if (this.name !== "playerControlled" && this.name !== "Zombie")	console.log(this.name);
-	this.canvasX = this.x - this.radius - this.game.getWindowX();
-	this.canvasY = this.y - this.radius - this.game.getWindowY();
+	if (this.name !== "playerControlled" && this.name !== "Zombie"){
+		//console.log(this.name);
+	}	
+	this.canvasX = this.x - this.game.getWindowX();
+	this.canvasY = this.y - this.game.getWindowY();
 }
 }
 
@@ -69,11 +71,12 @@ Entity.prototype.draw = function (ctx) {
 
 function LivingEntity(game, pointerX, pointerY, directionX, directionY, locationX, locationY) {
     Entity.call(this, game, locationX, locationY);
-    this.game = game;
+	this.angle = 0;
+	this.game = game;
     this.locationX = locationX;
     this.locationY = locationY;
-    this.pointerX = pointerX;
-    this.pointerY = pointerY;
+    this.pointerX = pointerX; //replaced by this.angle?
+    this.pointerY = pointerY; //replaced by this.angle?
     this.directionX = directionX;
     this.directionY = directionY;
 	this.SpriteWidth = 60;  //default:60
@@ -91,7 +94,6 @@ function LivingEntity(game, pointerX, pointerY, directionX, directionY, location
 	this.healthMAX = 100;
 	this.health = this.healthMAX;
 	this.angle = 0;
-    this.health = 100;
     this.strength = 25;
     this.speed = 10;
     this.movingAnimation = null;
@@ -157,18 +159,17 @@ LivingEntity.prototype.draw = function (ctx) {
         var rad = Math.atan2(this.game.y - this.y, this.game.x - this.x);
         var deg = rad * (180 / Math.PI);
 
-          // console.log(deg/ 360);
-          // console.log(deg / 360);
-          // ctx.beginPath();
-          // ctx.strokeStyle = "red";
-          // ctx.lineWidth = 1;
-          // ctx.arc(
-          //   this.x - this.CenterOffsetX - this.game.getWindowX() + (deg/ 360) * this.radius,
-          //   this.y - this.CenterOffsetY - this.game.getWindowY() + (deg/ 360) * this.radius,
-          //   this.radius, 0, Math.PI * 2, false);
-          // ctx.closePath();
-          // ctx.stroke();
-
+		
+		//trying to get gun to point at mouse
+		 var angleOffset = 0;
+		 if (this.game.mouse) {
+			var dist = distance(this.game.mouse, {x: this.canvasX, y: this.canvasY});
+			angleOffset = Math.tan(this.radius / dist) * (180/Math.PI) - 5;	
+			//console.log(angleOffset);
+			
+		}
+		deg -= angleOffset;
+		
 		//this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius, this.y - this.radius, deg);
     this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius - this.CenterOffsetX - this.game.getWindowX(), 
 		this.y - this.radius - this.CenterOffsetY - this.game.getWindowY(), deg,
@@ -232,35 +233,40 @@ LivingEntity.prototype.draw = function (ctx) {
         ctx.beginPath();
 		ctx.strokeStyle = "red";
         ctx.lineWidth = 1;
-        ctx.arc(this.x, this.y , 5, 0, Math.PI * 2, false);
+        ctx.arc(this.canvasX, this.canvasY , 5, 0, Math.PI * 2, false);
+        //ctx.arc(this.x, this.y , 5, 0, Math.PI * 2, false);
         ctx.closePath();
 		ctx.stroke();
 		
 		ctx.beginPath();
 		ctx.strokeStyle = "blue";
         ctx.lineWidth = 1;
-        ctx.arc(this.x + this.SpriteWidth/2 + 2, this.y + this.SpriteHeight/2 + 2, 5, 0, Math.PI * 2, false);
+        ctx.arc(this.canvasX + this.SpriteWidth/2 + 2, this.canvasY + this.SpriteHeight/2 + 2, 5, 0, Math.PI * 2, false);
+        //ctx.arc(this.x + this.SpriteWidth/2 + 2, this.y + this.SpriteHeight/2 + 2, 5, 0, Math.PI * 2, false);
         ctx.closePath();
 		ctx.stroke();
 		
 		ctx.beginPath();
 		ctx.strokeStyle = "purple";
         ctx.lineWidth = 1;
-        ctx.arc(this.x + this.CenterOffsetX, this.y + this.CenterOffsetY, 5, 0, Math.PI * 2, false);
+        ctx.arc(this.canvasX + this.CenterOffsetX, this.canvasY + this.CenterOffsetY, 5, 0, Math.PI * 2, false);
+        //ctx.arc(this.x + this.CenterOffsetX, this.y + this.CenterOffsetY, 5, 0, Math.PI * 2, false);
         ctx.closePath();
 		ctx.stroke();
 		
 		ctx.beginPath();
 		ctx.strokeStyle = "green";
         ctx.lineWidth = 1;
-        ctx.arc(this.x + this.SpriteWidth, this.y + this.SpriteHeight, 5, 0, Math.PI * 2, false);
+        ctx.arc(this.canvasX + this.SpriteWidth, this.canvasY + this.SpriteHeight, 5, 0, Math.PI * 2, false);
+        //ctx.arc(this.x + this.SpriteWidth, this.y + this.SpriteHeight, 5, 0, Math.PI * 2, false);
         ctx.closePath();
 		ctx.stroke();
 		
 		ctx.beginPath();
         ctx.strokeStyle = "pink";
         ctx.lineWidth = 1;
-        ctx.arc(this.x + this.radius, this.y + this.radius, 5, 0, Math.PI * 2, false);
+        ctx.arc(this.canvasX + this.radius, this.canvasY + this.radius, 5, 0, Math.PI * 2, false);
+        //ctx.arc(this.x + this.radius, this.y + this.radius, 5, 0, Math.PI * 2, false);
         ctx.closePath();
         ctx.stroke();
 		
@@ -275,7 +281,9 @@ LivingEntity.prototype.draw = function (ctx) {
     ctx.beginPath();
         ctx.strokeStyle = "white";
         ctx.lineWidth = 1;
-        ctx.arc(this.x , this.y, this.radius, 0, Math.PI * 2, false);
+        // ctx.arc(this.x , this.y, this.radius, 0, Math.PI * 2, false);
+        ctx.arc(this.canvasX, this.canvasY, this.radius, 0, Math.PI * 2, false);
+        //ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
         ctx.closePath();
         ctx.stroke();
     }
@@ -283,6 +291,7 @@ LivingEntity.prototype.draw = function (ctx) {
 }
 
 LivingEntity.prototype.update = function () {
+	Entity.update();
     // if (this.health === 0) {
     //     this.currentAnimation = this.deathAnimation;
     // } else if (/* Attack button is pressed */) {
@@ -315,7 +324,9 @@ NonLivingEntity.prototype.setNonLiving = function (bool) {
 }
 
 NonLivingEntity.prototype.draw = function (ctx) {
-    ctx.drawImage(this.image, this.x - this.radius - this.game.getWindowX(), this.y - this.radius - this.game.getWindowY());
+  //  this.game.ctx.drawImage(this.image, 0, 0);
+  ctx.drawImage(this.image, 0, 0);
+  //ctx.drawImage(this.image, this.x - this.radius - this.game.getWindowX(), this.y - this.radius - this.game.getWindowY());
 }
 
 NonLivingEntity.prototype.update = function () {
