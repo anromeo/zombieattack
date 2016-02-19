@@ -141,16 +141,36 @@ LivingEntity.prototype.setDeathAnimation = function (spriteSheet, frameWidth, fr
 // }
 
 LivingEntity.prototype.draw = function (ctx) {
+    if (this.maxSpeed === 0) {
+        this.movingAnimation.frozen = true;
+    } else {
+        this.movingAnimation.frozen = false;
+    }
+
 	//console.log("angle LE draw: " + this.angle);
     if (this.movingAnimation && this.name === "playerControlled" && this.controlled === true) {
 
 //        console.log("Location: " + this.x + " " + this.y);
 //        console.log("Mouse: " + this.game.x + " " + this.game.y);
 
+
         var rad = Math.atan2(this.game.y - this.y, this.game.x - this.x);
         var deg = rad * (180 / Math.PI);
+
+          // console.log(deg/ 360);
+          // console.log(deg / 360);
+          // ctx.beginPath();
+          // ctx.strokeStyle = "red";
+          // ctx.lineWidth = 1;
+          // ctx.arc(
+          //   this.x - this.CenterOffsetX - this.game.getWindowX() + (deg/ 360) * this.radius,
+          //   this.y - this.CenterOffsetY - this.game.getWindowY() + (deg/ 360) * this.radius,
+          //   this.radius, 0, Math.PI * 2, false);
+          // ctx.closePath();
+          // ctx.stroke();
+
 		//this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius, this.y - this.radius, deg);
-        this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius - this.CenterOffsetX - this.game.getWindowX(), 
+    this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius - this.CenterOffsetX - this.game.getWindowX(), 
 		this.y - this.radius - this.CenterOffsetY - this.game.getWindowY(), deg,
 		this.SpriteRotateOffsetX, this.SpriteRotateOffsetY);
 		//console.log("this.SpriteRotateOffsetX" + this.SpriteRotateOffsetX);
@@ -244,10 +264,18 @@ LivingEntity.prototype.draw = function (ctx) {
         ctx.closePath();
         ctx.stroke();
 		
-		ctx.beginPath();
+		// ctx.beginPath();
+  //       ctx.strokeStyle = "white";
+  //       ctx.lineWidth = 1;
+  //       ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+  //       ctx.closePath();
+  //       ctx.stroke();
+  //   }
+
+    ctx.beginPath();
         ctx.strokeStyle = "white";
         ctx.lineWidth = 1;
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+        ctx.arc(this.x , this.y, this.radius, 0, Math.PI * 2, false);
         ctx.closePath();
         ctx.stroke();
     }

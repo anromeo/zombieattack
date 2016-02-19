@@ -5,6 +5,7 @@
 // only change code in selectAction function()
 // Source Used: http://jaran.de/goodbits/2011/07/17/calculating-an-intercept-course-to-a-target-with-constant-direction-and-velocity-in-a-2-dimensional-plane/
 
+
 function playerControlled(game) {
 	//LivingEntity.call(this, game, 0, 0, 0, 0, this.radius + Math.random() * (800 - this.radius * 2), this.radius + Math.random() * (800 - this.radius * 2));	
 	LivingEntity.call(this, game, 0, 0, 0, 0, game.surfaceWidth/2, game.surfaceHeight/2);
@@ -16,9 +17,13 @@ function playerControlled(game) {
     this.controlled = false;
     this.weapon = null;
 
+    this.currentSpecialMove = null;
+    this.specialMoves = null;
+
     this.game = game;
     this.name = "playerControlled";
     this.color = "Black";
+
     this.cooldown = 0;
     this.team = "blue";
     //this.corners = [{x:0, y:0}, {x:800, y:0}, {x:0, y:800}, {x:800, y:800}]
@@ -33,6 +38,48 @@ function playerControlled(game) {
 
 playerControlled.prototype = new LivingEntity();
 playerControlled.prototype.constructor = playerControlled;
+
+
+playerControlled.prototype.gameEffects = function() {
+    if (this.freezingTime && this.freezingTime > 0) {
+        var currentGameEntity;
+        for (var i = 0; i < this.game.entities.length; i++) {
+            currentGameEntity = this.game.entities[i];
+            currentGameEntity.maxSpeed = 0;
+        }
+        this.freezingTime -= this.game.clockTick;
+    }
+
+    if (this.freezingTime && this.freezingTime < 0) {
+        var currentGameEntity = null;
+        for (var i = 0; i < this.game.entities.length; i++) {
+            currentGameEntity = this.game.entities[i];
+            // console.log(this.allEntitiesOldSpeeds[currentGameEntity]);
+            currentGameEntity.maxSpeed = this.allEntitiesOldSpeeds[i];
+        }
+        this.freezingTime = null;
+    }
+}
+
+// Freezes Time for the current entities
+playerControlled.prototype.freezeTime = function () {
+    if (!this.freezingTime || this.freezingTime < 0) {
+        this.freezingTime = 6;
+        this.allEntitiesOldSpeeds = new Array();
+        var currentGameEntity;
+        for (var i = 0; i < this.game.entities.length; i++) {
+            currentGameEntity = this.game.entities[i];
+            this.allEntitiesOldSpeeds[i] = currentGameEntity.maxSpeed;
+            if (currentGameEntity.team != this.team) {
+                if (this.name === "playerControlled") {
+                    console.log("I am player controlled and have become frozen");
+                }
+                currentGameEntity.maxSpeed = 0;
+            }
+        }
+        console.log(this.allEntitiesOldSpeeds);
+    }
+}
 
 // This function will eventually move to the shooter class.
 playerControlled.prototype.attack = function(dir) {
@@ -149,18 +196,24 @@ playerControlled.prototype.aiSelectAction = function() {
         var closest = 800;
 
         // for every zombie
-        for (var i = 0; i < this.game.zombies.length; i++) {
+        for (var i = 0; i < this.game.entities.length; i++) {
 
             // determine if the zombie is the closest zombie to the AI
-            var ent = this.game.zombies[i];
-            dist = distance(ent, this);
+            var ent = this.game.entities[i];
 
-            // if the distance is closer than the currently closest zombie
-            if (dist < closest) {
+            // if the entity is not equal to this and the entity
+            // does not have the same team as this
+            // and the entity is not a NonLiving entity
+            if (ent !== this && ent.team !== this.team &&  ent.name !== "FlameThrower" && ent.name !== "NonLiving") {
+                dist = distance(ent, this);
 
-                // reassign the closest distance the target
-                closest = dist;
-                target = ent;
+                // if the distance is closer than the currently closest zombie
+                if (dist < closest) {
+
+                    // reassign the closest distance the target
+                    closest = dist;
+                    target = ent;
+                }
             }
         }
 
@@ -252,18 +305,25 @@ playerControlled.prototype.aiSelectAction = function() {
         // }
 
         // for every zombie
-        for (var i = 0; i < this.game.zombies.length; i++) {
+        for (var i = 0; i < this.game.entities.length; i++) {
 
             // determine if the zombie is the closest zombie to the AI
-            var ent = this.game.zombies[i];
-            dist = distance(ent, this);
+            var ent = this.game.entities[i];
 
-            // if the distance is closer than the currently closest zombie
-            if (dist < closest) {
 
-                // reassign the closest distance the target
-                closest = dist;
-                target = ent;
+            // if the entity is not equal to this and the entity
+            // does not have the same team as this
+            // and the entity is not a NonLiving entity
+            if (ent !== this && ent.team !== this.team && ent.name !== "FlameThrower" && ent.name !== "NonLiving") {
+                dist = distance(ent, this);
+
+                // if the distance is closer than the currently closest zombie
+                if (dist < closest) {
+
+                    // reassign the closest distance the target
+                    closest = dist;
+                    target = ent;
+                }
             }
         }
 
@@ -324,7 +384,7 @@ playerControlled.prototype.aiSelectAction = function() {
 
             // calculate where the zombie will be in order to determine where the target of the shot will be
             action.target = this.calculateInterceptionPoint(target, target.velocity, this, 200);
-
+            console.log("NAME: " + target.name + " | TEAM: " + target.team);
             action.target.x = action.target.x - this.radius;
             action.target.y = action.target.y - this.radius;
             
@@ -366,6 +426,7 @@ playerControlled.prototype.swapIfCanSwap = function(game) {
 }
 
 playerControlled.prototype.selectAction = function () {
+
     if (!this.controlled) {
         return this.aiSelectAction();
     }
@@ -381,6 +442,9 @@ playerControlled.prototype.selectAction = function () {
             // If the player has pressed a key '1' to '9' then swap players if
             // the other player exists
             this.swapIfCanSwap(this.game);            
+            if (this.game.keyState[32]) {
+                this.currentSpecialMove();
+            }
 
     		//left
     		if (this.game.keyState[37]||this.game.keyState[65]||this.game.keyState[97]) { //leftarrow, a, A
@@ -419,20 +483,37 @@ playerControlled.prototype.collide = function (other) {
     return distance(this, other) < this.radius + other.radius;
 };
 
+// playerControlled.prototype.collideLeft = function () {
+//     return (this.x - this.radius) < 0;
+// };
+
+// playerControlled.prototype.collideRight = function () {
+//     return (this.x + this.radius) > this.game.surfaceWidth;
+// };
+
+// playerControlled.prototype.collideTop = function () {
+//     return (this.y - this.radius) < 0;
+// };
+
+// playerControlled.prototype.collideBottom = function () {
+//     return (this.y + this.radius) > this.game.surfaceHeight;
+// };
+
+
 playerControlled.prototype.collideLeft = function () {
-    return (this.x - this.radius) < 0;
+    return (this.x - this.CenterOffsetX - this.game.getWindowX()) < 0;
 };
 
 playerControlled.prototype.collideRight = function () {
-    return (this.x + this.radius) > this.game.surfaceWidth;
+   return (this.x - this.CenterOffsetX - this.game.getWindowX()) > 672;
 };
 
 playerControlled.prototype.collideTop = function () {
-    return (this.y - this.radius) < 0;
+   return (this.y - this.CenterOffsetY - this.game.getWindowY()) < 0;
 };
 
 playerControlled.prototype.collideBottom = function () {
-    return (this.y + this.radius) > this.game.surfaceHeight;
+   return (this.y - this.CenterOffsetY - this.game.getWindowY()) > 526;
 };
 
 playerControlled.prototype.aiUpdate = function() {
@@ -471,7 +552,7 @@ playerControlled.prototype.aiUpdate = function() {
     if (this.collideLeft() || this.collideRight()) {
         this.velocity.x = -this.velocity.x * friction;
         if (this.collideLeft()) this.x = this.radius;
-        if (this.collideRight()) this.x = this.game.surfaceWidth - this.radius;
+        if (this.collideRight()) this.x = 900 - this.radius;
         this.x += this.velocity.x * this.game.clockTick;
         this.y += this.velocity.y * this.game.clockTick;
     }
@@ -479,7 +560,7 @@ playerControlled.prototype.aiUpdate = function() {
     if (this.collideTop() || this.collideBottom()) {
         this.velocity.y = -this.velocity.y * friction;
         if (this.collideTop()) this.y = this.radius;
-        if (this.collideBottom()) this.y = this.game.surfaceHeight - this.radius;
+        if (this.collideBottom()) this.y = 900 - this.radius;
         this.x += this.velocity.x * this.game.clockTick;
         this.y += this.velocity.y * this.game.clockTick;
     }
@@ -549,7 +630,12 @@ playerControlled.prototype.aiUpdate = function() {
 
 playerControlled.prototype.update = function () {
 
-
+    this.gameEffects();
+    if (!this.specialMoves) {
+        this.specialMoves = new Array();
+        this.specialMoves[0] = this.freezeTime;
+        this.currentSpecialMove = this.specialMoves[0];
+    }
     if (!this.controlled) {
         this.aiUpdate();
         return;
@@ -687,6 +773,40 @@ playerControlled.prototype.update = function () {
     //     }
     // }
 
+    for (var i = 0; i < this.game.entities.length; i++) {
+        var ent = this.game.entities[i];
+        if (ent !== this && this.collide(ent)) {
+            if (ent.team !== this.team && ent.name !== "Rock" && ent.name !== "FlameThrower" && ent.name !== "NonLiving") {
+                var temp = { x: this.velocity.x, y: this.velocity.y };
+                var dist = distance(this, ent);
+                var delta = this.radius + ent.radius - dist;
+
+                if (dist) {
+                    var difX = (this.x - ent.x) / dist;
+                    var difY = (this.y - ent.y) / dist;
+
+
+                    this.x += difX * delta / 2;
+                    this.y += difY * delta / 2;
+                    ent.x -= difX * delta / 2;
+                    ent.y -= difY * delta / 2;
+
+                    this.velocity.x = ent.velocity.x * friction;
+                    this.velocity.y = ent.velocity.y * friction;
+                    ent.velocity.x = temp.x * friction;
+                    ent.velocity.y = temp.y * friction;
+                    this.x += this.velocity.x * this.game.clockTick;
+                    this.y += this.velocity.y * this.game.clockTick;
+                    ent.x += ent.velocity.x * this.game.clockTick;
+                    ent.y += ent.velocity.y * this.game.clockTick;
+                }
+            }
+            // if (ent.name === "Rock" && this.rocks < 2) {
+                // this.rocks++;
+                // ent.removeFromWorld = true;
+            // }
+        }
+    }
     
     var rock;
     var flame;
@@ -743,9 +863,9 @@ playerControlled.prototype.update = function () {
     this.velocity.y -= (1 - friction) * this.game.clockTick * this.velocity.y;
 
     if (flame) {
-          var Distance = distance(this, flame);
-          console.log(Distance);
-          }
+        var Distance = distance(this, flame);
+        console.log(Distance);
+    }
 
 };
 

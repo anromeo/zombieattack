@@ -38,7 +38,7 @@ function GameEngine() {
     this.zombieCooldownNum = 3;  //how often a zombie will appear
 	this.zombieCooldown = this.zombieCooldownNum;
 	this.kills = null;
-    this.showOutlines = false;
+    this.showOutlines = true;
     this.ctx = null;
     this.click = null;
     this.mouse = null;
@@ -73,20 +73,22 @@ GameEngine.prototype.getWindowY = function() {
 }
 
 GameEngine.prototype.setWindowX = function(x) {
+    var maxWindowX = 672;
     if (x < 0) {
         this.windowX = 0;
-    } else if (x > 400) {
-        this.windowX = 400;
+    } else if (x > maxWindowX) {
+        this.windowX = maxWindowX;
     } else {
         this.windowX = x;
     }
 }
 
 GameEngine.prototype.setWindowY = function(y) {
-        if (y < 0) {
+    var maxWindowY = 554;
+    if (y < 0) {
         this.windowY = 0;
-    } else if (y > 400) {
-        this.windowY = 400;
+    } else if (y > maxWindowY) {
+        this.windowY = maxWindowY;
     } else {
         this.windowY = y;
     }
@@ -95,8 +97,8 @@ GameEngine.prototype.setWindowY = function(y) {
 GameEngine.prototype.init = function (ctx) {
     this.ctx = ctx;
     this.ctx.showOutlines = false;
-    this.surfaceWidth = this.ctx.canvas.width;
-    this.surfaceHeight = this.ctx.canvas.height;
+    this.surfaceWidth = 1000;
+    this.surfaceHeight = 1000;
     this.playerX = this.surfaceWidth/2;
     this.playerY = this.surfaceHeight/2;
 	console.log("surface: " + this.surfaceWidth + " " + this.surfaceHeight)
