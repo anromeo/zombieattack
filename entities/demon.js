@@ -35,3 +35,5 @@ Demon.prototype.update = function () {
     this.currentAnimation = this.movingAnimation;
     Entity.prototype.update.call(this);
 }
+
+ASSET_MANAGER.queueDownload("./images/demon.png");
