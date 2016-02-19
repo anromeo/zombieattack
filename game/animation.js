@@ -32,8 +32,17 @@ function Animation(spriteSheet, frameWidth, frameHeight, frameDuration, frames, 
 //                  this.frameHeight);
 // }
 
-Animation.prototype.drawFrameRotate = function (tick, ctx, x, y, angle) {
-    this.elapsedTime += tick;
+Animation.prototype.drawFrameRotate = function (tick, ctx, x, y, theAngle, xOffset, yOffset) {
+
+    if (xOffset === undefined) {
+        xOffset = 0;
+    }
+    if (yOffset = 0) {
+        yOffset = 0;
+    }
+
+    var angle = Math.floor(theAngle);
+	this.elapsedTime += tick;
     if (this.isDone()) {
         if (this.loop) this.elapsedTime = 0;
     }
@@ -50,14 +59,22 @@ Animation.prototype.drawFrameRotate = function (tick, ctx, x, y, angle) {
         this.currentAngleImage[angle] = new Array();
     }
     if (!this.currentAngleImage[angle][frame]) {
-        this.currentAngleImage[angle][frame] = this.rotateAndCache(angle, xindex, yindex);
+        this.currentAngleImage[angle][frame] = this.rotateAndCache(angle, xindex, yindex, xOffset, yOffset);
     }
 
-    ctx.drawImage(this.currentAngleImage[angle][frame], x, y);
+    if (ctx !== null) {
+        ctx.drawImage(this.currentAngleImage[angle][frame], x, y);
+    }
 }
 
-Animation.prototype.rotateAndCache = function (angle, xindex, yindex) {
-    console.log("Rotating and Caching");
+Animation.prototype.rotateAndCache = function (angle, xindex, yindex, translatex, translatey) {
+    if (translatex === undefined) {
+        translatex = 0;
+    }
+    if (translatey === undefined) {
+        translatey = 0
+    }
+    //console.log("Rotating and Caching");
     var offscreenCanvas = document.createElement('canvas');
     var size = Math.max(this.frameWidth, this.frameHeight);
     offscreenCanvas.width = size;
@@ -66,7 +83,7 @@ Animation.prototype.rotateAndCache = function (angle, xindex, yindex) {
     offscreenCtx.save();
     offscreenCtx.translate(size / 2, size / 2);
     offscreenCtx.rotate(angle * Math.PI/180);
-    offscreenCtx.translate(0, 0);
+    offscreenCtx.translate(translatex, translatey);
     offscreenCtx.drawImage(this.spriteSheet,
                  xindex * this.frameWidth, yindex * this.frameHeight,  // source from sheet
                  this.frameWidth, this.frameHeight,

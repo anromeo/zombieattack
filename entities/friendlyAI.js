@@ -4,7 +4,6 @@
 
 // only change code in selectAction function()
 // Source Used: http://jaran.de/goodbits/2011/07/17/calculating-an-intercept-course-to-a-target-with-constant-direction-and-velocity-in-a-2-dimensional-plane/
-
 function friendlyAI(game) {
     this.player = 1;
     this.radius = 10;
@@ -13,7 +12,7 @@ function friendlyAI(game) {
     this.name = "friendlyAI";
     this.color = "Grey";
     this.cooldown = 0;
-	this.corners = [{x:0, y:0}, {x:800, y:0}, {x:0, y:800}, {x:800, y:800}]
+    this.corners = [{x:0, y:0}, {x:800, y:0}, {x:0, y:800}, {x:800, y:800}]
     Entity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2), this.radius + Math.random() * (800 - this.radius * 2));
 
     this.velocity = { x: 0, y: 0 };
@@ -42,11 +41,11 @@ friendlyAI.prototype.selectAction = function () {
     var closest = 1000;
     var targetZombie = null;
     this.visualRadius = 500;
-	this.zombieRadius = 50;
-	this.closeZombieRadius = 30;
-	this.cornerRadius = 300;
-	
-	var nearZombie = false;
+    this.zombieRadius = 50;
+    this.closeZombieRadius = 30;
+    this.cornerRadius = 300;
+  
+    var nearZombie = false;
 
     for (var i = 0; i < this.game.zombies.length; i++) {
         var thisZombie = this.game.zombies[i];
@@ -60,9 +59,9 @@ friendlyAI.prototype.selectAction = function () {
             var difY = (thisZombie.y - this.y) / dist;
             action.direction.x -= difX * acceleration / (dist * dist);
             action.direction.y -= difY * acceleration / (dist * dist);
-			if (this.collide({x: thisZombie.x, y: thisZombie.y, radius: this.closeZombieRadius})) {
-				nearZombie = true;
-			} 
+      			if (this.collide({x: thisZombie.x, y: thisZombie.y, radius: this.closeZombieRadius})) {
+      				nearZombie = true;
+      			} 
         }
     }
 
@@ -268,20 +267,20 @@ friendlyAI.prototype.update = function () {
         this.cooldown = 1;
         this.rocks--;
         var target = this.action.target;
-		var dir = null;
-		if (target != null) {
-			dir = direction(target, this);
-		}        
-		if (dir != null) {
-			var rock = new Rock(this.game);
-			rock.x = this.x + dir.x * (this.radius + rock.radius + 20);
-			rock.y = this.y + dir.y * (this.radius + rock.radius + 20);
-			rock.velocity.x = dir.x * rock.maxSpeed;
-			rock.velocity.y = dir.y * rock.maxSpeed;
-			rock.thrown = true;
-			rock.thrower = this;
-			this.game.addEntity(rock);
-		}
+        var dir = null;
+        if (target != null) {
+          dir = direction(target, this);
+        }        
+        if (dir != null) {
+          var rock = new Rock(this.game);
+          rock.x = this.x + dir.x * (this.radius + rock.radius + 20);
+          rock.y = this.y + dir.y * (this.radius + rock.radius + 20);
+          rock.velocity.x = dir.x * rock.maxSpeed;
+          rock.velocity.y = dir.y * rock.maxSpeed;
+          rock.thrown = true;
+          rock.thrower = this;
+          this.game.addEntity(rock);
+        }
     }
 
     this.velocity.x -= (1 - friction) * this.game.clockTick * this.velocity.x;
