@@ -98,6 +98,8 @@ ASSET_MANAGER.downloadAll(function () {
     // var boss = new Boss(gameEngine, ASSET_MANAGER.getAsset("./images/boss.png"));
 	var flamethrower = new FlameThrower(gameEngine, ASSET_MANAGER.getAsset("./images/flamethrower.png"));
 
+    gameEngine.addEntity(new Wall(gameEngine, 38, 132, 70, 210));
+
     gameEngine.addEntity(flamethrower);
     player.controlled = true;
     gameEngine.addEntity(player);

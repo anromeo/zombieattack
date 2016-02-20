@@ -785,7 +785,9 @@ NonLivingEntity.prototype.setNonLiving = function (bool) {
 NonLivingEntity.prototype.draw = function (ctx) {
   //  this.game.ctx.drawImage(this.image, 0, 0);
   // ctx.drawImage(this.image, 0, 0);
-  ctx.drawImage(this.image, this.x - this.radius - this.game.getWindowX(), this.y - this.radius - this.game.getWindowY());
+  if (this.image) {
+      ctx.drawImage(this.image, this.x - this.radius - this.game.getWindowX(), this.y - this.radius - this.game.getWindowY());
+  }
 }
 
 NonLivingEntity.prototype.update = function () {
