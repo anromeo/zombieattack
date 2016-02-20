@@ -70,8 +70,19 @@ function GameEngine() {
     this.surfaceWidth = null; // the width of the canvas
     this.surfaceHeight = null; // the height of the canvas
 
-    this.worldWidth = 1600; // the width of the world within the canvas
-    this.worldHeight = 1600; // the height of the world within the canvas
+    // FOREST MAP
+    // this.worldWidth = 1600; // the width of the world within the canvas FOREST
+    // this.worldHeight = 1600; // the height of the world within the canvas FOREST
+
+    // this.mapRatioWidth = 1600; //
+    // this.mapRationHeight = 1600;
+
+    // HOSPITAL MAP
+    this.worldWidth = 1400; // the width of the world within the canvas HOSPITAL
+    this.worldHeight = 1200; // the height of the world within the canvas HOSPITAL
+
+    this.mapRatioWidth = 400;
+    this.mapRatioHeight = 400;
 
     this.windowX = 0; // This is the x-coordinate of the top left corner of the canvas currently
     this.windowY = 0; // This is the y-coordinate of the top left corner of the canvas currently
@@ -284,13 +295,17 @@ GameEngine.prototype.addEntity = function (entity) {
  */
 GameEngine.prototype.draw = function (top, left) {
 
+    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+
+    // // The speed in which the canvas is moving when the player is moving
+    // var ratio = 2; //1.2
     // The speed in which the canvas is moving when the player is moving
-    var ratio = 2; //1.2
+    var ratio = .5; //1.2
 
     // Changed this.worldWidth and this.worldHeight from 1600 magic numbers
     // Changed this.surfaceWidth and this.surfaceHeight from 800 magic numbers
     // The forest level that is being drawn
-    this.ctx.drawImage(ASSET_MANAGER.getAsset("./images/ForestLevelBig.png"), this.getWindowX() * ratio, this.getWindowY() * ratio, this.worldWidth, this.worldHeight, 0, 0, this.surfaceWidth, this.surfaceHeight);
+    this.ctx.drawImage(ASSET_MANAGER.getAsset("./images/hospital.png"), this.getWindowX() * ratio, this.getWindowY() * ratio, this.mapRatioHeight, this.mapRatioWidth, 0, 0, this.surfaceWidth, this.surfaceHeight);
 
     // draws the number of kills onto the canvas
     this.ctx.beginPath();
@@ -306,6 +321,8 @@ GameEngine.prototype.draw = function (top, left) {
         // then calls the draw method on the entities and passes the ctx so that they can be drawn
         this.entities[i].draw(this.ctx);
     }
+
+    this.ctx.restore();
 }
 
 /**

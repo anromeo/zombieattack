@@ -55,6 +55,7 @@ ASSET_MANAGER.queueDownload("./images/Player2.png");
 ASSET_MANAGER.queueDownload("./images/background.png");
 
 ASSET_MANAGER.queueDownload("./images/ForestLevelBig.png");
+ASSET_MANAGER.queueDownload("./images/hospital.png");
 ASSET_MANAGER.queueDownload("./images/boss.png");
 ASSET_MANAGER.queueDownload("./images/flamethrower.png");
 ASSET_MANAGER.queueDownload("./images/flame2.png");
