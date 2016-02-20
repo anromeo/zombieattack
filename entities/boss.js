@@ -2,7 +2,8 @@ function Boss(game, spritesheet) {
     this.animation = new Animation(spritesheet, 132, 87, 0.05, 1, true, false); 
     this.radius = 32;
     this.name = "Zombie";
-    LivingEntity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, 150, 150);
+//    LivingEntity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, 150, 150);
+    LivingEntity.call(this, game, 150, 150);
     this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/boss.png"), 132, 187, .05, 1, true, false, 1);
     this.x = 0;
     this.y = 0;

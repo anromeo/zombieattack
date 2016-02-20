@@ -48,7 +48,7 @@ function GameEngine() {
     this.entities = []; // All entities of the game
     this.weapons = []; // All the weapons of the game
     // added from 435 ZOMBIE AI Project
-    this.zombies = []; // All the Zombies | TODO ? Get rid or change ?
+    this.villains = []; // All the Zombies | TODO ? Get rid or change ?
     this.players = []; // All the Players | TODO ? Get rid or change ?
     this.rocks = []; // All the rocks or bullets
 
@@ -273,8 +273,7 @@ GameEngine.prototype.addEntity = function (entity) {
     this.entities.push(entity);
     // TODO Delete this!
     if (entity.name === "FlameThrower") this.weapons.push(entity);
-    if (entity.name === "Zombie") this.zombies.push(entity);
-    if (entity.name === "Rock") this.rocks.push(entity);
+    if (entity.type === "villain") this.villains.push(entity);
     if (entity.name === "playerControlled") this.players.push(entity);
 }
 
@@ -292,6 +291,14 @@ GameEngine.prototype.draw = function (top, left) {
     // Changed this.surfaceWidth and this.surfaceHeight from 800 magic numbers
     // The forest level that is being drawn
     this.ctx.drawImage(ASSET_MANAGER.getAsset("./images/ForestLevelBig.png"), this.getWindowX() * ratio, this.getWindowY() * ratio, this.worldWidth, this.worldHeight, 0, 0, this.surfaceWidth, this.surfaceHeight);
+
+    // draws the number of kills onto the canvas
+    this.ctx.beginPath();
+    this.ctx.fillStyle = "Red";
+    this.ctx.font = "48px serif";
+    var message = "Kills: " + this.kills;
+    this.ctx.fillText(message, 10, 50);
+    this.ctx.stroke(); 
 
     // this cycles through the entities that exist in the game
     for (var i = 0; i < this.entities.length; i++) {
@@ -352,11 +359,11 @@ GameEngine.prototype.update = function () {
                 // the formula for the curent zombie cooldown.
                 this.zombieCooldown = this.zombieCooldownNumInitial * Math.pow((1/2), dist / halfLife);
             }
-        }
 
-        // Adds the zombie entity to the game
-        var zom = new Zombie(this);
-        this.addEntity(zom);
+            // Adds the zombie entity to the game
+            var zom = new Villain(this);
+            this.addEntity(zom);
+        }
     }
 
     // cyles through all of the entities once again
@@ -381,9 +388,9 @@ GameEngine.prototype.update = function () {
         }
     }
     // TODO remove these two arrays; we will not be using them anymore
-    for (var i = this.zombies.length - 1; i >= 0; --i) {
-        if (this.zombies[i].removeFromWorld) {
-            this.zombies.splice(i, 1);
+    for (var i = this.villains.length - 1; i >= 0; --i) {
+        if (this.villains[i].removeFromWorld) {
+            this.villains.splice(i, 1);
         }
     }
     for (var i = this.rocks.length - 1; i >= 0; --i) {

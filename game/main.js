@@ -102,6 +102,10 @@ ASSET_MANAGER.downloadAll(function () {
     gameEngine.addEntity(player);
     var player2 = new playerControlled(gameEngine);
     gameEngine.addEntity(player2);
+
+    var player3 = new playerControlled(gameEngine);
+    gameEngine.addEntity(player3);
+
     gameEngine.start();
     //gameEngine.addEntity(boss);
   //  gameEngine.addEntity(background);
