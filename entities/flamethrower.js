@@ -3,8 +3,11 @@ function FlameThrower(game, image) {
     NonLivingEntity.prototype.setNonLiving.call(this, true);
     this.image = image;
     this.game = game;
-    this.x = Math.random() * 600;
-    this.y = Math.random() * 600;
+    // this.x = Math.random() * 600;
+    // this.y = Math.random() * 600;
+    this.x = 0;
+    this.y = 100;
+
     this.shooting = false;
     this.radius = 30;
     this.name = "FlameThrower";
@@ -30,8 +33,6 @@ FlameThrower.prototype.draw = function (ctx) {
 }
 
 function Flame(game, spritesheet) {
-    this.x = this.playerX;
-    this.y = this.playerY;
     Entity.call(this, game, this.x, this.y);
     this.spriteSheet = spritesheet;
     this.animation = new Animation(spritesheet, 38, 39, 0.05, 5, false, false, 5);  
@@ -138,7 +139,10 @@ Flame.prototype.update = function () {
 }
 
 Flame.prototype.draw = function (ctx) {
-    var rad = Math.atan2(this.game.playerY - this.game.y, this.game.playerX - this.game.x);
-    var deg = rad * (180 / Math.PI);
-    this.animation.drawFrameRotate(this.game.clockTick, this.ctx, this.x - this.game.getWindowX() - this.game.getWindowY(), this.y, 0, 0, 5);
+
+//    console.log("this.X: " + this.x + "| this.Y: " + this.y);
+    // Removed game.x and game.y
+    // var rad = Math.atan2(this.game.playerY - this.game.y, this.game.playerX - this.game.x);
+    // var deg = rad * (180 / Math.PI);
+    this.animation.drawFrameRotate(this.game.clockTick, this.ctx, this.x - this.game.getWindowX(), this.y- this.game.getWindowY(), 0, 0, 5);
  }
