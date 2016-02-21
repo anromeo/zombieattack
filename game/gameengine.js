@@ -105,7 +105,7 @@ GameEngine.prototype.setMap = function(map) {
         for (i = 0; i < this.map.walls.length; i++) {
             // this.entities["wall" + i] = this.map.walls[i];
             this.entities.push(this.map.walls[i]);
-            console.log(("wall" + i).name);
+            // console.log(("wall" + i).name);
 
         }
 
