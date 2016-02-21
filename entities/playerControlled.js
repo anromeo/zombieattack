@@ -7,10 +7,15 @@
 
 function playerControlled(game) {
     //LivingEntity.call(this, game, 0, 0, 0, 0, this.radius + Math.random() * (800 - this.radius * 2), this.radius + Math.random() * (800 - this.radius * 2));  
-    LivingEntity.call(this, game, game.surfaceWidth/2, game.surfaceHeight/2);
+    LivingEntity.call(this, game,
+        game.surfaceWidth/2 * Math.random(), game.surfaceHeight/2 * Math.random());
     this.player = 1;
-    this.SpriteWidth = 80;
-    this.SpriteHeight = 43;
+    // this.SpriteWidth = 80;
+    // this.SpriteHeight = 43;
+
+    this.SpriteWidth = 110;
+    this.SpriteHeight = 176 / 3;
+
     this.radius = 30;
     this.strength = 100;
     this.controlled = false;
@@ -23,6 +28,8 @@ function playerControlled(game) {
     this.team = "blue";
     this.shootingLine = true;
     this.angleOffset = 0;
+    this.radialOffset = 15;
+
     this.cooldown = 0;
     this.randomLine = {x:0, y:0};
     this.linecooldown = .002;
@@ -35,7 +42,7 @@ function playerControlled(game) {
     this.CenterOffsetY = 10; // puts the center of the sprite in the center of the entity
     this.SpriteRotateOffsetX = 8; //describes the point of rotation on the sprite changed from 1/2 width
     this.SpriteRotateOffsetY = -7; //describes the point of rotation on the sprite changed from 1/2 height
-    this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/Player2.png"), this.SpriteWidth, this.SpriteHeight, .05, 1, true, false, 1);
+    this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/shooter-walking2.png"), this.SpriteWidth, this.SpriteHeight, .09, 8, true, false, 3);
     this.velocity = { x: 0, y: 0 };
 };
 
@@ -192,7 +199,7 @@ playerControlled.prototype.selectAction = function () {
 //     if (this.collideLeft() || this.collideRight()) {
 //         this.velocity.x = -this.velocity.x * friction;
 //         if (this.collideLeft()) this.x = this.radius;
-//         if (this.collideRight()) this.x = this.game.worldWidth - this.radius;
+//         if (this.collideRight()) this.x = this.game.map.worldWidth - this.radius;
 //         this.x += this.velocity.x * this.game.clockTick;
 //         this.y += this.velocity.y * this.game.clockTick;
 //     }
@@ -200,7 +207,7 @@ playerControlled.prototype.selectAction = function () {
 //     if (this.collideTop() || this.collideBottom()) {
 //         this.velocity.y = -this.velocity.y * friction;
 //         if (this.collideTop()) this.y = this.radius;
-//         if (this.collideBottom()) this.y = this.game.worldWidth - this.radius;
+//         if (this.collideBottom()) this.y = this.game.map.worldWidth - this.radius;
 //         this.x += this.velocity.x * this.game.clockTick;
 //         this.y += this.velocity.y * this.game.clockTick;
 //     }
@@ -325,7 +332,7 @@ playerControlled.prototype.update = function () {
     if (this.collideLeft() || this.collideRight()) {
         this.velocity.x = -this.velocity.x * friction;
         if (this.collideLeft()) this.x = this.radius;
-        if (this.collideRight()) this.x = this.game.worldWidth - this.radius;
+        if (this.collideRight()) this.x = this.game.map.worldWidth - this.radius;
         this.x += this.velocity.x * this.game.clockTick;
         this.y += this.velocity.y * this.game.clockTick;
     }

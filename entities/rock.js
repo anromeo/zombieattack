@@ -24,7 +24,7 @@ Rock.prototype.collideLeft = function () {
 };
 
 Rock.prototype.collideRight = function () {
-    return (this.x + this.radius) > this.game.worldWidth;
+    return (this.x + this.radius) > this.game.map.worldWidth;
 };
 
 Rock.prototype.collideTop = function () {
@@ -32,7 +32,7 @@ Rock.prototype.collideTop = function () {
 };
 
 Rock.prototype.collideBottom = function () {
-    return (this.y + this.radius) > this.game.worldHeight;
+    return (this.y + this.radius) > this.game.map.worldHeight;
 };
 
 Rock.prototype.update = function () {

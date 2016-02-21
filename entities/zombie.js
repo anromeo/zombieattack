@@ -28,7 +28,7 @@ function Zombie(game, clone) {
     this.maxSpeed = minSpeed + (maxSpeed - minSpeed) * Math.random();
     this.healthMAX = 100;
 	this.health = this.healthMAX;
-    this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/ZombieWalking.png"), this.SpriteHeight, this.SpriteWidth, .05, 25, true, false, 5);
+    this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/zombie-moving.png"), this.SpriteHeight, this.SpriteWidth, .05, 25, true, false, 5);
         // Entity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2), this.radius + Math.random() * (800 - this.radius * 2));
     // this.velocity = { x: Math.random() * 1000, y: Math.random() * 1000 };
     // var speed = Math.sqrt(this.directionX * this.directionX + this.directionY * this.directionY);

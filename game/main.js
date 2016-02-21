@@ -60,6 +60,13 @@ ASSET_MANAGER.queueDownload("./images/boss.png");
 ASSET_MANAGER.queueDownload("./images/flamethrower.png");
 ASSET_MANAGER.queueDownload("./images/flame2.png");
 ASSET_MANAGER.queueDownload("./images/cone.png");
+ASSET_MANAGER.queueDownload("./images/shooter-walking.png");
+ASSET_MANAGER.queueDownload("./images/shooter-walking2.png");
+
+// Moving Animations
+ASSET_MANAGER.queueDownload("./images/boss-moving.png");
+ASSET_MANAGER.queueDownload("./images/zombie-moving.png");
+
 
 ASSET_MANAGER.downloadAll(function () {
     console.log("starting up da sheild");
@@ -114,7 +121,7 @@ ASSET_MANAGER.downloadAll(function () {
 
     // Map(game, image, name, worldWidth, worldHeight, mapRatioWidth, mapRatioHeight, ratio) 
 
-    var hospital = new Map(gameEngine, ASSET_MANAGER.getAsset("./images/hospital.png"), "Hospital", 1400, 1200, 400, 400, 0.5);
+    var hospital = new Map(gameEngine, ASSET_MANAGER.getAsset("./images/hospital.png"), "Hospital", 1400, 1350, 400, 400, 0.5);
      hospital.addWall(new Wall(gameEngine, 38, 132, 70, 210));
 
     gameEngine.setMap(hospital);
@@ -122,6 +129,10 @@ ASSET_MANAGER.downloadAll(function () {
 
     gameEngine.addEntity(flamethrower);
     player.controlled = true;
+
+    var boss = new Boss(gameEngine);
+    gameEngine.addEntity(boss);
+
     gameEngine.addEntity(player);
     var player2 = new playerControlled(gameEngine);
     gameEngine.addEntity(player2);

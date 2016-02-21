@@ -1,4 +1,4 @@
-function FlameThrower(game, image) {
+function Portal(game, image) {
     // NonLivingEntity.prototype.setImage.call(this, image);
     NonLivingEntity.prototype.setNonLiving.call(this, true);
     this.image = image;
@@ -13,13 +13,13 @@ function FlameThrower(game, image) {
 
     this.shooting = false;
     this.radius = 30;
-    this.name = "FlameThrower";
-    this.type = "weapon";
+    this.name = "Portal";
+    this.type = "portal";
     this.newTemp = 0;
     this.newTemp2 = 0;
 }
 
-FlameThrower.prototype = new NonLivingEntity();
+Portal.prototype = new NonLivingEntity();
 FlameThrower.prototype.constructor = FlameThrower;
 
 FlameThrower.prototype.update = function () {

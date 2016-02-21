@@ -135,7 +135,9 @@ GameEngine.prototype.getWindowY = function() {
  */
 GameEngine.prototype.setWindowX = function(x) {
 
-    var maxX = this.worldWidth - this.surfaceWidth; // World Width minus the Canvas Width | the 1600 - 800  for forest world
+    console.log("World Width: " + this.map.worldWidth);
+    console.log("Surface Width: " + this.surfaceWidth);
+    var maxX = this.map.worldWidth - this.surfaceWidth; // World Width minus the Canvas Width | the 1600 - 800  for forest world
 
     // if the X getting passed in is less than 0, then this.WindowX is less than 0
     if (x < 0) {
@@ -160,7 +162,10 @@ GameEngine.prototype.setWindowX = function(x) {
  */
 GameEngine.prototype.setWindowY = function(y) {
 
-    var maxY = this.worldHeight - this.surfaceHeight; // World Height minus the Canvas Height | the 1600 - 800  for forest world
+    console.log("World Height: " + this.map.worldHeight);
+    console.log("Surface Height: " + this.surfaceHeight);
+
+    var maxY = this.map.worldHeight - this.surfaceHeight; // World Height minus the Canvas Height | the 1600 - 800  for forest world
 
     // if the Y getting passed in is less than 0, then this.WindowY is less than 0
     if (y < 0) {
@@ -321,10 +326,12 @@ GameEngine.prototype.draw = function (top, left) {
     // var ratio = 2; //1.2
     // The speed in which the canvas is moving when the player is moving
 
+    // Uses the current map image
+    // Uses the current map's ratio, mapRatioHeight, mapRatioWidth to deterine map
     // Changed this.worldWidth and this.worldHeight from 1600 magic numbers
     // Changed this.surfaceWidth and this.surfaceHeight from 800 magic numbers
     // The forest level that is being drawn
-    this.ctx.drawImage(this.map.image, this.getWindowX() * this.map.ratio, this.getWindowY() * this.map.ratio, this.map.mapRatioHeight, this.map.mapRatioWidth, 0, 0, this.surfaceWidth, this.surfaceHeight);
+    this.ctx.drawImage(this.map.image, this.getWindowX() * this.map.ratio, this.getWindowY() * this.map.ratio, this.map.mapRatioWidth, this.map.mapRatioHeight, 0, 0, this.surfaceWidth, this.surfaceHeight);
 
     // draws the number of kills onto the canvas
     this.ctx.beginPath();

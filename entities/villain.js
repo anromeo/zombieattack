@@ -26,7 +26,7 @@ function Villain(game, clone) {
     this.healthMAX = 100;
 	this.health = this.healthMAX;
     this.strength = 40;
-    this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/ZombieWalking.png"), this.SpriteHeight, this.SpriteWidth, .05, 25, true, false, 5);
+    this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/zombie-moving.png"), this.SpriteHeight, this.SpriteWidth, .05, 25, true, false, 5);
 
     this.velocity = { x: Math.random() * 1000, y: Math.random() * 1000 };
     var speed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.y * this.velocity.y);

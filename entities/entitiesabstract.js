@@ -66,6 +66,8 @@ function LivingEntity(game, x, y) {
   	this.healthMAX = 100; // determines the maximum health this LivingEntity can have
   	this.health = this.healthMAX; // determines the current health of this LivingEntity
 
+    this.radialOffset = 0; // the offset of the radius
+
   	this.angle = 0; // determines the current angle set on this LivingEntity
 
     this.strength = 25; // determines the current damage done by this LivingEntity
@@ -321,7 +323,6 @@ LivingEntity.prototype.aiSelectAction = function(type) {
         if (ent !== this) {
             // IF the LivingEntity is alive
             if (!ent.isNonLiving) {
-
                 // IF the LivingEntity has a team and team does not equal this LivingEntity's team
                 if (this.team !== undefined && this.team !== ent.team) {
 
@@ -346,6 +347,7 @@ LivingEntity.prototype.aiSelectAction = function(type) {
                         // REMOVE the ent from the world
                         ent.removeFromWorld = true;
                     }
+
 
                 // ELSE IF this is a part of my team and colliding with this
                 } else if (this.team !== undefined && this.team === ent.team) {
@@ -457,8 +459,8 @@ LivingEntity.prototype.drawPlayer = function(ctx) {
     deg -= angleOffset; // subtract the angle's offset by this offset
     
     // draw the current player
-    this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius - this.CenterOffsetX - this.game.getWindowX(), 
-      this.y - this.radius - this.CenterOffsetY - this.game.getWindowY(), deg,
+    this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius - this.CenterOffsetX - this.game.getWindowX() - this.radialOffset, 
+      this.y - this.radius - this.CenterOffsetY - this.game.getWindowY() - this.radialOffset, deg,
       this.SpriteRotateOffsetX, this.SpriteRotateOffsetY);
 }
 
@@ -493,7 +495,12 @@ LivingEntity.prototype.drawOutlines = function(ctx) {
     this.drawCircle(ctx, "purple", this.canvasX + this.CenterOffsetX, this.canvasY + this.CenterOffsetY);
     this.drawCircle(ctx, "green", this.canvasX + this.SpriteWidth, this.canvasY + this.SpriteHeight);
     this.drawCircle(ctx, "pink", this.canvasX + this.radius, this.canvasY + this.radius);
-    this.drawCircle(ctx, "white", this.canvasX, this.canvasY, this.radius);    
+    this.drawCircle(ctx, "orange", this.canvasX + this.radialOffset, this.canvasY + this.radialOffset);
+
+    this.drawCircle(ctx, "black", this.canvasX, this.canvasY, this.radius);
+
+    // this.drawCircle(ctx, "white", this.canvasX + this.radialOffset, this.canvasY  + this.radialOffset, this.radius);    
+
 }
 
 /**
@@ -578,7 +585,7 @@ LivingEntity.prototype.draw = function (ctx) {
 
 
     } else { // If any uncontrolled LivingEntity
-        this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius - this.game.getWindowX(), this.y - this.radius - this.game.getWindowY(), this.angle);
+        this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius - this.game.getWindowX() - this.radialOffset, this.y - this.radius - this.game.getWindowY() - this.radialOffset, this.angle);
     }
 	
 	  // SHOW health bar if set
@@ -603,7 +610,7 @@ LivingEntity.prototype.collideLeft = function () {
 };
 
 LivingEntity.prototype.collideRight = function () {
-    return (this.x + this.radius) > this.game.worldWidth;
+    return (this.x + this.radius) > this.game.map.worldWidth;
 };
 
 LivingEntity.prototype.collideTop = function () {
@@ -611,14 +618,14 @@ LivingEntity.prototype.collideTop = function () {
 };
 
 LivingEntity.prototype.collideBottom = function () {
-    return (this.y + this.radius) > this.game.worldHeight;
+    return (this.y + this.radius) > this.game.map.worldHeight;
 };
 
 
 LivingEntity.prototype.attack = function(target) {
-  if (target.entTarget) {
-      target.entTarget.health -= this.strength;
-  }
+    if (target.entTarget) {
+        target.entTarget.health -= this.strength;
+    }
 }
 
 /**
@@ -690,7 +697,7 @@ LivingEntity.prototype.aiUpdate = function(type) {
         // Push the LivingEntity back
         this.velocity.x = -this.velocity.x * friction;
         if (this.collideLeft()) this.x = this.radius;
-        if (this.collideRight()) this.x = this.game.worldWidth - this.radius;
+        if (this.collideRight()) this.x = this.game.map.worldWidth - this.radius;
         this.x += this.velocity.x * this.game.clockTick;
         this.y += this.velocity.y * this.game.clockTick;
     }
@@ -700,7 +707,7 @@ LivingEntity.prototype.aiUpdate = function(type) {
         // Push the LivingEntity back
         this.velocity.y = -this.velocity.y * friction;
         if (this.collideTop()) this.y = this.radius;
-        if (this.collideBottom()) this.y = this.game.worldWidth - this.radius;
+        if (this.collideBottom()) this.y = this.game.map.worldWidth - this.radius;
         this.x += this.velocity.x * this.game.clockTick;
         this.y += this.velocity.y * this.game.clockTick;
     }
@@ -718,8 +725,8 @@ LivingEntity.prototype.aiUpdate = function(type) {
         // IF the target is not null
         // AND the target is within the screen
         if (target != null
-          && target.x < this.game.worldWidth - borderRange && target.x > borderRange
-          && target.y < this.game.worldHeight - borderRange && target.y > borderRange) {
+          && target.x < this.game.map.worldWidth - borderRange && target.x > borderRange
+          && target.y < this.game.map.worldHeight - borderRange && target.y > borderRange) {
             // LET loose the attack against the target
             this.attack(target);
         }
@@ -760,6 +767,7 @@ LivingEntity.prototype.update = function () {
     }
 }
 
+
 function NonLivingEntity(game, locationX, locationY) {
     Entity.call(this, game, locationX, locationY);
     this.name = "NonLiving";
@@ -771,7 +779,15 @@ NonLivingEntity.prototype.constructor = NonLivingEntity;
 
 NonLivingEntity.prototype.setImage = function (image) {
     this.image = image;
-    console.log("Image set");
+}
+
+/**
+ * This function sets the moving Animation.
+ * The moving Animation is the animation that the character
+ * does when traversing. All LivingEntities are constantly traversing
+ */
+LivingEntity.prototype.setAnimation = function (spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse, numFramesInRow) {
+    this.movingAnimation = new Animation(spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse, numFramesInRow);
 }
 
 NonLivingEntity.prototype.setLocation = function (X, Y) {
