@@ -63,14 +63,11 @@ ASSET_MANAGER.queueDownload("./images/cone.png");
 ASSET_MANAGER.queueDownload("./images/shooter-walking.png");
 ASSET_MANAGER.queueDownload("./images/shooter-walking2.png");
 
-<<<<<<< Updated upstream
 // Moving Animations
 ASSET_MANAGER.queueDownload("./images/boss-moving.png");
 ASSET_MANAGER.queueDownload("./images/zombie-moving.png");
 
-=======
 ASSET_MANAGER.queueDownload("./images/boss2.png");
->>>>>>> Stashed changes
 
 ASSET_MANAGER.downloadAll(function () {
     console.log("starting up da sheild");
@@ -153,8 +150,8 @@ ASSET_MANAGER.downloadAll(function () {
     gameEngine.addEntity(flamethrower);
     player.controlled = true;
 
-    var boss = new Boss(gameEngine);
-    gameEngine.addEntity(boss);
+    // var boss = new Boss(gameEngine);
+    // gameEngine.addEntity(boss);
 
     gameEngine.addEntity(player);
     // var player2 = new playerControlled(gameEngine);
