@@ -56,6 +56,8 @@ function GameEngine() {
     this.x;
     this.y;
 
+    this.map = null;
+
     this.zombieCooldownNumInitial = 3;  // how often a zombie will appear initially
     this.zombieCooldown = this.zombieCooldownNumInitial; // the cooldown until the next zombie appears
 
@@ -70,20 +72,6 @@ function GameEngine() {
     this.surfaceWidth = null; // the width of the canvas
     this.surfaceHeight = null; // the height of the canvas
 
-    // FOREST MAP
-    // this.worldWidth = 1600; // the width of the world within the canvas FOREST
-    // this.worldHeight = 1600; // the height of the world within the canvas FOREST
-
-    // this.mapRatioWidth = 1600; //
-    // this.mapRationHeight = 1600;
-
-    // HOSPITAL MAP
-    this.worldWidth = 1400; // the width of the world within the canvas HOSPITAL
-    this.worldHeight = 1200; // the height of the world within the canvas HOSPITAL
-
-    this.mapRatioWidth = 400;
-    this.mapRatioHeight = 400;
-
     this.windowX = 0; // This is the x-coordinate of the top left corner of the canvas currently
     this.windowY = 0; // This is the y-coordinate of the top left corner of the canvas currently
 
@@ -91,6 +79,38 @@ function GameEngine() {
     this.timer = new Timer(); // this creates the Object Timer for the Game Engine
     this.keyState = {}; // this is the current keystate which is an object that is nothing
 
+}
+
+GameEngine.prototype.setMap = function(map) {
+
+    if (this.map === null) {
+        // Set map
+        this.map = map;
+
+        // Adding the map walls into the game entities
+        for (i = 0; i < this.map.walls.length; i++) {
+            // this.entities["wall" + i] = this.map.walls[i];
+            this.entities.push(this.map.walls[i]);
+            console.log(("wall" + i).name);
+
+        }
+
+    } else {
+
+        // Removing all of the previous maps walls
+        for (i = 0; i < this.map.walls.length; i++) {
+            this.entities.splice("wall" + i, 1);
+        }
+
+        // Set new map
+        this.map = map;
+
+        // Adding the map walls into the game entities
+        for (i = 0; i < this.map.walls.length; i++) {
+            this.entities["wall" + i] = this.map.wall[i];
+        }
+
+     }
 }
 
 /**
@@ -300,12 +320,11 @@ GameEngine.prototype.draw = function (top, left) {
     // // The speed in which the canvas is moving when the player is moving
     // var ratio = 2; //1.2
     // The speed in which the canvas is moving when the player is moving
-    var ratio = .5; //1.2
 
     // Changed this.worldWidth and this.worldHeight from 1600 magic numbers
     // Changed this.surfaceWidth and this.surfaceHeight from 800 magic numbers
     // The forest level that is being drawn
-    this.ctx.drawImage(ASSET_MANAGER.getAsset("./images/hospital.png"), this.getWindowX() * ratio, this.getWindowY() * ratio, this.mapRatioHeight, this.mapRatioWidth, 0, 0, this.surfaceWidth, this.surfaceHeight);
+    this.ctx.drawImage(this.map.image, this.getWindowX() * this.map.ratio, this.getWindowY() * this.map.ratio, this.map.mapRatioHeight, this.map.mapRatioWidth, 0, 0, this.surfaceWidth, this.surfaceHeight);
 
     // draws the number of kills onto the canvas
     this.ctx.beginPath();

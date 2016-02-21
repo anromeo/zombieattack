@@ -98,7 +98,27 @@ ASSET_MANAGER.downloadAll(function () {
     // var boss = new Boss(gameEngine, ASSET_MANAGER.getAsset("./images/boss.png"));
 	var flamethrower = new FlameThrower(gameEngine, ASSET_MANAGER.getAsset("./images/flamethrower.png"));
 
-    gameEngine.addEntity(new Wall(gameEngine, 38, 132, 70, 210));
+        //     // HOSPITAL MAP
+    // this.worldWidth = 1400; // the width of the world within the canvas HOSPITAL
+    // this.worldHeight = 1200; // the height of the world within the canvas HOSPITAL
+
+    // this.mapRatioWidth = 400;
+    // this.mapRatioHeight = 400;
+
+        // FOREST MAP
+    // this.worldWidth = 1600; // the width of the world within the canvas FOREST
+    // this.worldHeight = 1600; // the height of the world within the canvas FOREST
+
+    // this.mapRatioWidth = 1600; 
+    // this.mapRationHeight = 1600;
+
+    // Map(game, image, name, worldWidth, worldHeight, mapRatioWidth, mapRatioHeight, ratio) 
+
+    var hospital = new Map(gameEngine, ASSET_MANAGER.getAsset("./images/hospital.png"), "Hospital", 1400, 1200, 400, 400, 0.5);
+     hospital.addWall(new Wall(gameEngine, 38, 132, 70, 210));
+
+    gameEngine.setMap(hospital);
+
 
     gameEngine.addEntity(flamethrower);
     player.controlled = true;
