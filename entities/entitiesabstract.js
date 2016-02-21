@@ -500,6 +500,7 @@ LivingEntity.prototype.drawOutlines = function(ctx) {
     this.drawCircle(ctx, "black", this.canvasX, this.canvasY, this.radius);
 
     // this.drawCircle(ctx, "white", this.canvasX + this.radialOffset, this.canvasY  + this.radialOffset, this.radius);    
+    // this.drawCircle(ctx, "white", this.canvasX, this.canvasY, this.radius);
 
 }
 
@@ -786,7 +787,7 @@ NonLivingEntity.prototype.setImage = function (image) {
  * The moving Animation is the animation that the character
  * does when traversing. All LivingEntities are constantly traversing
  */
-LivingEntity.prototype.setAnimation = function (spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse, numFramesInRow) {
+NonLivingEntity.prototype.setAnimation = function (spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse, numFramesInRow) {
     this.movingAnimation = new Animation(spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse, numFramesInRow);
 }
 
