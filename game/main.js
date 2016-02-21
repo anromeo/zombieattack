@@ -98,6 +98,7 @@ ASSET_MANAGER.downloadAll(function () {
     // var boss = new Boss(gameEngine, ASSET_MANAGER.getAsset("./images/boss.png"));
 	var flamethrower = new FlameThrower(gameEngine, ASSET_MANAGER.getAsset("./images/flamethrower.png"));
 
+<<<<<<< Updated upstream
         //     // HOSPITAL MAP
     // this.worldWidth = 1400; // the width of the world within the canvas HOSPITAL
     // this.worldHeight = 1200; // the height of the world within the canvas HOSPITAL
@@ -119,15 +120,34 @@ ASSET_MANAGER.downloadAll(function () {
 
     gameEngine.setMap(hospital);
 
+    gameEngine.addEntity(new Wall(gameEngine, 38, 132, 70, 210));
+    gameEngine.addEntity(new Wall(gameEngine, 38, 460, 70, 210));
+    gameEngine.addEntity(new Wall(gameEngine, 275, 50, 95, 63));
+    gameEngine.addEntity(new Wall(gameEngine, 275, 208, 95, 240));
+    gameEngine.addEntity(new Wall(gameEngine, 275, 540, 95, 215));
+    gameEngine.addEntity(new Wall(gameEngine, 370, 258, 385, 55));
+    gameEngine.addEntity(new Wall(gameEngine, 755, 258, 90, 364));
+    gameEngine.addEntity(new Wall(gameEngine, 845, 490, 258, 85));
+    gameEngine.addEntity(new Wall(gameEngine, 1103, 258, 98, 364));
+
+    gameEngine.addEntity(new Wall(gameEngine, 0, 0, 14000, 50));
+    gameEngine.addEntity(new Wall(gameEngine, 0, 0, 58, 12000));
+    gameEngine.addEntity(new Wall(gameEngine, 58, 752, 538, 74))
+    gameEngine.addEntity(new Wall(gameEngine, 696, 752, 100, 74))
+    gameEngine.addEntity(new Wall(gameEngine, 1158, 752, 600, 74))
+    gameEngine.addEntity(new Wall(gameEngine, 793, 700, 85, 600))
+    gameEngine.addEntity(new Wall(gameEngine, 1083, 695, 75, 298))
+    gameEngine.addEntity(new Wall(gameEngine, 1083, 1086, 75, 150))
+     gameEngine.addEntity(new Wall(gameEngine, 180, 970, 78, 400))
 
     gameEngine.addEntity(flamethrower);
     player.controlled = true;
     gameEngine.addEntity(player);
-    var player2 = new playerControlled(gameEngine);
-    gameEngine.addEntity(player2);
+    // var player2 = new playerControlled(gameEngine);
+    // gameEngine.addEntity(player2);
 
-    var player3 = new playerControlled(gameEngine);
-    gameEngine.addEntity(player3);
+    // var player3 = new playerControlled(gameEngine);
+    // gameEngine.addEntity(player3);
 
     gameEngine.start();
     //gameEngine.addEntity(boss);

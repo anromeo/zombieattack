@@ -72,6 +72,20 @@ function GameEngine() {
     this.surfaceWidth = null; // the width of the canvas
     this.surfaceHeight = null; // the height of the canvas
 
+    // FOREST MAP
+    // this.worldWidth = 1600; // the width of the world within the canvas FOREST
+    // this.worldHeight = 1600; // the height of the world within the canvas FOREST
+
+    // this.mapRatioWidth = 1600; //
+    // this.mapRationHeight = 1600;
+
+    // HOSPITAL MAP
+    // this.worldWidth = 1400; // the width of the world within the canvas HOSPITAL
+    // this.worldHeight = 1350; // the height of the world within the canvas HOSPITAL
+
+    // this.mapRatioWidth = 400;
+    // this.mapRatioHeight = 400;
+
     this.windowX = 0; // This is the x-coordinate of the top left corner of the canvas currently
     this.windowY = 0; // This is the y-coordinate of the top left corner of the canvas currently
 
@@ -135,6 +149,8 @@ GameEngine.prototype.getWindowY = function() {
  */
 GameEngine.prototype.setWindowX = function(x) {
 
+    console.log("World Width: " + this.worldWidth);
+    console.log("surfaceWidth: " + this.surfaceWidth);
     var maxX = this.worldWidth - this.surfaceWidth; // World Width minus the Canvas Width | the 1600 - 800  for forest world
 
     // if the X getting passed in is less than 0, then this.WindowX is less than 0
@@ -159,6 +175,8 @@ GameEngine.prototype.setWindowX = function(x) {
  * @param y represented by a float
  */
 GameEngine.prototype.setWindowY = function(y) {
+    onsole.log("World height: " + this.worldHeight);
+    console.log("surfaceHeight: " + this.surfaceHeight);
 
     var maxY = this.worldHeight - this.surfaceHeight; // World Height minus the Canvas Height | the 1600 - 800  for forest world
 
@@ -397,8 +415,8 @@ GameEngine.prototype.update = function () {
             }
 
             // Adds the zombie entity to the game
-            var zom = new Villain(this);
-            this.addEntity(zom);
+            // var zom = new Villain(this);
+            // this.addEntity(zom);
         }
     }
 
