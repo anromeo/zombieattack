@@ -173,6 +173,7 @@ GameEngine.prototype.setWindowX = function(x) {
  * @param y represented by a float
  */
 GameEngine.prototype.setWindowY = function(y) {
+
     var maxY = this.map.worldHeight - this.surfaceHeight; // World Height minus the Canvas Height | the 1600 - 800  for forest world
 
     // if the Y getting passed in is less than 0, then this.WindowY is less than 0
