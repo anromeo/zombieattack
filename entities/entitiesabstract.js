@@ -773,6 +773,10 @@ function NonLivingEntity(game, locationX, locationY) {
     Entity.call(this, game, locationX, locationY);
     this.name = "NonLiving";
     this.image = null;
+    this.animation = null;
+    this.degree = null;
+    this.leftImageOffset = 0;
+    this.topImageOffset = 0;
 }
 
 NonLivingEntity.prototype = new Entity();
@@ -788,7 +792,7 @@ NonLivingEntity.prototype.setImage = function (image) {
  * does when traversing. All LivingEntities are constantly traversing
  */
 NonLivingEntity.prototype.setAnimation = function (spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse, numFramesInRow) {
-    this.movingAnimation = new Animation(spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse, numFramesInRow);
+    this.animation = new Animation(spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse, numFramesInRow);
 }
 
 NonLivingEntity.prototype.setLocation = function (X, Y) {
@@ -800,11 +804,27 @@ NonLivingEntity.prototype.setNonLiving = function (bool) {
 }
 
 NonLivingEntity.prototype.draw = function (ctx) {
-  //  this.game.ctx.drawImage(this.image, 0, 0);
-  // ctx.drawImage(this.image, 0, 0);
-  if (this.image) {
-      ctx.drawImage(this.image, this.x - this.radius - this.game.getWindowX(), this.y - this.radius - this.game.getWindowY());
-  }
+    if (this.animation) {
+      // draw the current player
+      this.animation.drawFrameRotate(this.game.clockTick, ctx,
+        this.x - this.game.getWindowX() - this.leftImageOffset, // Top left's x-coordinate 
+        this.y - this.game.getWindowY() - this.topImageOffset, // Top left's y-coordinate
+        this.degree);
+    } else if (this.image) {
+        ctx.drawImage(this.image,
+            this.x - this.game.getWindowX() - this.leftImageOffset,
+            this.y - this.game.getWindowY() - this.topImageOffset);
+    }
+    if (this.game.showOutlines) {
+        ctx.beginPath();
+        ctx.strokeStyle = "black";
+        ctx.rect(
+            this.x  - this.game.getWindowX(), // Top Left corner's x-coordinate
+            this.y - this.game.getWindowY(), // Top Left corner's y-coordinate
+            this.width, this.height);
+        ctx.stroke();
+
+    }
 }
 
 NonLivingEntity.prototype.update = function () {

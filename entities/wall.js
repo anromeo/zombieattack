@@ -24,21 +24,19 @@ Wall.prototype.constructor = Wall;
 //         }
 //             return false;
 // };
-Wall.prototype.collideTop = function(other) { 
-    return ((this.y < other.y + other.radius) // if the object is less than the top's y-coordinate (top of object)
-        && (this.x < other.x + other.radius) // AND either if the right side of the object is greater than the the left side of this
-        || (this.x + this.width > other.x - other.radius)); // OR if the left side of the object is greater than  right side of this
+Wall.prototype.collideTop = function(other) {
+    return other.velocity.y > 0 && this.y < other.y + other.radius;
 };
 Wall.prototype.collideBottom = function(other) {
-    if((this.y + this.height > other.y - other.radius) || (this.x < other.x + other.radius) || (this.x + this.width > other.x - other.radius));
+    return other.velocity.y < 0 && this.y + this.height > other.y - other.radius;
 };
 
 Wall.prototype.collideLeft= function(other) {
-    if((this.x < other.x + other.radius) || (this.y < other.y + other.radius) || (this.y + this.height > other.y - other.radius));
+    return other.velocity.x < 0 && this.x < other.x + other.radius;
 };
 
 Wall.prototype.collideRight = function(other) {
-    if((this.x + this.width > other.x - other.radius) || (this.y < other.y + other.radius) || (this.y + this.height > other.y - other.radius));
+    return other.velocity.x > 0 && this.x + this.width > other.x - other.radius;
 };
 
 // if(this.collideLeft(other)){
@@ -60,11 +58,32 @@ Wall.prototype.collideRight = function(other) {
 Wall.prototype.update = function () {
 
     NonLivingEntity.prototype.update.call(this);
+    var other;
     for (var i = 0; i < this.game.entities.length; i++) {
-        if (!this.game.entities[i].nonLiving) {
-            console.log(this.game.entities[i].name);
-            if (this.collideTop(this.game.entities[i])) {
-                console.log("TOP HIT!!");
+        other = this.game.entities[i];
+        if (!other.isNonLiving) {
+        // console.log("Y: " + this.y + " < other.y: "  + other.y + " and other.radius: " + other.radius + " - " + (this.y < other.y + other.radius)); // if the object is less than the top's y-coordinate (top of object)
+        // console.log("X:" + this.x + " < other.x: " + other.x + " and other.radius :" + other.radius + " - " + (this.x < other.x + other.radius)); // AND either if the right side of the object is greater than the the left side of this
+        // console.log("X:" + this.x + " width: " + this.width + " and other.x: " + other.x + " minus other.radius " + other.radius + " - " + (this.x + this.width > other.x - other.radius)); // OR if the left side of the object is greater than  right side of this
+
+        // console.log(this.game.entities[i].name);
+            if ((this.y < other.y + other.radius) // if the object is less than the top's y-coordinate (top of object)
+            && (this.y + this.height > other.y - other.radius) // AND if the oject's right hand side is higher than the bottom's y-coordinate (bottom of object)
+            && (this.x < other.x + other.radius) // AND either if the right side of the object is greater than the the left side of this
+            && (this.x + this.width > other.x - other.radius)) {
+                if (this.collideTop(other)) {
+                    other.y = this.y - other.radius;
+                    console.log("TOP HIT!!");
+                } else if (this.collideBottom(other)) {
+                    other.y = this.y + this.height + other.radius;
+                    console.log("Bottom HIT!!");
+                } else if (this.collideLeft(other)) {
+                    other.x = this.x - other.radius;
+                    console.log("Left HIT!!");                    
+                } else if (this.collideRight(other)) {
+                    other.x = this.x + this.width + other.radius;
+                    console.log("Left HIT!!");                    
+                }
             }
         }
     }
@@ -84,7 +103,7 @@ Wall.prototype.update = function () {
 Wall.prototype.draw = function (ctx) {
     NonLivingEntity.prototype.draw.call(this, ctx);
     ctx.beginPath();
-    ctx.strokeStyle = "black";
+    ctx.fillStyle = "black";
     ctx.rect(this.x - this.game.getWindowX(), this.y - this.game.getWindowY(), this.width, this.height);
     ctx.fill();
 

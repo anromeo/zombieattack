@@ -340,7 +340,7 @@ playerControlled.prototype.update = function () {
     if (this.collideTop() || this.collideBottom()) {
         this.velocity.y = -this.velocity.y * friction;
         if (this.collideTop()) this.y = this.radius;
-        if (this.collideBottom()) this.y = this.game.worldHeight - this.radius;
+        if (this.collideBottom()) this.y = this.game.map.worldHeight - this.radius;
         this.x += this.velocity.x * this.game.clockTick;
         this.y += this.velocity.y * this.game.clockTick;
     }

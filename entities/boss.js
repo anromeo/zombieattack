@@ -24,22 +24,6 @@ function Boss(game) {
 Boss.prototype = new LivingEntity();
 Boss.prototype.constructor = Boss;
 
-Boss.prototype.collideLeft = function () {
-    return (this.x - this.radius) < 0;
-};
-
-Boss.prototype.collideRight = function () {
-    return (this.x + this.radius) > 800;
-};
-
-Boss.prototype.collideTop = function () {
-    return (this.y - this.radius) < 0;
-};
-
-Boss.prototype.collideBottom = function () {
-    return (this.y + this.radius) > 800;
-};
-
 Boss.prototype.update = function() {
     this.aiUpdate("zombie");
 }

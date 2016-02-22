@@ -7,6 +7,8 @@ function FlameThrower(game, image) {
     // this.y = Math.random() * 600;
     this.x = 100;
     this.y = 100;
+    this.width = 45;
+    this.height = 20;
 
     this.canvasX = 100;
     this.canvasY = 100;
@@ -33,7 +35,6 @@ FlameThrower.prototype.update = function () {
 
 FlameThrower.prototype.draw = function (ctx) {
       NonLivingEntity.prototype.draw.call(this, ctx);
-
 }
 
 function Flame(game, spritesheet) {

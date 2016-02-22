@@ -101,28 +101,28 @@ GameEngine.prototype.setMap = function(map) {
         // Set map
         this.map = map;
 
-        // Adding the map walls into the game entities
-        for (i = 0; i < this.map.walls.length; i++) {
-            // this.entities["wall" + i] = this.map.walls[i];
-            this.entities.push(this.map.walls[i]);
-            // console.log(("wall" + i).name);
+        // // Adding the map walls into the game entities
+        // for (i = 0; i < this.map.walls.length; i++) {
+        //     // this.entities["wall" + i] = this.map.walls[i];
+        //     this.entities.push(this.map.walls[i]);
+        //     // console.log(("wall" + i).name);
 
-        }
+        // }
 
     } else {
 
-        // Removing all of the previous maps walls
-        for (i = 0; i < this.map.walls.length; i++) {
-            this.entities.splice("wall" + i, 1);
-        }
+        // // Removing all of the previous maps walls
+        // for (i = 0; i < this.map.walls.length; i++) {
+        //     this.entities.splice("wall" + i, 1);
+        // }
 
-        // Set new map
-        this.map = map;
+        // // Set new map
+        // this.map = map;
 
-        // Adding the map walls into the game entities
-        for (i = 0; i < this.map.walls.length; i++) {
-            this.entities["wall" + i] = this.map.wall[i];
-        }
+        // // Adding the map walls into the game entities
+        // for (i = 0; i < this.map.walls.length; i++) {
+        //     this.entities["wall" + i] = this.map.wall[i];
+        // }
 
      }
 }
@@ -350,6 +350,12 @@ GameEngine.prototype.draw = function (top, left) {
     this.ctx.fillText(message, 10, 50);
     this.ctx.stroke(); 
 
+    // this cycles through the walls of the map
+    for (var i = 0; i < this.map.walls.length; i++) {
+        // to draw them
+        this.map.walls[i].draw(this.ctx);
+    }
+
     // this cycles through the entities that exist in the game
     for (var i = 0; i < this.entities.length; i++) {
 
@@ -386,6 +392,12 @@ GameEngine.prototype.getPlayer = function() {
 GameEngine.prototype.update = function () {
 
     var entitiesCount = this.entities.length; // count of all the different entities in the game
+
+    // this cycles through the walls to check for collissions
+    for (var i = 0; i < this.map.walls.length; i++) {
+        // to draw them
+        this.map.walls[i].update();
+    }
 
     // Sets the player to the current player
     this.player = this.getPlayer();
