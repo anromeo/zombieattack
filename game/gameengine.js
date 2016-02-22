@@ -318,11 +318,11 @@ GameEngine.prototype.draw = function (top, left) {
     this.ctx.fillText(message, 10, 50);
     this.ctx.stroke(); 
 
-    // this cycles through the walls of the map
-    for (var i = 0; i < this.map.walls.length; i++) {
-        // to draw them
-        this.map.walls[i].draw(this.ctx);
-    }
+    // // this cycles through the walls of the map
+    // for (var i = 0; i < this.map.walls.length; i++) {
+    //     // to draw them
+    //     this.map.walls[i].draw(this.ctx);
+    // }
 
     // this cycles through the entities that exist in the game
     for (var i = 0; i < this.entities.length; i++) {

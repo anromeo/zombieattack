@@ -57,6 +57,9 @@ Wall.prototype.update = function () {
             && (this.y + this.height > other.y - other.radius) // AND if the oject's right hand side is higher than the bottom's y-coordinate (bottom of object)
             && (this.x < other.x + other.radius) // AND either if the right side of the object is greater than the the left side of this
             && (this.x + this.width > other.x - other.radius)) {
+                if (other.type === "projectile") {
+                    other.removeFromWorld = true;
+                }
                 if (this.collideTop(other)) {
                     other.y = this.y - other.radius;
                     console.log("TOP HIT!!");
