@@ -52,7 +52,6 @@ Background.prototype.draw = function (ctx) {
 ASSET_MANAGER.queueDownload("./images/demon.png");
 ASSET_MANAGER.queueDownload("./images/ZombieWalking.png");
 ASSET_MANAGER.queueDownload("./images/Player2.png");
-ASSET_MANAGER.queueDownload("./images/background.png");
 
 ASSET_MANAGER.queueDownload("./images/ForestLevelBig.png");
 ASSET_MANAGER.queueDownload("./images/hospital.png");
@@ -70,6 +69,7 @@ ASSET_MANAGER.queueDownload("./images/zombie-moving.png");
 ASSET_MANAGER.queueDownload("./images/boss2.png");
 
 ASSET_MANAGER.queueDownload("./images/portal.png");
+ASSET_MANAGER.queueDownload("./images/bossMap1.png");
 
 ASSET_MANAGER.downloadAll(function () {
     console.log("starting up da sheild");
@@ -99,7 +99,7 @@ ASSET_MANAGER.downloadAll(function () {
     // }
 
     var player = new playerControlled(gameEngine);
-    var background = new Background(gameEngine, ASSET_MANAGER.getAsset("./images/background.png"));
+    // var background = new Background(gameEngine, ASSET_MANAGER.getAsset("./images/background.png"));
 //    var boss = new Boss(gameEngine, ASSET_MANAGER.getAsset("./images/boss.png"));
     //gameEngine.addEntity(boss);
   //  gameEngine.addEntity(background);
@@ -129,22 +129,22 @@ ASSET_MANAGER.downloadAll(function () {
 
     hospital.addWall(new Wall(gameEngine, 38, 132, 70, 210));
     hospital.addWall(new Wall(gameEngine, 38, 460, 70, 210));
-    // hospital.addWall(new Wall(gameEngine, 275, 50, 95, 63));
-    // hospital.addWall(new Wall(gameEngine, 275, 208, 95, 240));
-    // hospital.addWall(new Wall(gameEngine, 275, 540, 95, 215));
-    // hospital.addWall(new Wall(gameEngine, 370, 258, 385, 55));
-    // hospital.addWall(new Wall(gameEngine, 755, 258, 90, 364));
-    // hospital.addWall(new Wall(gameEngine, 845, 490, 258, 85));
-    // hospital.addWall(new Wall(gameEngine, 1103, 258, 98, 364));
-    // hospital.addWall(new Wall(gameEngine, 0, 0, 14000, 50));
-    // hospital.addWall(new Wall(gameEngine, 0, 0, 58, 12000));
-    // hospital.addWall(new Wall(gameEngine, 58, 752, 538, 74));
-    // hospital.addWall(new Wall(gameEngine, 696, 752, 100, 74));
-    // hospital.addWall(new Wall(gameEngine, 1158, 752, 600, 74));
-    // hospital.addWall(new Wall(gameEngine, 793, 700, 85, 600));
-    // hospital.addWall(new Wall(gameEngine, 1083, 695, 75, 298));
-    // hospital.addWall(new Wall(gameEngine, 1083, 1086, 75, 150));
-    // hospital.addWall(new Wall(gameEngine, 180, 970, 78, 400));
+    hospital.addWall(new Wall(gameEngine, 275, 50, 95, 63));
+    hospital.addWall(new Wall(gameEngine, 275, 208, 95, 240));
+    hospital.addWall(new Wall(gameEngine, 275, 540, 95, 215));
+    hospital.addWall(new Wall(gameEngine, 370, 258, 385, 55));
+    hospital.addWall(new Wall(gameEngine, 755, 258, 90, 364));
+    hospital.addWall(new Wall(gameEngine, 845, 490, 258, 85));
+    hospital.addWall(new Wall(gameEngine, 1103, 258, 98, 364));
+    hospital.addWall(new Wall(gameEngine, 0, 0, 14000, 50));
+    hospital.addWall(new Wall(gameEngine, 0, 0, 58, 12000));
+    hospital.addWall(new Wall(gameEngine, 58, 752, 538, 74));
+    hospital.addWall(new Wall(gameEngine, 696, 752, 100, 74));
+    hospital.addWall(new Wall(gameEngine, 1158, 752, 600, 74));
+    hospital.addWall(new Wall(gameEngine, 793, 700, 85, 600));
+    hospital.addWall(new Wall(gameEngine, 1083, 695, 75, 298));
+    hospital.addWall(new Wall(gameEngine, 1083, 1086, 75, 150));
+    hospital.addWall(new Wall(gameEngine, 180, 970, 78, 400));
 
     gameEngine.setMap(hospital);
 
@@ -171,13 +171,15 @@ ASSET_MANAGER.downloadAll(function () {
     gameEngine.addEntity(flamethrower);
     player.controlled = true;
 
-    // var boss = new Boss(gameEngine);
-    // gameEngine.addEntity(boss);
 
     gameEngine.addEntity(player);
-    gameEngine.addEntity(new Portal(gameEngine, 0, 0));
 
-    // gameEngine.addEntity(new Portal(gameEngine, 94, 1186));
+    var bossMap = new Map(gameEngine, ASSET_MANAGER.getAsset("./images/bossMap1.png"), "Boss Map - Level 1", 800, 800, 800, 800, 0.5);
+    bossMap.addVillain(new Boss(gameEngine));
+    bossMap.isBossMap = true;
+
+    gameEngine.addEntity(new Portal(gameEngine, 94, 1186, bossMap, 700, 200));
+    // gameEngine.setMap(bossMap);
     // var player2 = new playerControlled(gameEngine);
     // gameEngine.addEntity(player2);
 

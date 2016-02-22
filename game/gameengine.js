@@ -95,38 +95,6 @@ function GameEngine() {
 
 }
 
-GameEngine.prototype.setMap = function(map) {
-
-    if (this.map === null) {
-        // Set map
-        this.map = map;
-
-        // // Adding the map walls into the game entities
-        // for (i = 0; i < this.map.walls.length; i++) {
-        //     // this.entities["wall" + i] = this.map.walls[i];
-        //     this.entities.push(this.map.walls[i]);
-        //     // console.log(("wall" + i).name);
-
-        // }
-
-    } else {
-
-        // // Removing all of the previous maps walls
-        // for (i = 0; i < this.map.walls.length; i++) {
-        //     this.entities.splice("wall" + i, 1);
-        // }
-
-        // // Set new map
-        // this.map = map;
-
-        // // Adding the map walls into the game entities
-        // for (i = 0; i < this.map.walls.length; i++) {
-        //     this.entities["wall" + i] = this.map.wall[i];
-        // }
-
-     }
-}
-
 /**
  * This gets the windowX which is the top left corner's X-coordinate
  * @return float representing windowX
@@ -402,31 +370,34 @@ GameEngine.prototype.update = function () {
     // Sets the player to the current player
     this.player = this.getPlayer();
 
-    this.zombieCooldown -= this.clockTick; // decrements the zombie cooldown by the clock of the game
+    // If the map is not a BossMap
+    if (!this.map.isBossMap) {
+        this.zombieCooldown -= this.clockTick; // decrements the zombie cooldown by the clock of the game
 
-    // IF the zombieCooldown gets less than 0
-    if (this.zombieCooldown < 0) {
+        // IF the zombieCooldown gets less than 0
+        if (this.zombieCooldown < 0) {
 
-        // IF there exists a player on the board
-        // AND the player is not removed from world
-        if (this.player && !this.player.removeFromWorld) {
+            // IF there exists a player on the board
+            // AND the player is not removed from world
+            if (this.player && !this.player.removeFromWorld) {
 
-            // decrease the zombieCooldownNum
-            // exponentially as the distance between the player and the
-            // origin of the gameboard goes down 
-            var dist = distance(this.player, {x:0, y:0});
-            if (dist !== 0) {
+                // decrease the zombieCooldownNum
+                // exponentially as the distance between the player and the
+                // origin of the gameboard goes down 
+                var dist = distance(this.player, {x:0, y:0});
+                if (dist !== 0) {
 
-                // the half life used to project the spawn rate of the zombies.
-                var halfLife = 3000;
+                    // the half life used to project the spawn rate of the zombies.
+                    var halfLife = 3000;
 
-                // the formula for the curent zombie cooldown.
-                this.zombieCooldown = this.zombieCooldownNumInitial * Math.pow((1/2), dist / halfLife);
+                    // the formula for the curent zombie cooldown.
+                    this.zombieCooldown = this.zombieCooldownNumInitial * Math.pow((1/2), dist / halfLife);
+                }
+
+                // Adds the zombie entity to the game
+                var zom = new Villain(this);
+                this.addEntity(zom);
             }
-
-            // Adds the zombie entity to the game
-            // var zom = new Villain(this);
-            // this.addEntity(zom);
         }
     }
 
@@ -485,6 +456,47 @@ GameEngine.prototype.update = function () {
         }
     }
 
+}
+
+
+GameEngine.prototype.setMap = function(map, portal) {
+    this.map = map;
+
+    if (this.map !== null) {
+       // Removes all the previous villains
+       for (var i = 0; i < this.villains.length; i++) {
+           // Sets the remove from world for all villains to true
+           this.villains[i].removeFromWorld = true;
+       }
+
+       // Removes all the previous weapons
+       for (var i = 0; i < this.weapons.length; i++) {
+            // Sets the remove from world for all weapons to true
+            this.weapons[i].removeFromWorld = true;
+       }
+    }
+
+    // IF there are players in this game
+    if (this.players.length > 0 && portal) {
+        // set the current player to the portal's Enter X and Enter Y
+        var player = this.getPlayer();
+        player.x = portal.enterX;
+        player.y = portal.enterY;
+        player.canvasX = portal.enterX;
+        player.canvasY = portal.enterY;
+    }
+
+    // Add Villains from Map into the game
+    for (var i = 0; i < this.map.villains.length; i++) {
+        // Add Villains from Map into the game
+        this.addEntity(this.map.villains[i]);
+    }
+
+    // Adds Weapons from Map into the game
+    for (var i = 0; i < this.map.weapons.length; i++) {
+        // Add Weapons from Map into the game
+        this.addEntity(this.map.weapons[i]);
+    }
 }
 
 /**

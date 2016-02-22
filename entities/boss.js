@@ -1,12 +1,22 @@
-function Boss(game) {
+function Boss(game, x, y) {
     LivingEntity.call(this, game, 150, 150);
     this.radius = 32;
     this.name = "Boss";
     this.SpriteWidth = 128;
     this.SpriteHeight = 128;
     this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/boss-moving.png"), this.SpriteWidth, this.SpriteHeight, .05, 24, true, false, 6);
-    this.x = 200;
-    this.y = 200;
+    if (x === undefined) {
+        this.x = this.game.surfaceWidth / 2;
+    } else {
+        this.y = y;
+    }
+
+    if (y === undefined) {
+        this.y = this.game.surfaceHeight / 2;
+    } else {
+        this.y = y;
+    }
+
     this.canvasX = this.x;
     this.canvasY = this.y;
     this.radialOffset = this.radius;
@@ -14,18 +24,40 @@ function Boss(game) {
     this.type = "villain";
     this.game = game;
     this.ctx = game.ctx;
-    this.visualRadius = 800;
-    this.maxSpeed = 100;
-    this.health = 500;
+    this.visualRadius = 1000;
+    this.maxSpeed = 80;
+    this.health = 600;
     this.attackRange = 30; // always make sure attack range is larger than comfort zone
     this.comfortZone = 25;
     this.angleOffset = 270;
+    this.ability1Attributes.cooldown = 4;
+    this.ability1Attributes.maxCooldown = 4;
 }
 Boss.prototype = new LivingEntity();
 Boss.prototype.constructor = Boss;
 
+Boss.prototype.ability1 = function(entity) {
+    console.log("Activate Abilities");
+    entity.originalMaxSpeed = entity.maxSpeed;
+    entity.maxSpeed *= 4;
+    entity.movingAnimation.originalFrameDuration = entity.movingAnimation.frameDuration;
+    entity.movingAnimation.frameDuration = entity.movingAnimation.frameDuration;
+    entity.ability1Timer = 1;
+}
+
 Boss.prototype.update = function() {
     this.aiUpdate("zombie");
+    if (this.ability1Timer) {
+        console.log(this.maxSpeed);
+        if (this.ability1Timer <= 0) {
+            this.ability1Timer = false;
+            this.maxSpeed = this.originalMaxSpeed;
+            this.movingAnimation.frameDuration = this.movingAnimation.originalFrameDuration;
+        } else {
+            this.ability1Timer -= this.game.clockTick;
+        }
+    }
+
 }
 
 // Boss.prototype.update = function () {

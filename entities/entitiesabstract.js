@@ -79,6 +79,25 @@ function LivingEntity(game, x, y) {
     this.cooldown = 0; // the cooldown levels for attacks
     this.maxCoolDown = .75; // the max cooldown levels for attacks
 
+    this.ability1Attributes = {
+        // cooldowns used to determine whether to unleash ability1 or not
+        maxCooldown: 10, 
+        cooldown: 10,
+        activate: false
+    }
+    this.ability2Attributes = {
+        // cooldown used to determine whether to unleash ability2 or not
+        maxCooldown: 18,
+        cooldown: 18,
+        activate: false
+    }
+    this.ability3Attributes = {
+        // cooldowns used to determine whether to unleash ability3 or not
+        maxCooldown: 25,
+        cooldown: 25,
+        activate: false
+    }
+
     this.angleOffset = 0;
 
     // AI-used attributes
@@ -418,14 +437,19 @@ LivingEntity.prototype.aiSelectAction = function(type) {
     // IF there exists a target
     if (target) {
 
-        // calculate where the enemy will be in order to determine where the target of the attack will be
-        action.target = calculateInterceptionPoint(target, target.velocity, this, 200);
-
+        action.target = calculateInterceptionPoint(target, target.velocity, this, maxSpeed);
+        if (this.playerControlled) {
+            console.log(target);
+        }
         // IF the target is within the attack range
         if (distance(target, this) < this.attackRange + target.radius) {
             action.willAttack = true;
         }
-        action.target.entTarget = target;
+        if (action.target) {
+            action.target.entTarget = target;
+        } else {
+            action.target = {x: target.x, y: target.y};
+        }
     }
 
     action.direction.x -= (1 - friction) * this.game.clockTick * this.velocity.x;
@@ -752,11 +776,23 @@ LivingEntity.prototype.aiUpdate = function(type) {
 }
 
 /**
+ *
+ */
+LivingEntity.prototype.checkAbility = function(abilityAttributes, ability) {
+    if (abilityAttributes.cooldown <= 0 && ((this.type === "playerControlled" && abilityAttributes.activate === true) || this.type !== "playerControlled")) {
+        ability(this);
+        abilityAttributes.cooldown = abilityAttributes.maxCooldown;
+    } else if (abilityAttributes.cooldown > 0) {
+        abilityAttributes.cooldown -= this.game.clockTick;
+    }
+}
+/**
  * This is the update function for all living entities.
  */
 LivingEntity.prototype.update = function () {
 
   	Entity.prototype.update.call(this);
+
     // IF a LivingEntity's Health Drops to less than 0
     if (this.health <= 0) {
         // REMOVE it from the world
@@ -766,6 +802,10 @@ LivingEntity.prototype.update = function () {
             this.game.kills++;
         }
     }
+
+    if (this.ability1 !== undefined) {
+        this.checkAbility(this.ability1Attributes, this.ability1);
+    } 
 }
 
 
@@ -802,6 +842,109 @@ NonLivingEntity.prototype.setLocation = function (X, Y) {
 NonLivingEntity.prototype.setNonLiving = function (bool) {
     this.isNonLiving = true;
 }
+
+// START DEFAULT COLLIDE METHODS
+NonLivingEntity.prototype.collide = function (livingEntity) {
+    return distance(this, other) < this.radius + other.radius;
+};
+
+NonLivingEntity.prototype.collideTop = function(other) {
+    var leftThis = this.x;
+    var rightThis = this.x + this.width;
+    var topThis = this.y;
+
+    var leftOther = other.x - other.radius;
+    var rightOther = other.x + other.radius;
+    var bottomOther = other.y + other.radius;
+    var topOther = other.y - other.radius;
+
+    var checkPoint2 = topThis + (bottomOther - topThis);
+    if (topOther <= topThis) {
+        if (leftOther < leftThis) { // if the other is more left than this
+            var checkPoint = leftThis + (leftOther - leftThis);
+            return (checkPoint == leftOther) && (bottomOther == checkPoint2);
+        } else {
+            var checkPoint = leftOther + (leftThis - leftOther);
+            return (checkPoint == leftThis) && (bottomOther == checkPoint2);
+        }
+    }
+    return false;
+};
+NonLivingEntity.prototype.collideBottom = function(other) {
+    var leftThis = this.x;
+    var rightThis = this.x + this.width;
+    var topThis = this.y;
+    var bottomThis = this.y + this.height;
+
+    var leftOther = other.x - other.radius;
+    var rightOther = other.x + other.radius;
+    var bottomOther = other.y + other.radius;
+    var topOther = other.y - other.radius;
+
+    var checkPoint2 = topOther + (bottomThis - topOther);
+    if (bottomOther >= bottomThis) {
+        if (leftOther < leftThis) {
+            var checkPoint = leftThis + (leftOther - leftThis);
+            return (checkPoint == leftOther) && (bottomThis == checkPoint2);
+        } else {
+            var checkPoint = leftOther + (leftThis - leftOther);
+            return (checkPoint == leftThis) && (bottomThis == checkPoint2);
+        }
+    }
+    return false;
+};
+
+NonLivingEntity.prototype.collideLeft= function(other) {
+    var leftThis = this.x;
+    var rightThis = this.x + this.width;
+    var topThis = this.y;
+    var bottomThis = this.y + this.height;
+
+    var leftOther = other.x - other.radius;
+    var rightOther = other.x + other.radius;
+    var bottomOther = other.y + other.radius;
+    var topOther = other.y - other.radius;
+
+    var checkPoint2 = leftThis + (rightOther - leftThis);
+    if (leftOther <= leftThis) {
+        if (topOther < topThis) {
+            var checkPoint = topThis + (topOther - topThis);
+            return (checkPoint == topOther) && (rightOther == checkPoint2);
+        } else {
+            var checkPoint = topOther + (topThis - topOther);
+            return (checkPoint == topThis) && (rightOther == checkPoint2);
+        }
+    }
+    return false;
+};
+
+NonLivingEntity.prototype.collideRight = function(other) {
+    var leftThis = this.x;
+    var rightThis = this.x + this.width;
+    var topThis = this.y;
+    var bottomThis = this.y + this.height;
+
+    var leftOther = other.x - other.radius;
+    var rightOther = other.x + other.radius;
+    var bottomOther = other.y + other.radius;
+    var topOther = other.y - other.radius;
+
+    var start = false;
+    var end = false;
+
+    var checkPoint2 = leftOther + (rightThis - leftOther);
+    if (rightOther >= rightThis) {
+        if (topOther < topThis) {
+            var checkPoint = topThis + (topOther - topThis);
+            return (checkPoint == topOther) && (rightThis == checkPoint2);
+        } else {
+            var checkPoint = topOther + (topThis - topOther);
+            return (checkPoint == topThis) && (rightThis == checkPoint2);
+        }
+    }
+
+    return false;
+};
 
 NonLivingEntity.prototype.draw = function (ctx) {
     if (this.animation) {

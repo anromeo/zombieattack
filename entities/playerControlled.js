@@ -44,6 +44,8 @@ function playerControlled(game) {
     this.SpriteRotateOffsetY = -7; //describes the point of rotation on the sprite changed from 1/2 height
     this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/shooter-walking2.png"), this.SpriteWidth, this.SpriteHeight, .09, 8, true, false, 3);
     this.velocity = { x: 0, y: 0 };
+
+    this.ability1Attributes.activate = false;
 };
 
 playerControlled.prototype = new LivingEntity();
@@ -281,8 +283,6 @@ playerControlled.prototype.update = function () {
         this.aiUpdate(this.type);
         return;
     }
-
-
     LivingEntity.prototype.update.call(this);
 
     // Weapon collision

@@ -24,20 +24,6 @@ Wall.prototype.constructor = Wall;
 //         }
 //             return false;
 // };
-Wall.prototype.collideTop = function(other) {
-    return other.velocity.y > 0 && this.y < other.y + other.radius;
-};
-Wall.prototype.collideBottom = function(other) {
-    return other.velocity.y < 0 && this.y + this.height > other.y - other.radius;
-};
-
-Wall.prototype.collideLeft= function(other) {
-    return other.velocity.x < 0 && this.x < other.x + other.radius;
-};
-
-Wall.prototype.collideRight = function(other) {
-    return other.velocity.x > 0 && this.x + this.width > other.x - other.radius;
-};
 
 // if(this.collideLeft(other)){
 //     other.x = this.x - other.radius;
