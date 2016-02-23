@@ -89,7 +89,7 @@ Wall.prototype.update = function () {
 Wall.prototype.draw = function (ctx) {
     NonLivingEntity.prototype.draw.call(this, ctx);
     ctx.beginPath();
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "yellow";
     ctx.rect(this.x - this.game.getWindowX(), this.y - this.game.getWindowY(), this.width, this.height);
     ctx.fill();
 

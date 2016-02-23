@@ -48,8 +48,8 @@ function Zombie(game, clone) {
 
 };
 
-Zombie.prototype = new LivingEntity();
-Zombie.prototype.constructor = Zombie;
+// Zombie.prototype = new LivingEntity();
+// Zombie.prototype.constructor = Zombie;
 
 Zombie.prototype.collide = function (other) {
     return distance(this, other) < this.radius + other.radius;
@@ -197,7 +197,7 @@ Zombie.prototype.update = function () {
 
     Zombie.prototype.draw = function (ctx) {
         LivingEntity.prototype.draw.call(this, ctx);
-};
+    };
 
 // Zombie.prototype.draw = function (ctx) {
 //     var ctx = ctx.canvas.getContext("2d");

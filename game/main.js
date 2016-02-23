@@ -129,44 +129,35 @@ ASSET_MANAGER.downloadAll(function () {
 
     hospital.addWall(new Wall(gameEngine, 38, 132, 70, 210));
     hospital.addWall(new Wall(gameEngine, 38, 460, 70, 210));
-    hospital.addWall(new Wall(gameEngine, 275, 50, 95, 63));
+    hospital.addWall(new Wall(gameEngine, 275, 0, 95, 115));
     hospital.addWall(new Wall(gameEngine, 275, 208, 95, 240));
-    hospital.addWall(new Wall(gameEngine, 275, 540, 95, 215));
+    hospital.addWall(new Wall(gameEngine, 489, 258, 185, 100));
+    hospital.addWall(new Wall(gameEngine, 275, 540, 100, 215));
     hospital.addWall(new Wall(gameEngine, 370, 258, 385, 55));
     hospital.addWall(new Wall(gameEngine, 755, 258, 90, 364));
     hospital.addWall(new Wall(gameEngine, 845, 490, 258, 85));
+    hospital.addWall(new Wall(gameEngine, 910, 450, 130, 40));
+    hospital.addWall(new Wall(gameEngine, 930, 575, 100, 40));
     hospital.addWall(new Wall(gameEngine, 1103, 258, 98, 364));
     hospital.addWall(new Wall(gameEngine, 0, 0, 14000, 50));
     hospital.addWall(new Wall(gameEngine, 0, 0, 58, 12000));
     hospital.addWall(new Wall(gameEngine, 58, 752, 538, 74));
+    hospital.addWall(new Wall(gameEngine, 398, 826, 168, 40));
+    hospital.addWall(new Wall(gameEngine, 520, 1240, 168, 40));
     hospital.addWall(new Wall(gameEngine, 696, 752, 100, 74));
     hospital.addWall(new Wall(gameEngine, 1158, 752, 600, 74));
     hospital.addWall(new Wall(gameEngine, 793, 700, 85, 600));
     hospital.addWall(new Wall(gameEngine, 1083, 695, 75, 298));
-    hospital.addWall(new Wall(gameEngine, 1083, 1086, 75, 150));
+    hospital.addWall(new Wall(gameEngine, 1083, 1086, 75, 250));
+
+    hospital.addWall(new Wall(gameEngine, 1208, 826, 160, 63));
+    hospital.addWall(new Wall(gameEngine, 1310, 1190, 300, 800));
+
     hospital.addWall(new Wall(gameEngine, 180, 970, 78, 400));
+    hospital.addWall(new Wall(gameEngine, 0, 1280, 14000, 80));
 
     gameEngine.setMap(hospital);
 
-    // gameEngine.addEntity(new Wall(gameEngine, 38, 132, 70, 210));
-    // gameEngine.addEntity(new Wall(gameEngine, 38, 460, 70, 210));
-    // gameEngine.addEntity(new Wall(gameEngine, 275, 50, 95, 63));
-    // gameEngine.addEntity(new Wall(gameEngine, 275, 208, 95, 240));
-    // gameEngine.addEntity(new Wall(gameEngine, 275, 540, 95, 215));
-    // gameEngine.addEntity(new Wall(gameEngine, 370, 258, 385, 55));
-    // gameEngine.addEntity(new Wall(gameEngine, 755, 258, 90, 364));
-    // gameEngine.addEntity(new Wall(gameEngine, 845, 490, 258, 85));
-    // gameEngine.addEntity(new Wall(gameEngine, 1103, 258, 98, 364));
-
-    // gameEngine.addEntity(new Wall(gameEngine, 0, 0, 14000, 50));
-    // gameEngine.addEntity(new Wall(gameEngine, 0, 0, 58, 12000));
-    // gameEngine.addEntity(new Wall(gameEngine, 58, 752, 538, 74))
-    // gameEngine.addEntity(new Wall(gameEngine, 696, 752, 100, 74))
-    // gameEngine.addEntity(new Wall(gameEngine, 1158, 752, 600, 74))
-    // gameEngine.addEntity(new Wall(gameEngine, 793, 700, 85, 600))
-    // gameEngine.addEntity(new Wall(gameEngine, 1083, 695, 75, 298))
-    // gameEngine.addEntity(new Wall(gameEngine, 1083, 1086, 75, 150))
-    //  gameEngine.addEntity(new Wall(gameEngine, 180, 970, 78, 400))
 
     gameEngine.addEntity(flamethrower);
     player.controlled = true;
@@ -175,8 +166,8 @@ ASSET_MANAGER.downloadAll(function () {
     gameEngine.addEntity(player);
 
     var bossMap = new Map(gameEngine, ASSET_MANAGER.getAsset("./images/bossMap1.png"), "Boss Map - Level 1", 800, 800, 800, 800, 0.5);
-    bossMap.addVillain(new Boss(gameEngine));
-    bossMap.isBossMap = true;
+    //bossMap.addVillain(new Boss(gameEngine));
+    //bossMap.isBossMap = true;
 
     gameEngine.addEntity(new Portal(gameEngine, 94, 1186, bossMap, 700, 200));
     // gameEngine.setMap(bossMap);
