@@ -1,5 +1,4 @@
 function Villain(game, clone) {
-    this.radius = 64;
     // LivingEntity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1);
     LivingEntity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1);
 	this.x = 850;
@@ -35,6 +34,8 @@ function Villain(game, clone) {
         this.velocity.x *= ratio;
         this.velocity.y *= ratio;
     }
+    this.radius = 20;
+    this.radialOffset = 15;
 
 };
 
