@@ -84,19 +84,19 @@ function LivingEntity(game, x, y) {
         maxCooldown: 10, 
         cooldown: 10,
         activate: false
-    }
+    };
     this.ability2Attributes = {
         // cooldown used to determine whether to unleash ability2 or not
         maxCooldown: 18,
         cooldown: 18,
         activate: false
-    }
+    };
     this.ability3Attributes = {
         // cooldowns used to determine whether to unleash ability3 or not
         maxCooldown: 25,
         cooldown: 25,
         activate: false
-    }
+    };
 
     this.angleOffset = 0;
 
@@ -848,24 +848,32 @@ NonLivingEntity.prototype.collide = function (livingEntity) {
     return distance(this, other) < this.radius + other.radius;
 };
 
+var collisionOffset = 3;
+
 NonLivingEntity.prototype.collideTop = function(other) {
     var leftThis = this.x;
     var rightThis = this.x + this.width;
     var topThis = this.y;
 
-    var leftOther = other.x - other.radius;
-    var rightOther = other.x + other.radius;
-    var bottomOther = other.y + other.radius;
-    var topOther = other.y - other.radius;
+    var leftOther = other.x - other.radius + collisionOffset;
+    var rightOther = other.x + other.radius - collisionOffset;
+    var bottomOther = other.y + other.radius + collisionOffset;
+    var topOther = other.y - other.radius - collisionOffset;
 
-    var checkPoint2 = topThis + (bottomOther - topThis);
-    if (topOther <= topThis) {
+    var difference = bottomOther - topThis;
+    var checkPoint2 = topThis + difference;
+
+    if (topOther <= topThis && bottomOther == checkPoint2) {
         if (leftOther < leftThis) { // if the other is more left than this
             var checkPoint = leftThis + (leftOther - leftThis);
-            return (checkPoint == leftOther) && (bottomOther == checkPoint2);
+            if (checkPoint == leftOther) {
+                return difference;
+            }
         } else {
             var checkPoint = leftOther + (leftThis - leftOther);
-            return (checkPoint == leftThis) && (bottomOther == checkPoint2);
+            if (checkPoint == leftThis) {
+                return difference;
+            }
         }
     }
     return false;
@@ -876,19 +884,25 @@ NonLivingEntity.prototype.collideBottom = function(other) {
     var topThis = this.y;
     var bottomThis = this.y + this.height;
 
-    var leftOther = other.x - other.radius;
-    var rightOther = other.x + other.radius;
-    var bottomOther = other.y + other.radius;
-    var topOther = other.y - other.radius;
+    var leftOther = other.x - other.radius + collisionOffset;
+    var rightOther = other.x + other.radius - collisionOffset;
+    var bottomOther = other.y + other.radius + collisionOffset;
+    var topOther = other.y - other.radius - collisionOffset;
 
-    var checkPoint2 = topOther + (bottomThis - topOther);
-    if (bottomOther >= bottomThis) {
+    var difference = bottomThis - topOther;
+    var checkPoint2 = topOther + difference;
+
+    if (bottomOther >= bottomThis && bottomThis == checkPoint2) {
         if (leftOther < leftThis) {
             var checkPoint = leftThis + (leftOther - leftThis);
-            return (checkPoint == leftOther) && (bottomThis == checkPoint2);
+            if (checkPoint == leftOther) {
+                return difference;
+            }
         } else {
             var checkPoint = leftOther + (leftThis - leftOther);
-            return (checkPoint == leftThis) && (bottomThis == checkPoint2);
+            if (checkPoint == leftThis) {
+                return difference;
+            }
         }
     }
     return false;
@@ -900,19 +914,25 @@ NonLivingEntity.prototype.collideLeft= function(other) {
     var topThis = this.y;
     var bottomThis = this.y + this.height;
 
-    var leftOther = other.x - other.radius;
-    var rightOther = other.x + other.radius;
-    var bottomOther = other.y + other.radius;
-    var topOther = other.y - other.radius;
+    var leftOther = other.x - other.radius + collisionOffset;
+    var rightOther = other.x + other.radius - collisionOffset;
+    var bottomOther = other.y + other.radius + collisionOffset;
+    var topOther = other.y - other.radius - collisionOffset;
 
-    var checkPoint2 = leftThis + (rightOther - leftThis);
-    if (leftOther <= leftThis) {
+    var difference = rightOther - leftThis;
+    var checkPoint2 = leftThis + difference;
+
+    if (leftOther <= leftThis && rightOther == checkPoint2) {
         if (topOther < topThis) {
             var checkPoint = topThis + (topOther - topThis);
-            return (checkPoint == topOther) && (rightOther == checkPoint2);
+            if (checkPoint == topOther) {
+                return difference;
+            }
         } else {
             var checkPoint = topOther + (topThis - topOther);
-            return (checkPoint == topThis) && (rightOther == checkPoint2);
+            if (checkPoint == topThis) {
+                return difference;
+            }
         }
     }
     return false;
@@ -924,22 +944,25 @@ NonLivingEntity.prototype.collideRight = function(other) {
     var topThis = this.y;
     var bottomThis = this.y + this.height;
 
-    var leftOther = other.x - other.radius;
-    var rightOther = other.x + other.radius;
-    var bottomOther = other.y + other.radius;
-    var topOther = other.y - other.radius;
+    var leftOther = other.x - other.radius + collisionOffset;
+    var rightOther = other.x + other.radius - collisionOffset;
+    var bottomOther = other.y + other.radius + collisionOffset;
+    var topOther = other.y - other.radius - collisionOffset;
 
-    var start = false;
-    var end = false;
+    var difference = rightThis - leftOther;
+    var checkPoint2 = leftOther + difference;
 
-    var checkPoint2 = leftOther + (rightThis - leftOther);
-    if (rightOther >= rightThis) {
+    if (rightOther >= rightThis && rightThis == checkPoint2) {
         if (topOther < topThis) {
             var checkPoint = topThis + (topOther - topThis);
-            return (checkPoint == topOther) && (rightThis == checkPoint2);
+            if (checkPoint == topOther) {
+                return difference;
+            }
         } else {
             var checkPoint = topOther + (topThis - topOther);
-            return (checkPoint == topThis) && (rightThis == checkPoint2);
+            if (checkPoint == topThis) {
+                return difference;
+            }
         }
     }
 

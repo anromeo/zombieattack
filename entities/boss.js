@@ -27,9 +27,11 @@ function Boss(game, x, y) {
     this.visualRadius = 1000;
     this.maxSpeed = 80;
     this.health = 600;
-    this.attackRange = 30; // always make sure attack range is larger than comfort zone
+    this.attackRange = 50; // always make sure attack range is larger than comfort zone
     this.comfortZone = 25;
     this.angleOffset = 270;
+    this.cooldown = 1;
+
     this.ability1Attributes.cooldown = 4;
     this.ability1Attributes.maxCooldown = 4;
 }
@@ -48,7 +50,6 @@ Boss.prototype.ability1 = function(entity) {
 Boss.prototype.update = function() {
     this.aiUpdate("zombie");
     if (this.ability1Timer) {
-        console.log(this.maxSpeed);
         if (this.ability1Timer <= 0) {
             this.ability1Timer = false;
             this.maxSpeed = this.originalMaxSpeed;

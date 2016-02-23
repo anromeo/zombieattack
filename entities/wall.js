@@ -60,18 +60,54 @@ Wall.prototype.update = function () {
                 if (other.type === "projectile") {
                     other.removeFromWorld = true;
                 }
-                if (this.collideTop(other)) {
-                    other.y = this.y - other.radius;
-                    console.log("TOP HIT!!");
-                } else if (this.collideBottom(other)) {
-                    other.y = this.y + this.height + other.radius;
-                    console.log("Bottom HIT!!");
-                } else if (this.collideLeft(other)) {
-                    other.x = this.x - other.radius;
-                    console.log("Left HIT!!");                    
-                } else if (this.collideRight(other)) {
-                    other.x = this.x + this.width + other.radius;
-                    console.log("Left HIT!!");                    
+                var collideTop = this.collideTop(other);
+                var collideBottom = this.collideBottom(other);
+                var collideLeft = this.collideLeft(other);
+                var collideRight = this.collideRight(other);
+
+                var velocityY = Math.abs(other.velocity.y);
+                var velocityX = Math.abs(other.velocity.x);
+
+                if (collideTop && collideLeft) {
+                    console.log("CollideTop :" + collideTop + " | " )
+                    if (velocityY < velocityX) {
+                        other.y = this.y - other.radius;
+                        other.velocity.y = 0;
+                    } else {
+                        other.x = this.x - other.radius;
+                    }
+                } else if (collideTop && collideRight) {
+                    if (velocityY < velocityX) {
+                        other.y = this.y - other.radius;
+                        other.velocity.y = 0;
+                    } else {
+                        other.x = this.x + this.width + other.radius;
+                        other.velocity.x = 0;
+                    }
+                } else if (collideBottom && collideLeft) {
+                    if (velocityY < velocityX) {
+                        other.y = this.y + this.height + other.radius;
+                        other.velocity.y = 0;
+                    } else {
+                        other.x = this.x - other.radius;
+                        other.velocity.x = 0;
+                    }
+                } else if (collideBottom && collideRight) {
+                    if (velocityY < velocityX) {
+                        other.y = this.y + this.height + other.radius;
+                        other.velocity.y = 0;
+                    } else {
+                        other.x = this.x + this.width + other.radius;
+                        other.velocity.x = 0;
+                    }
+                }else if (collideTop !== false) {
+                     other.y = this.y - other.radius;
+                } else if (collideBottom !== false) {
+                     other.y = this.y + this.height + other.radius;
+                } else if (collideLeft !== false) {
+                     other.x = this.x - other.radius;
+                } else if (collideRight !== false) {
+                     other.x = this.x + this.width + other.radius;
                 }
             }
         }
@@ -92,7 +128,7 @@ Wall.prototype.update = function () {
 Wall.prototype.draw = function (ctx) {
     NonLivingEntity.prototype.draw.call(this, ctx);
     ctx.beginPath();
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "yellow";
     ctx.rect(this.x - this.game.getWindowX(), this.y - this.game.getWindowY(), this.width, this.height);
     ctx.fill();
 
