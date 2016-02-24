@@ -7,12 +7,12 @@
  */
 function Entity(game, x, y) {
     this.game = game; // add the game to this entity to call rendering
-	  this.radius = 10; // add the default radius to this entity
+	this.radius = 10; // add the default radius to this entity
     this.x = x; // this is the entity's current x-coordinate location
     this.y = y; // this is the entity's current y-coordinate location
-	  this.canvasX = x; // this is the entity's current x-coordinate location on the canvas
-	  this.canvasY = y; // this is the entity's current y-coordinate location on the canvas
-	  this.isNonLiving = false; // this determines whether the entity is living or non-living. It is defaultly set to non-living
+	this.canvasX = x; // this is the entity's current x-coordinate location on the canvas
+	this.canvasY = y; // this is the entity's current y-coordinate location on the canvas
+	this.isNonLiving = false; // this determines whether the entity is living or non-living. It is defaultly set to non-living
 
     // if the game exists
     if(this.game) {

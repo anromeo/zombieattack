@@ -8,7 +8,7 @@ function Boss(game, x, y) {
     if (x === undefined) {
         this.x = this.game.surfaceWidth / 2;
     } else {
-        this.y = y;
+        this.x = x;
     }
 
     if (y === undefined) {

@@ -2,8 +2,7 @@ function Rock(game) {
     this.player = 1;
     this.radius = 4;
 	Entity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2), this.radius + Math.random() * (800 - this.radius * 2));
-    this.radius = 4;
-	this.name = "Rock";
+   	this.name = "Rock";
     this.color = "Gray";
     this.maxSpeed = 200;
     this.thrown = false;

@@ -127,13 +127,12 @@ ASSET_MANAGER.downloadAll(function () {
     var hospital = new Map(gameEngine, ASSET_MANAGER.getAsset("./images/hospital.png"), "Hospital", 1400, 1350, 400, 400, 0.5);
      // hospital.addWall(new Wall(gameEngine, 38, 132, 70, 210));
 
-<<<<<<< HEAD
     hospital.addWall(new Wall(gameEngine, 38, 132, 70, 210));
     hospital.addWall(new Wall(gameEngine, 38, 460, 70, 210));
     hospital.addWall(new Wall(gameEngine, 275, 0, 95, 115));
     hospital.addWall(new Wall(gameEngine, 275, 208, 95, 240));
     hospital.addWall(new Wall(gameEngine, 489, 258, 185, 100));
-    hospital.addWall(new Wall(gameEngine, 275, 540, 100, 215));
+    //hospital.addWall(new Wall(gameEngine, 275, 540, 100, 215));
     hospital.addWall(new Wall(gameEngine, 370, 258, 385, 55));
     hospital.addWall(new Wall(gameEngine, 755, 258, 90, 364));
     hospital.addWall(new Wall(gameEngine, 845, 490, 258, 85));
@@ -150,11 +149,8 @@ ASSET_MANAGER.downloadAll(function () {
     hospital.addWall(new Wall(gameEngine, 793, 700, 85, 600));
     hospital.addWall(new Wall(gameEngine, 1083, 695, 75, 298));
     hospital.addWall(new Wall(gameEngine, 1083, 1086, 75, 250));
-
     hospital.addWall(new Wall(gameEngine, 1208, 826, 160, 63));
     hospital.addWall(new Wall(gameEngine, 1310, 1190, 300, 800));
-
-=======
     hospital.addWall(new Wall(gameEngine, 0, 132, 108, 210));
     hospital.addWall(new Wall(gameEngine, 0, 460, 108, 210));
     hospital.addWall(new Wall(gameEngine, 275, 0, 95, 113));
@@ -164,15 +160,14 @@ ASSET_MANAGER.downloadAll(function () {
     hospital.addWall(new Wall(gameEngine, 755, 258, 90, 364));
     hospital.addWall(new Wall(gameEngine, 755, 490, 447, 85));
     hospital.addWall(new Wall(gameEngine, 1103, 258, 98, 364));
-    hospital.addWall(new Wall(gameEngine, 0, 0, 14000, 50));
-    hospital.addWall(new Wall(gameEngine, 0, 0, 58, 12000));
+    // hospital.addWall(new Wall(gameEngine, 0, 0, 14000, 50));
+    // hospital.addWall(new Wall(gameEngine, 0, 0, 58, 12000));
     hospital.addWall(new Wall(gameEngine, 0, 752, 596, 74));
     hospital.addWall(new Wall(gameEngine, 696, 752, 160, 74));
     hospital.addWall(new Wall(gameEngine, 1083, 752, 675, 74));
     hospital.addWall(new Wall(gameEngine, 793, 700, 85, 675));
     hospital.addWall(new Wall(gameEngine, 1083, 695, 75, 298));
     hospital.addWall(new Wall(gameEngine, 1083, 1086, 75, 300));
->>>>>>> a61106f255c2de21b0ba6b2783f531b839849aca
     hospital.addWall(new Wall(gameEngine, 180, 970, 78, 400));
     hospital.addWall(new Wall(gameEngine, 0, 1280, 14000, 80));
 

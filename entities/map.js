@@ -27,5 +27,5 @@ Map.prototype.addVillain = function(villain) {
 }
 
 Map.prototype.addWeapon = function(weapon) {
-    this.weapons.push(villain);
+    this.weapons.push(weapon);
 }
