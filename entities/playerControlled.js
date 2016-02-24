@@ -7,8 +7,29 @@
 
 function playerControlled(game) {
     //LivingEntity.call(this, game, 0, 0, 0, 0, this.radius + Math.random() * (800 - this.radius * 2), this.radius + Math.random() * (800 - this.radius * 2));  
-    LivingEntity.call(this, game,
-        game.surfaceWidth/2 * Math.random(), game.surfaceHeight/2 * Math.random());
+    // LivingEntity.call(this, game, game.surfaceWidth/2 * Math.random(), game.surfaceHeight/2 * Math.random());
+
+    this.spawnPoints = [];
+    this.spawnPoints[0] = { x: 190, y: 213 };
+    this.spawnPoints[1] = { x: 659, y: 136 };
+    this.spawnPoints[2] = { x: 976, y: 303 };
+    this.spawnPoints[3] = { x: 965, y: 706 };
+    this.spawnPoints[4] = { x: 167, y: 154 };
+    this.spawnPoints[5] = { x: 138, y: 222 };
+    this.spawnPoints[6] = { x: 184, y:  283 };
+    this.spawnPoints[13] = { x: 190, y: 80 };
+    this.spawnPoints[7] = { x: 138, y: 688 };
+    this.spawnPoints[8] = { x: 449, y: 672 };
+    this.spawnPoints[9] = { x: 136, y: 888 };
+    this.spawnPoints[10] = { x: 298, y: 1192};
+    this.spawnPoints[11] = { x: 664, y: 416 };
+    this.spawnPoints[12] = { x: 190, y: 80 };
+    
+
+    var spawnpoint = this.spawnPoints[Math.floor(Math.random() * this.spawnPoints.length)];
+
+    LivingEntity.call(this, game, spawnpoint.x, spawnpoint.y);
+
     this.player = 1;
     // this.SpriteWidth = 80;
     // this.SpriteHeight = 43;
@@ -284,6 +305,8 @@ playerControlled.prototype.update = function () {
         return;
     }
     LivingEntity.prototype.update.call(this);
+
+    console.log("location X:" +this.x + "location Y: " + this.y);
 
     // Weapon collision
     for (i = 0; i < this.game.weapons.length; i++) {

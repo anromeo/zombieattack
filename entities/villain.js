@@ -1,6 +1,29 @@
 function Villain(game, clone) {
     // LivingEntity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1);
-    LivingEntity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1);
+    // LivingEntity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1);
+
+
+    this.spawnPoints = [];
+    this.spawnPoints[0] = { x: 1360, y: 652 };
+    this.spawnPoints[1] = { x: 1231, y: 322 };
+    this.spawnPoints[2] = { x: 1338, y: 80 };
+    this.spawnPoints[3] = { x: 1073, y: 460 };
+    this.spawnPoints[4] = { x: 874, y: 411 };
+    this.spawnPoints[5] = { x: 939, y: 965 };
+    this.spawnPoints[6] = { x: 1027, y:  1225 };
+    this.spawnPoints[13] = { x: 1248, y: 1221 };
+    this.spawnPoints[7] = { x: 910, y: 683 };
+    this.spawnPoints[8] = { x: 660, y: 1029 };
+    this.spawnPoints[9] = { x: 360, y: 1233 };
+    this.spawnPoints[10] = { x: 360, y: 924};
+    this.spawnPoints[11] = { x: 752, y: 1250 };
+    this.spawnPoints[12] = { x: 400, y: 632 };
+    
+
+    var spawnpoint = this.spawnPoints[Math.floor(Math.random() * this.spawnPoints.length)];
+
+    LivingEntity.call(this, game, spawnpoint.x, spawnpoint.y);
+
 	this.x = 850;
 	this.y = this.game.surfaceHeight * Math.random();
 	
