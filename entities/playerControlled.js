@@ -168,6 +168,10 @@ playerControlled.prototype.selectAction = function () {
             if (this.game.keyState[40]||this.game.keyState[83]||this.game.keyState[115]) {  //downarrow, s, S
                 y = 1;
             }   
+			//pause the game
+			if (this.game.keyState[80]||this.game.keyState[112]) {  //p, P
+                this.game.menuMode = "Pause";
+            }  
             
             action.direction.x += (x) * acceleration;
             action.direction.y += (y) * acceleration;
@@ -306,7 +310,7 @@ playerControlled.prototype.update = function () {
     }
     LivingEntity.prototype.update.call(this);
 
-    console.log("location X:" +this.x + "location Y: " + this.y);
+    //console.log("location X:" +this.x + "location Y: " + this.y);
 
     // Weapon collision
     for (i = 0; i < this.game.weapons.length; i++) {
@@ -523,8 +527,10 @@ playerControlled.prototype.draw = function (ctx) {
         //shooting line
     if (this.game.mouse && this.shootingLine && this.controlled) {
         ctx.beginPath();
-        var lineBeginX = this.canvasX + this.radius;
-        var lineBeginY = this.canvasY + this.radius;
+		        // var lineBeginX = this.canvasX + this.radius;
+        // var lineBeginY = this.canvasY + this.radius;
+		var lineBeginX = this.canvasX;
+        var lineBeginY = this.canvasY;
         var lineEndX = this.game.mouse.canvasx;
         var lineEndY = this.game.mouse.canvasy;
         ctx.strokeStyle = "pink";
@@ -547,8 +553,10 @@ playerControlled.prototype.draw = function (ctx) {
 
     if (this.game.mouse && this.game.mouse.mousedown && this.controlled) {
         ctx.beginPath();
-        var lineBeginX = this.canvasX + this.radius;
-        var lineBeginY = this.canvasY + this.radius;
+        // var lineBeginX = this.canvasX + this.radius;
+        // var lineBeginY = this.canvasY + this.radius;
+		var lineBeginX = this.canvasX;
+        var lineBeginY = this.canvasY;
         var lineEndX =  this.game.mouse.canvasx + this.randomLine.x;
         var lineEndY = this.game.mouse.canvasy + this.randomLine.y;
         ctx.strokeStyle = "yellow";

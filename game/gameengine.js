@@ -57,13 +57,14 @@ function GameEngine() {
     this.y;
 
     this.map = null;
+	this.menuMode = "Start";
 
     this.zombieCooldownNumInitial = 3;  // how often a zombie will appear initially
     this.zombieCooldown = this.zombieCooldownNumInitial; // the cooldown until the next zombie appears
 
     this.kills = 0; // this is the number of kills that the player has total
 
-    this.showOutlines = true; // this shows the outline of the entities
+    this.showOutlines = false; // this shows the outline of the entities
     this.ctx = null; // this is the object being used to draw on the map
     this.click = null; // this is the click value (if null, not being clicked)
 
@@ -166,21 +167,172 @@ GameEngine.prototype.setWindowY = function(y) {
 GameEngine.prototype.init = function (ctx) {
 
     this.ctx = ctx; // this adds the ctx object to the Game Engine
-
-    this.surfaceWidth = this.ctx.canvas.width; // this sets the surfaceWidth to the canvas width
+	this.ctx.lostfocus = "False"; //used when detecting if game lost focus.
+    window.onblur = function detectLostFocus() { this.document.getElementById('gameWorld').getContext('2d').lostfocus = "True";}
+	
+	this.surfaceWidth = this.ctx.canvas.width; // this sets the surfaceWidth to the canvas width
     this.surfaceHeight = this.ctx.canvas.height; // this sets the surfaceHeight to the canvas height 
 
     this.startInput();
-
+	this.setupGameState();
 }
 
 GameEngine.prototype.start = function () {
     console.log("starting game");
     var that = this;
     (function gameLoop() {
-        that.loop();
-        requestAnimFrame(gameLoop, that.ctx.canvas);
+		if (that.menuMode == "Game") {
+			that.loop();
+		} else if (that.menuMode == "Start" || that.menuMode == "Pause") {
+			that.menuLoop();
+		}
+        
+        requestAnimFrame(gameLoop, that.ctx.canvas); 
     })();
+}
+
+GameEngine.prototype.restart = function () {
+	
+    // Entities of the Game
+    this.entities = []; // All entities of the game
+    this.weapons = []; // All the weapons of the game
+    // added from 435 ZOMBIE AI Project
+    this.villains = []; // All the Zombies | TODO ? Get rid or change ?
+    this.players = []; // All the Players | TODO ? Get rid or change ?
+    this.rocks = []; // All the rocks or bullets
+
+    // This is the x and y of the game, they control the rotation of the player
+    this.x;
+    this.y;
+
+    this.map = null;
+
+    this.kills = 0; // this is the number of kills that the player has total
+
+    this.mouse = {x:0, y:0, mousedown:false}; // this is the mouse coordinates and whether the mouse is pressed or not
+	this.keyState = {}; // this is the current keystate which is an object that is nothing
+
+    this.windowX = 0; // This is the x-coordinate of the top left corner of the canvas currently
+    this.windowY = 0; // This is the y-coordinate of the top left corner of the canvas currently   
+	this.setupGameState();
+}
+
+GameEngine.prototype.setupGameState = function () {
+	    var circle;
+    // for (var i = 0; i < numPlayers; i++) {
+        // circle = new friendlyAI(this);
+        // this.addEntity(circle);
+    // }
+    // for (var i = 0; i < numZombies; i++) {
+		// console.log("added zombie");
+        // circle = new Zombie(this);
+        // this.addEntity(circle);
+    // }
+
+    // for (var i = 0; i < numRocks; i++) {
+        // circle = new Rock(this);
+        // this.addEntity(circle);
+    // }
+
+    var player = new playerControlled(this);
+    // var background = new Background(this, ASSET_MANAGER.getAsset("./images/background.png"));
+//    var boss = new Boss(this, ASSET_MANAGER.getAsset("./images/boss.png"));
+    //this.addEntity(boss);
+  //  this.addEntity(background);
+
+    // var background = new Background(this, ASSET_MANAGER.getAsset("./images/background.png"));
+    // var boss = new Boss(this, ASSET_MANAGER.getAsset("./images/boss.png"));
+	var flamethrower = new FlameThrower(this, ASSET_MANAGER.getAsset("./images/flamethrower.png"));
+
+        //     // HOSPITAL MAP
+    // this.worldWidth = 1400; // the width of the world within the canvas HOSPITAL
+    // this.worldHeight = 1200; // the height of the world within the canvas HOSPITAL
+
+    // this.mapRatioWidth = 400;
+    // this.mapRatioHeight = 400;
+
+        // FOREST MAP
+    // this.worldWidth = 1600; // the width of the world within the canvas FOREST
+    // this.worldHeight = 1600; // the height of the world within the canvas FOREST
+
+    // this.mapRatioWidth = 1600; 
+    // this.mapRationHeight = 1600;
+
+    // Map(game, image, name, worldWidth, worldHeight, mapRatioWidth, mapRatioHeight, ratio) 
+
+    var hospital = new Map(this, ASSET_MANAGER.getAsset("./images/hospital.png"), "Hospital", 1400, 1350, 400, 400, 0.5);
+     // hospital.addWall(new Wall(this, 38, 132, 70, 210));
+
+    hospital.addWall(new Wall(this, 38, 132, 70, 210));
+    hospital.addWall(new Wall(this, 38, 460, 70, 210));
+    hospital.addWall(new Wall(this, 275, 0, 95, 115));
+    hospital.addWall(new Wall(this, 275, 208, 95, 240));
+    hospital.addWall(new Wall(this, 489, 258, 185, 100));
+    //hospital.addWall(new Wall(this, 275, 540, 100, 215));
+    hospital.addWall(new Wall(this, 370, 258, 385, 55));
+    hospital.addWall(new Wall(this, 755, 258, 90, 364));
+    hospital.addWall(new Wall(this, 845, 490, 258, 85));
+    hospital.addWall(new Wall(this, 910, 450, 130, 40));
+    hospital.addWall(new Wall(this, 930, 575, 100, 40));
+    hospital.addWall(new Wall(this, 1103, 258, 98, 364));
+    hospital.addWall(new Wall(this, 0, 0, 14000, 50));
+    hospital.addWall(new Wall(this, 0, 0, 58, 12000));
+    hospital.addWall(new Wall(this, 58, 752, 538, 74));
+    hospital.addWall(new Wall(this, 398, 826, 168, 40));
+    hospital.addWall(new Wall(this, 520, 1240, 168, 40));
+    hospital.addWall(new Wall(this, 696, 752, 100, 74));
+    hospital.addWall(new Wall(this, 1158, 752, 600, 74));
+    hospital.addWall(new Wall(this, 793, 700, 85, 600));
+    hospital.addWall(new Wall(this, 1083, 695, 75, 298));
+    hospital.addWall(new Wall(this, 1083, 1086, 75, 250));
+    hospital.addWall(new Wall(this, 1208, 826, 160, 63));
+    hospital.addWall(new Wall(this, 1310, 1190, 300, 800));
+    hospital.addWall(new Wall(this, 0, 132, 108, 210));
+    hospital.addWall(new Wall(this, 0, 460, 108, 210));
+    hospital.addWall(new Wall(this, 275, 0, 95, 113));
+    hospital.addWall(new Wall(this, 275, 208, 95, 240));
+    hospital.addWall(new Wall(this, 275, 540, 95, 280));
+    hospital.addWall(new Wall(this, 275, 258, 505, 55));
+    hospital.addWall(new Wall(this, 755, 258, 90, 364));
+    hospital.addWall(new Wall(this, 755, 490, 447, 85));
+    hospital.addWall(new Wall(this, 1103, 258, 98, 364));
+    // hospital.addWall(new Wall(this, 0, 0, 14000, 50));
+    // hospital.addWall(new Wall(this, 0, 0, 58, 12000));
+    hospital.addWall(new Wall(this, 0, 752, 596, 74));
+    hospital.addWall(new Wall(this, 696, 752, 160, 74));
+    hospital.addWall(new Wall(this, 1083, 752, 675, 74));
+    hospital.addWall(new Wall(this, 793, 700, 85, 675));
+    hospital.addWall(new Wall(this, 1083, 695, 75, 298));
+    hospital.addWall(new Wall(this, 1083, 1086, 75, 300));
+    hospital.addWall(new Wall(this, 180, 970, 78, 400));
+    hospital.addWall(new Wall(this, 0, 1280, 14000, 80));
+
+    this.setMap(hospital);
+
+
+    this.addEntity(flamethrower);
+    player.controlled = true;
+
+
+    this.addEntity(player);
+
+    var bossMap = new Map(this, ASSET_MANAGER.getAsset("./images/bossMap1.png"), "Boss Map - Level 1", 800, 800, 800, 800, 0.5);
+    //bossMap.addVillain(new Boss(this));
+    //bossMap.isBossMap = true;
+
+    this.addEntity(new Portal(this, 94, 1186, bossMap, 700, 200));
+//    this.setMap(bossMap);
+    // var player2 = new playerControlled(this);
+    // this.addEntity(player2);
+
+    // var player3 = new playerControlled(this);
+    // this.addEntity(player3);
+
+    
+    //this.addEntity(boss);
+  //  this.addEntity(background);
+
+  //  this.addEntity(player2);   
 }
 
 /**
@@ -310,13 +462,7 @@ GameEngine.prototype.draw = function (top, left) {
     // The forest level that is being drawn
     this.ctx.drawImage(this.map.image, this.getWindowX() * this.map.ratio, this.getWindowY() * this.map.ratio, this.map.mapRatioWidth, this.map.mapRatioHeight, 0, 0, this.surfaceWidth, this.surfaceHeight);
 
-    // draws the number of kills onto the canvas
-    this.ctx.beginPath();
-    this.ctx.fillStyle = "Red";
-    this.ctx.font = "48px serif";
-    var message = "Kills: " + this.kills;
-    this.ctx.fillText(message, 10, 50);
-    this.ctx.stroke(); 
+
 
     if (this.showOutlines) {
         // this cycles through the walls of the map
@@ -333,6 +479,14 @@ GameEngine.prototype.draw = function (top, left) {
         this.entities[i].draw(this.ctx);
     }
 
+	// draws the number of kills onto the canvas
+    this.ctx.beginPath();
+    this.ctx.fillStyle = "Red";
+    this.ctx.font = "48px serif";
+    var message = "Kills: " + this.kills;
+    this.ctx.fillText(message, 10, 50);
+    this.ctx.stroke(); 
+	
     this.ctx.restore();
 }
 
@@ -501,10 +655,178 @@ GameEngine.prototype.setMap = function(map, portal) {
     }
 }
 
+GameEngine.prototype.drawStartMenu = function() {
+	this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+	if (this.menuMode == "Start") {
+		var height = 50;
+		var width = 200;
+		
+		//startButton
+		this.startButton = {x:this.ctx.canvas.width/2 - width/2, y:this.ctx.canvas.height/2 - height/2, height:height, width:width};	
+		this.startButton.lines = ["New Game"];
+		
+		
+		this.drawButton(this.startButton);
+	} else if (this.menuMode == "Pause") {
+		var height = 50;
+		var width = 200;
+		
+		//startButton
+		this.continueButton = {x:this.ctx.canvas.width/2 - width/2, y:this.ctx.canvas.height/2 - height/2, height:height, width:width};	
+		this.continueButton.lines = ["Continue"];
+		
+		var buttX = this.continueButton.x;//this.ctx.canvas.width/2 - width/2; 
+		var buttY = this.continueButton.y + this.continueButton.height + 30;
+		this.startButton = {x:buttX, y:buttY, height:height, width:width};	
+		this.startButton.lines = ["New Game"];
+		
+		this.drawButton(this.continueButton);
+		this.drawButton(this.startButton);
+		
+	} 
+
+}
+
+GameEngine.prototype.drawButton = function(buttonToDraw) {
+	this.ctx.save();
+	
+	this.ctx.beginPath();
+    this.ctx.fillStyle = "blue";
+    this.ctx.fillRect(buttonToDraw.x, buttonToDraw.y, buttonToDraw.width, buttonToDraw.height);
+    this.ctx.fill();
+    this.ctx.closePath();
+	
+	this.ctx.beginPath();
+    this.ctx.strokeStyle = "black";
+    this.ctx.rect(buttonToDraw.x, buttonToDraw.y, buttonToDraw.width, buttonToDraw.height);
+    this.ctx.stroke();
+    this.ctx.closePath();
+	
+	this.ctx.fillStyle = "white";
+	this.ctx.font="25px Arial";
+	
+	// var line1 = "New Game";
+	// var line2 = "Click";
+	// var line3 = "to Start";
+
+	for (var i = 0; i < buttonToDraw.lines.length; i++) {
+		var startX = buttonToDraw.x + buttonToDraw.width/2 - (buttonToDraw.lines[i].length/2 * 15);
+		var startY = buttonToDraw.y + (33 * (i + 1));
+		this.ctx.fillText(buttonToDraw.lines[i], startX, startY);
+	};
+	
+	// this.ctx.beginPath();
+    // this.ctx.fillStyle = "orange";
+    // this.ctx.fillRect(buttonToDraw.x, buttonToDraw.y, 5, 5);
+    // this.ctx.fill();
+    // this.ctx.closePath();
+	
+	// this.ctx.fillText(line1,this.startButton.x + 32,this.startButton.y + 30);	
+	// this.ctx.fillText(line2,this.startButton.x + 35,this.startButton.y + 60);
+	// this.ctx.fillText(line3,this.startButton.x + 38,this.startButton.y + 90);
+    this.ctx.restore();
+}
+
+GameEngine.prototype.checkMenuClick = function (buttonToTest){
+	// console.log(this.click.x >= buttonToTest.x);
+	// console.log(this.click.x <= buttonToTest.x + buttonToTest.width);
+	// console.log(this.click.y >= buttonToTest.y);
+	// console.log(this.click.y <= buttonToTest.y + buttonToTest.height);
+	return(this.click.canvasx >= buttonToTest.x && this.click.canvasx <= buttonToTest.x + buttonToTest.width && this.click.canvasy >= buttonToTest.y && this.click.canvasy <= buttonToTest.y + buttonToTest.height)
+}
+
+// GameEngine.prototype.checkMenuClick = function (x, y, width, height){
+	// console.log(this.click.x >= x);
+	// console.log(this.click.x <= x + width);
+	// console.log(this.click.y >= y);
+	// console.log(this.click.y <= y + height);
+	// return(this.click.x >= x && this.click.x <= x + width && this.click.y >= y && this.click.y <= y + height)
+// }
+
+function printout() {
+    console.log("printout called");
+}
+
+GameEngine.prototype.menuLoop = function () {
+	//console.log(window);
+	//console.log(document);
+	//console.log(window.onblur);
+	//window.onblur = function setMenuMode() { console.log("printout called");}
+	//window.onblur = function setMenuMode() { console.log(this.document.getElementById('gameWorld').getContext('2d'));console.log(this.document.getElementById('gameWorld').getContext('2d').test = "now");console.log("printout called");}
+		//window.onblur = function setMenuMode() { this.menuMode = "Pause";console.log("printout called");}
+
+	// console.log(document.getElementById('gameWorld'));
+	// console.log(document.getElementById('gameWorld').style);
+	//console.log(document.getElementById('gameWorld').style.cursor = 'pointer');
+	document.getElementById('gameWorld').style.cursor = 'pointer';
+	//console.log(document.getElementById('gameWorld')._proto_;
+	this.drawStartMenu();
+	
+	//if there is a click, see if it clicked a button
+	//console.log(this.click);
+	if (this.click != null) {
+		//console.log(this.click);
+		//console.log(this.menuMode);
+		if (this.menuMode == "Start") {
+			//console.log(this.checkMenuClick(this.startButton));
+			//console.log(this.click);
+			//console.log(this.startButton);
+			if (this.checkMenuClick(this.startButton)){
+				//console.log("should be starting");
+				document.getElementById('gameWorld').style.cursor = '';
+				this.menuMode = "Game";
+			}
+			// } else if (this.checkMenuClick(this.restartButton)){
+				// this.restart();
+				// console.log(document.getElementById('gameWorld').style.cursor = 'url("./images/cursor.png")');
+				// this.menuMode = "Game";
+			// }
+		} else if (this.menuMode == "Pause") {
+			if (this.checkMenuClick(this.continueButton)){
+				console.log("should be continuing");
+				document.getElementById('gameWorld').style.cursor = '';
+				this.menuMode = "Game";
+			} else if (this.checkMenuClick(this.startButton)){
+				console.log("should be restarting");
+				this.restart();
+				document.getElementById('gameWorld').style.cursor = '';
+				this.menuMode = "Game";
+			}
+		} 
+		
+	}
+	
+	// if (this.click != null) {
+		// //console.log(this.click);
+		// if (this.checkMenuClick(this.startButton)){
+			// this.menuMode = "Game";
+		// }
+		// // if (this.click.x >= this.startButton.x && 
+		// // this.click.x <= this.startButton.x + this.startButton.width &&
+		// // this.click.y >= this.startButton.y && 
+		// // this.click.y <= this.startButton.y + this.startButton.height) {
+			
+			// // //this.showMenu = false;
+			// // //this.FirstMenu = false;
+			// // //this.reset();
+		// // }
+	// }
+    //this.clockTick = this.timer.tick(); // increments the clock tick
+    //this.update(); // updates the GameEngine and all the entities in the game
+    //this.draw(); // draws the GameEngine and all the entities in the game
+    this.click = null; // resets the click to null
+}
+
 /**
  * This loops through the game engine until the game ends
  */
 GameEngine.prototype.loop = function () {
+	//pauses the game if game looses focus
+	if (this.ctx.lostfocus == "True") {
+		//console.log("lostfocus");
+		this.ctx.lostfocus = "False";
+		this.menuMode = "Pause";
+	}
     this.clockTick = this.timer.tick(); // increments the clock tick
     this.update(); // updates the GameEngine and all the entities in the game
     this.draw(); // draws the GameEngine and all the entities in the game

@@ -69,7 +69,7 @@ Wall.prototype.update = function () {
                 var velocityX = Math.abs(other.velocity.x);
 
                 if (collideTop && collideLeft) {
-                    console.log("CollideTop :" + collideTop + " | " )
+                    //console.log("CollideTop :" + collideTop + " | " )
                     if (velocityY < velocityX) {
                         other.y = this.y - other.radius;
                         other.velocity.y = 0;
