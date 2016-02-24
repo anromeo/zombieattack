@@ -38,17 +38,64 @@ function Boss(game, x, y) {
 Boss.prototype = new LivingEntity();
 Boss.prototype.constructor = Boss;
 
+
 Boss.prototype.ability1 = function(entity) {
-    console.log("Activate Abilities");
+    console.log("Running Attack!");
     entity.originalMaxSpeed = entity.maxSpeed;
     entity.maxSpeed *= 4;
     entity.movingAnimation.originalFrameDuration = entity.movingAnimation.frameDuration;
     entity.movingAnimation.frameDuration = entity.movingAnimation.frameDuration;
-    entity.ability1Timer = 1;
+    entity.ability1Timer = 2;
+}
+
+Boss.prototype.ability2 = function(entity) {
+    console.log("Raise the DEAD!");
+    entity.ability2Timer = 4; // this is the timer for the length of time that occurs
+    entity.ability2Check = 3;
+}
+
+Boss.prototype.ability3 = function(entity) {
+    console.log("Heal thyself!");
+    entity.ability3Timer = 4;
+    entity.healingCircle = 50 + this.radius;
+}
+
+Boss.prototype.draw = function(ctx) {
+    if (this.healingCircle) {
+        this.drawCircle(ctx, "yellow", this.canvasX, this.canvasY, this.healingCircle, 5);
+    }
+    LivingEntity.prototype.draw.call(this, ctx);
 }
 
 Boss.prototype.update = function() {
     this.aiUpdate("zombie");
+
+    if (this.ability3Timer >= 4) {
+        this.healingCircle -= this.game.clockTick;
+        this.ability3Timer -= this.game.clockTick;
+        this.velocity.x = 0;
+        this.velocity.y = 0;
+    } else {
+        this.health += 25;
+        this.ability3Timer = false;
+        this.healingCircle = false;
+    }
+
+    if (this.ability2Timer) {
+        if (this.ability2Timer >= 0) {
+            this.ability2Timer -= this.game.clockTick;
+            if (this.ability2Check > this.ability2Timer) {
+                this.ability2Check -= 1;
+                var villain = new Villain(this.game, this.x + this.velocity.x, this.y + this.velocity.y);
+                this.game.addEntity(villain);
+            }
+            this.velocity.x = 0;
+            this.velocity.y = 0;
+        } else {
+            this.ability2Timer = false;
+        }
+    }
+
     if (this.ability1Timer) {
         if (this.ability1Timer <= 0) {
             this.ability1Timer = false;
@@ -60,6 +107,7 @@ Boss.prototype.update = function() {
     }
 
 }
+
 
 // Boss.prototype.update = function () {
 //     Entity.prototype.update.call(this);

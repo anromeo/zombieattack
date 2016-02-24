@@ -87,8 +87,8 @@ function LivingEntity(game, x, y) {
     };
     this.ability2Attributes = {
         // cooldown used to determine whether to unleash ability2 or not
-        maxCooldown: 18,
-        cooldown: 18,
+        maxCooldown: 8,
+        cooldown: 8,
         activate: false
     };
     this.ability3Attributes = {
@@ -791,7 +791,7 @@ LivingEntity.prototype.checkAbility = function(abilityAttributes, ability) {
  */
 LivingEntity.prototype.update = function () {
 
-  	Entity.prototype.update.call(this);
+    Entity.prototype.update.call(this);
 
     // IF a LivingEntity's Health Drops to less than 0
     if (this.health <= 0) {
@@ -805,7 +805,15 @@ LivingEntity.prototype.update = function () {
 
     if (this.ability1 !== undefined) {
         this.checkAbility(this.ability1Attributes, this.ability1);
-    } 
+    }
+
+    if (this.ability2 !== undefined) {
+        this.checkAbility(this.ability2Attributes, this.ability2);
+    }
+
+    if (this.ability3 !== undefined) {
+        this.checkAbility(this.ability3Attributes, this.ability3);
+    }
 }
 
 
