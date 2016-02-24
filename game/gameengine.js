@@ -317,8 +317,8 @@ GameEngine.prototype.setupGameState = function () {
     this.addEntity(player);
 
     var bossMap = new Map(this, ASSET_MANAGER.getAsset("./images/bossMap1.png"), "Boss Map - Level 1", 800, 800, 800, 800, 0.5);
-    //bossMap.addVillain(new Boss(this));
-    //bossMap.isBossMap = true;
+    bossMap.addVillain(new Boss(this));
+    bossMap.isBossMap = true;
 
     this.addEntity(new Portal(this, 94, 1186, bossMap, 700, 200));
 //    this.setMap(bossMap);
