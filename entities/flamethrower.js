@@ -5,6 +5,7 @@ function FlameThrower(game, image) {
     this.game = game;
     // this.x = Math.random() * 600;
     // this.y = Math.random() * 600;
+
     this.spawnPoints = [];
     this.spawnPoints[0] = { x: 100, y: 100 };
     this.spawnPoints[1] = { x: 440, y: 360 };
@@ -16,6 +17,21 @@ function FlameThrower(game, image) {
 
     this.x = spawnpoint.x;
     this.y = spawnpoint.y;
+
+    // this.spawnPoints = [];
+    // this.spawnPoints[0] = { x: 190, y: 213 };
+    // this.spawnPoints[1] = { x: 659, y: 136 };
+    // this.spawnPoints[2] = { x: 976, y: 303 };
+    // this.spawnPoints[3] = { x: 965, y: 706 };
+    // this.spawnPoints[4] = { x: 167, y: 154 };
+    // this.spawnPoints[5] = { x: 138, y: 222 };
+    // this.spawnPoints[6] = { x: 184, y:  283 };
+
+    // var spawnpoint = this.spawnPoints[Math.floor(Math.random() * this.spawnPoints.length)];
+
+    this.x = 100;
+    this.y = 100;
+
     this.width = 45;
     this.height = 20;
 

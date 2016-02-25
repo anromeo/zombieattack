@@ -835,7 +835,7 @@ GameEngine.prototype.loop = function () {
 	if (this.ctx.lostfocus == "True") {
 		//console.log("lostfocus");
 		this.ctx.lostfocus = "False";
-		this.menuMode = "Pause";
+		//this.menuMode = "Pause";
 	}
     this.clockTick = this.timer.tick(); // increments the clock tick
     this.update(); // updates the GameEngine and all the entities in the game
