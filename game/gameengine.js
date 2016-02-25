@@ -94,6 +94,10 @@ function GameEngine() {
     this.timer = new Timer(); // this creates the Object Timer for the Game Engine
     this.keyState = {}; // this is the current keystate which is an object that is nothing
 
+    this.expToLevelUp = 10;
+    this.level = 1;
+    this.expEarned = 0;
+
 }
 
 /**
@@ -525,6 +529,12 @@ GameEngine.prototype.update = function () {
 
     // Sets the player to the current player
     this.player = this.getPlayer();
+
+    if(this.expToLevelUp <= this.expEarned){
+        ++this.level;
+        console.log("My level is " + this.level);
+        this.expToLevelUp *= 2;
+    }
 
     // If the map is not a BossMap
     if (!this.map.isBossMap) {

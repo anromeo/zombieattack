@@ -5,8 +5,17 @@ function FlameThrower(game, image) {
     this.game = game;
     // this.x = Math.random() * 600;
     // this.y = Math.random() * 600;
-    this.x = 100;
-    this.y = 100;
+    this.spawnPoints = [];
+    this.spawnPoints[0] = { x: 100, y: 100 };
+    this.spawnPoints[1] = { x: 440, y: 360 };
+    this.spawnPoints[2] = { x: 570, y: 1150 };
+    this.spawnPoints[3] = { x: 1020, y: 650 };
+    this.spawnPoints[4] = { x: 980, y: 370 };
+
+    var spawnpoint = this.spawnPoints[Math.floor(Math.random() * this.spawnPoints.length)];
+
+    this.x = spawnpoint.x;
+    this.y = spawnpoint.y;
     this.width = 45;
     this.height = 20;
 
