@@ -984,8 +984,9 @@ NonLivingEntity.prototype.collideRight = function(other) {
 };
 
 NonLivingEntity.prototype.draw = function (ctx) {
-    if (this.animation) {
-      // draw the current player
+	if (this.movingAnimation) {
+        this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius - this.game.getWindowX() - this.radialOffset, this.y - this.radius - this.game.getWindowY() - this.radialOffset, this.angle);
+    } else if (this.animation) {
       this.animation.drawFrameRotate(this.game.clockTick, ctx,
         this.x - this.game.getWindowX() - this.leftImageOffset, // Top left's x-coordinate 
         this.y - this.game.getWindowY() - this.topImageOffset, // Top left's y-coordinate

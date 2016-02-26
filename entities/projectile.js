@@ -7,7 +7,6 @@ function Projectile(game) {
     this.type = "projectile";
     this.color = "Gray";
     this.maxSpeed = 200;
-    this.thrown = false;
     this.strength = 34;
     this.velocity = { x: 0, y: 0 };
 
@@ -51,32 +50,32 @@ Projectile.prototype.update = function () {
 		this.removeFromWorld = true;
     }
 
-    var chasing = false;
-    for (var i = 0; i < this.game.entities.length; i++) {
-        var ent = this.game.entities[i];
-        if (ent !== this && ent.name === "Projectile" && this.thrown && ent.thrown && this.collide(ent)) {
-            var temp = { x: this.velocity.x, y: this.velocity.y };
+    // var chasing = false;
+    // for (var i = 0; i < this.game.entities.length; i++) {
+        // var ent = this.game.entities[i];
+        // if (ent !== this && ent.name === "Projectile" && this.thrown && ent.thrown && this.collide(ent)) {
+            // var temp = { x: this.velocity.x, y: this.velocity.y };
 
-            var dist = distance(this, ent);
-            var delta = this.radius + ent.radius - dist;
-            var difX = (this.x - ent.x) / dist;
-            var difY = (this.y - ent.y) / dist;
+            // var dist = distance(this, ent);
+            // var delta = this.radius + ent.radius - dist;
+            // var difX = (this.x - ent.x) / dist;
+            // var difY = (this.y - ent.y) / dist;
 
-            this.x += difX * delta / 2;
-            this.y += difY * delta / 2;
-            ent.x -= difX * delta / 2;
-            ent.y -= difY * delta / 2;
+            // this.x += difX * delta / 2;
+            // this.y += difY * delta / 2;
+            // ent.x -= difX * delta / 2;
+            // ent.y -= difY * delta / 2;
 
-            this.velocity.x = ent.velocity.x * friction;
-            this.velocity.y = ent.velocity.y * friction;
-            ent.velocity.x = temp.x * friction;
-            ent.velocity.y = temp.y * friction;
-            this.x += this.velocity.x * this.game.clockTick;
-            this.y += this.velocity.y * this.game.clockTick;
-            ent.x += ent.velocity.x * this.game.clockTick;
-            ent.y += ent.velocity.y * this.game.clockTick;
-        }
-    }
+            // this.velocity.x = ent.velocity.x * friction;
+            // this.velocity.y = ent.velocity.y * friction;
+            // ent.velocity.x = temp.x * friction;
+            // ent.velocity.y = temp.y * friction;
+            // this.x += this.velocity.x * this.game.clockTick;
+            // this.y += this.velocity.y * this.game.clockTick;
+            // ent.x += ent.velocity.x * this.game.clockTick;
+            // ent.y += ent.velocity.y * this.game.clockTick;
+        // }
+    // }
 
     var speed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.y * this.velocity.y);
     if (speed > this.maxSpeed) {

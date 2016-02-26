@@ -58,7 +58,7 @@ ASSET_MANAGER.queueDownload("./images/hospital.png");
 ASSET_MANAGER.queueDownload("./images/boss.png");
 ASSET_MANAGER.queueDownload("./images/flamethrower.png");
 ASSET_MANAGER.queueDownload("./images/HealthPack.png");
-ASSET_MANAGER.queueDownload("./images/flame2.png");
+ASSET_MANAGER.queueDownload("./images/flame3.png");
 ASSET_MANAGER.queueDownload("./images/cone.png");
 ASSET_MANAGER.queueDownload("./images/shooter-walking.png");
 ASSET_MANAGER.queueDownload("./images/shooter-walking2.png");

@@ -62,19 +62,26 @@ FlameThrower.prototype.draw = function (ctx) {
       NonLivingEntity.prototype.draw.call(this, ctx);
 }
 
-function Flame(game, spritesheet) {
-    Entity.call(this, game, this.x, this.y);
-    this.spriteSheet = spritesheet;
-    this.animation = new Animation(spritesheet, 38, 39, 0.05, 5, false, false, 5);  
+function Flame(game, originator, dir) {
+	// var dist = distance(originator, dir);
+	// var tempdirx = dir.x/dist;
+	// var tempdiry = dir.y/dist;
+    this.origin = {x:originator.x + dir.x * (this.radius + originator.radius), y:originator.y + dir.y * (this.radius + originator.radius)};
+	Entity.call(this, game, this.origin.x, this.origin.y);
+    this.spriteSheet = ASSET_MANAGER.getAsset("./images/flame3.png");
+	//console.log(this.spriteSheet);
+	//Animation(spriteSheet, frameWidth, frameHeight, frameDuration, frames, loop, reverse, numFramesInRow) 
+    this.animation = new Animation(this.spriteSheet, 40, 40, 0.05, 8, true, false, 8);  
+	this.setMovingAnimation(this.spriteSheet, 40, 40, 0.05, 8, true, false, 8);  
     this.game = game;
     this.name = "Flame";
     this.type = "projectile";
     this.ctx = game.ctx;
     this.radius = 30;
     this.maxSpeed = 200;
-    this.thrown = false;
+	this.range = 100;
     this.strength = 100;
-    this.velocity = { x: 0, y: 0 };
+    this.velocity = { x: 50, y: 50 };
 }
 
 Flame.prototype = new LivingEntity();
@@ -102,78 +109,21 @@ Flame.prototype.collideBottom = function () {
 
 Flame.prototype.update = function () {
     LivingEntity.prototype.update.call(this);
-    // //console.log(this.velocity);
-    // var temp = this.velocity.x * this.game.clockTick;
-    // var temp2 = this.velocity.y * this.game.clockTick;
-    // this.newTemp += temp;
-    // this.newTemp2 += temp2;
-    // this.x += temp;
-    // this.y += temp2;
-
-    // if (this.newTemp > 7) this.removeFromWorld = true;
-    // if (this.newTemp2 > 7) this.removeFromWorld = true;
-
-    // if (this.collideLeft() || this.collideRight()) {
-    //     this.removeFromWorld = true;
-    //     this.velocity.x = 0;
-    //     this.velocity.y = 0;
-    //     if (this.collideLeft()) this.x = this.radius;
-    //     if (this.collideRight()) this.x = 800 - this.radius;
-    // }
-
-    // if (this.collideTop() || this.collideBottom()) {
-    //     this.removeFromWorld = true;
-    //     this.velocity.x = 0;
-    //     this.velocity.y = 0;
-    //     if (this.collideTop()) this.y = this.radius;
-    //     if (this.collideBottom()) this.y = 800 - this.radius;
-    // }
-
-    // var chasing = false;
-    // for (var i = 0; i < this.game.entities.length; i++) {
-    //     var ent = this.game.entities[i];
-    //     if (ent !== this && ent.name === "Flame" && this.thrown && ent.thrown && this.collide(ent)) {
-    //         var temp = { x: this.velocity.x, y: this.velocity.y };
-
-    //         var dist = distance(this, ent);
-    //         var delta = this.radius + ent.radius - dist;
-    //         var difX = (this.x - ent.x) / dist;
-    //         var difY = (this.y - ent.y) / dist;
-
-    //         this.x += difX * delta / 2;
-    //         this.y += difY * delta / 2;
-    //         ent.x -= difX * delta / 2;
-    //         ent.y -= difY * delta / 2;
-
-    //         this.velocity.x = ent.velocity.x * friction;
-    //         this.velocity.y = ent.velocity.y * friction;
-    //         ent.velocity.x = temp.x * friction;
-    //         ent.velocity.y = temp.y * friction;
-    //         this.x += this.velocity.x * this.game.clockTick;
-    //         this.y += this.velocity.y * this.game.clockTick;
-    //         ent.x += ent.velocity.x * this.game.clockTick;
-    //         ent.y += ent.velocity.y * this.game.clockTick;
-    //     }
-    // }
-
-    // var speed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.y * this.velocity.y);
-    // if (speed > this.maxSpeed) {
-    //     var ratio = this.maxSpeed / speed;
-    //     this.velocity.x *= ratio;
-    //     this.velocity.y *= ratio;
-    // }
-
-    // this.velocity.x -= (1 - friction) * this.game.clockTick * this.velocity.x;
-    // this.velocity.y -= (1 - friction) * this.game.clockTick * this.velocity.y;
-    // this.newTemp = 0;
-    // this.newTemp2 = 0;
+	
+	this.x += this.velocity.x * this.game.clockTick;
+    this.y += this.velocity.y * this.game.clockTick ;
+	if (distance(this, this.origin) > this.range ) {
+		this.removeFromWorld = true;
+	}
+	var speed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.y * this.velocity.y);
+    if (speed > this.maxSpeed) {
+        var ratio = this.maxSpeed / speed;
+        this.velocity.x *= ratio;
+        this.velocity.y *= ratio;
+    }
 }
 
 Flame.prototype.draw = function (ctx) {
-
-//    console.log("this.X: " + this.x + "| this.Y: " + this.y);
-    // Removed game.x and game.y
-    // var rad = Math.atan2(this.game.playerY - this.game.y, this.game.playerX - this.game.x);
-    // var deg = rad * (180 / Math.PI);
-    this.animation.drawFrameRotate(this.game.clockTick, this.ctx, this.x - this.game.getWindowX(), this.y- this.game.getWindowY(), 0, 0, 5);
+    //this.animation.drawFrameRotate(this.game.clockTick, this.ctx, this.x , this.y, 0, 0, 5);
+	NonLivingEntity.prototype.draw.call(this, ctx);
  }

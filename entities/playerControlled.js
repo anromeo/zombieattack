@@ -78,7 +78,7 @@ playerControlled.prototype.attack = function(target) {
     var dir = direction(target, this);
     var shot;
     if (this.weapon === "FlameThrower") {
-        shot = new Flame(this.game, ASSET_MANAGER.getAsset("./images/flame2.png"));
+        shot = new Flame(this.game, this, dir);
     } else {
         shot = new Projectile(this.game);
     }
@@ -86,7 +86,7 @@ playerControlled.prototype.attack = function(target) {
     shot.y = this.y + dir.y * (this.radius + shot.radius + 20);
     shot.velocity.x = dir.x * shot.maxSpeed;
     shot.velocity.y = dir.y * shot.maxSpeed;
-    shot.thrown = true;
+    //shot.thrown = true;
     shot.thrower = this;
     shot.team = this.team;
     this.game.addEntity(shot);
@@ -177,10 +177,12 @@ playerControlled.prototype.selectAction = function () {
             action.direction.y += (y) * acceleration;
         }
       
-        if (this.game.click) {    
-            action.target = this.game.click;
+		// console.log(this.game.mouse);
+		// console.log(this.game.mouse && this.game.mousedown);
+        if (this.game.mouse && this.game.mouse.mousedown) {   
+            action.target = this.game.mouse;
             action.willAttack = true;
-            this.game.click = null;
+            //this.game.click = null;
         }
       
         return action;
@@ -457,10 +459,12 @@ playerControlled.prototype.update = function () {
     // if (!this.controlled) {
     //     console.log(this.action);
     // }
-    if (this.cooldown === 0 && this.action.willAttack ) { //&& this.rocks > 0) {
-        if (this.controlled) {
-            this.cooldown = .25;
-        } else {
+    if (this.cooldown === 0 && this.action.willAttack ) { 
+        if (this.controlled && this.weapon === "FlameThrower") {
+            this.cooldown = .05;
+		}else if (this.controlled) {
+			 this.cooldown = .25;
+		} else {
             this.cooldown = .75;
         }
         //this.rocks--;
