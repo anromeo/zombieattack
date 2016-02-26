@@ -47,10 +47,10 @@ function GameEngine() {
     // Entities of the Game
     this.entities = []; // All entities of the game
     this.weapons = []; // All the weapons of the game
-    // added from 435 ZOMBIE AI Project
+	this.items = [];
     this.villains = []; // All the Zombies | TODO ? Get rid or change ?
     this.players = []; // All the Players | TODO ? Get rid or change ?
-    this.rocks = []; // All the rocks or bullets
+
 
     // This is the x and y of the game, they control the rotation of the player
     this.x;
@@ -183,10 +183,9 @@ GameEngine.prototype.start = function () {
     (function gameLoop() {
 		if (that.menuMode == "Game") {
 			that.loop();
-		} else if (that.menuMode == "Start" || that.menuMode == "Pause") {
+		} else {//if (that.menuMode == "Start" || that.menuMode == "Pause") {
 			that.menuLoop();
-		}
-        
+		}       
         requestAnimFrame(gameLoop, that.ctx.canvas); 
     })();
 }
@@ -196,10 +195,10 @@ GameEngine.prototype.restart = function () {
     // Entities of the Game
     this.entities = []; // All entities of the game
     this.weapons = []; // All the weapons of the game
+	this.items = [];
     // added from 435 ZOMBIE AI Project
     this.villains = []; // All the Zombies | TODO ? Get rid or change ?
     this.players = []; // All the Players | TODO ? Get rid or change ?
-    this.rocks = []; // All the rocks or bullets
 
     // This is the x and y of the game, they control the rotation of the player
     this.x;
@@ -218,23 +217,7 @@ GameEngine.prototype.restart = function () {
 }
 
 GameEngine.prototype.setupGameState = function () {
-	    var circle;
-    // for (var i = 0; i < numPlayers; i++) {
-        // circle = new friendlyAI(this);
-        // this.addEntity(circle);
-    // }
-    // for (var i = 0; i < numZombies; i++) {
-		// console.log("added zombie");
-        // circle = new Zombie(this);
-        // this.addEntity(circle);
-    // }
 
-    // for (var i = 0; i < numRocks; i++) {
-        // circle = new Rock(this);
-        // this.addEntity(circle);
-    // }
-
-    var player = new playerControlled(this);
     // var background = new Background(this, ASSET_MANAGER.getAsset("./images/background.png"));
 //    var boss = new Boss(this, ASSET_MANAGER.getAsset("./images/boss.png"));
     //this.addEntity(boss);
@@ -242,7 +225,7 @@ GameEngine.prototype.setupGameState = function () {
 
     // var background = new Background(this, ASSET_MANAGER.getAsset("./images/background.png"));
     // var boss = new Boss(this, ASSET_MANAGER.getAsset("./images/boss.png"));
-	var flamethrower = new FlameThrower(this, ASSET_MANAGER.getAsset("./images/flamethrower.png"));
+	
 
         //     // HOSPITAL MAP
     // this.worldWidth = 1400; // the width of the world within the canvas HOSPITAL
@@ -309,11 +292,16 @@ GameEngine.prototype.setupGameState = function () {
 
     this.setMap(hospital);
 
-
+	var flamethrower = new FlameThrower(this, ASSET_MANAGER.getAsset("./images/flamethrower.png"));
     this.addEntity(flamethrower);
+	
+	var healthpack = new HealthPack(this, ASSET_MANAGER.getAsset("./images/HealthPack.png"));
+	healthpack.x = 1280;
+	healthpack.y = 1040;
+	this.addEntity(healthpack);
+	
+	var player = new playerControlled(this);
     player.controlled = true;
-
-
     this.addEntity(player);
 
     var bossMap = new Map(this, ASSET_MANAGER.getAsset("./images/bossMap1.png"), "Boss Map - Level 1", 800, 800, 800, 800, 0.5);
@@ -434,10 +422,10 @@ GameEngine.prototype.startInput = function () {
  * @param entity Object of the game
  */
 GameEngine.prototype.addEntity = function (entity) {  
-
     this.entities.push(entity);
     // TODO Delete this!
     if (entity.name === "FlameThrower") this.weapons.push(entity);
+	if (entity.type === "item") this.items.push(entity);
     if (entity.type === "villain") this.villains.push(entity);
     if (entity.name === "playerControlled") this.players.push(entity);
 }
@@ -573,9 +561,13 @@ GameEngine.prototype.update = function () {
     // cyles through all of the entities backwards
     for (var i = this.entities.length - 1; i >= 0; --i) {
         // if the entities is removed from world
-        if (this.entities[i].removeFromWorld) {
-            // splice the array from i to 1
-            this.entities.splice(i, 1);
+        if (this.entities[i].removeFromWorld) {            
+            //check if you defeated the boss
+			if (this.entities[i].name == "FinalBoss") {
+				this.menuMode = "Win";
+			}
+			// splice the array from i to 1
+			this.entities.splice(i, 1);
         }
     }
     // TODO remove these two arrays; we will not be using them anymore
@@ -584,11 +576,11 @@ GameEngine.prototype.update = function () {
             this.villains.splice(i, 1);
         }
     }
-    for (var i = this.rocks.length - 1; i >= 0; --i) {
-        if (this.rocks[i].removeFromWorld) {
-            this.rocks.splice(i, 1);
-        }
-    }
+    // for (var i = this.rocks.length - 1; i >= 0; --i) {
+        // if (this.rocks[i].removeFromWorld) {
+            // this.rocks.splice(i, 1);
+        // }
+    // }
 
     // this cycles through the player array backwards
     for (var i = this.players.length - 1; i >= 0; --i) {
@@ -611,7 +603,11 @@ GameEngine.prototype.update = function () {
             this.players.splice(i, 1);
         }
     }
-
+	//if the players array is empty it is game over you lose
+	if (this.players.length == 0) {
+		this.menuMode = "Lose";
+	}
+	
 }
 
 
@@ -655,7 +651,7 @@ GameEngine.prototype.setMap = function(map, portal) {
     }
 }
 
-GameEngine.prototype.drawStartMenu = function() {
+GameEngine.prototype.drawMenu = function() {
 	this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 	if (this.menuMode == "Start") {
 		var height = 50;
@@ -683,8 +679,46 @@ GameEngine.prototype.drawStartMenu = function() {
 		this.drawButton(this.continueButton);
 		this.drawButton(this.startButton);
 		
-	} 
+	} else if (this.menuMode == "Lose") {
+		//console.log("lost game");
+		var height = 200;
+		var width = this.ctx.canvas.width/2 - 100;
+		
+		this.drawMessage ("GAME OVER", height, width);
+		this.drawMessage ("you lost.", height + 30, width);
+		
+		height = 50;
+		width = 200;
+		
+		//okButton
+		this.okButton = {x:this.ctx.canvas.width/2 - width/2, y:this.ctx.canvas.height/2 - height/2, height:height, width:width};	
+		this.okButton.lines = ["Ok"];
+		this.drawButton(this.okButton);
+	} else if (this.menuMode == "Win") {
+		
+		var height = 200;
+		var width = this.ctx.canvas.width/2 - 100;
+		
+		this.drawMessage ("GAME OVER", height, width);
+		this.drawMessage ("You Win!!", height + 30, width);
+		
+		height = 50;
+		width = 200;
+		
+		//okButton
+		this.okButton = {x:this.ctx.canvas.width/2 - width/2, y:this.ctx.canvas.height/2 - height/2, height:height, width:width};	
+		this.okButton.lines = ["Ok"];
+		this.drawButton(this.okButton);
+	}	
 
+}
+
+GameEngine.prototype.drawMessage = function(messageToDraw, startY, startX) {
+		this.ctx.save();
+		this.ctx.fillStyle = "white";
+		this.ctx.font="25px Arial";
+
+		this.ctx.fillText(messageToDraw, startX, startY);
 }
 
 GameEngine.prototype.drawButton = function(buttonToDraw) {
@@ -704,10 +738,6 @@ GameEngine.prototype.drawButton = function(buttonToDraw) {
 	
 	this.ctx.fillStyle = "white";
 	this.ctx.font="25px Arial";
-	
-	// var line1 = "New Game";
-	// var line2 = "Click";
-	// var line3 = "to Start";
 
 	for (var i = 0; i < buttonToDraw.lines.length; i++) {
 		var startX = buttonToDraw.x + buttonToDraw.width/2 - (buttonToDraw.lines[i].length/2 * 15);
@@ -728,10 +758,6 @@ GameEngine.prototype.drawButton = function(buttonToDraw) {
 }
 
 GameEngine.prototype.checkMenuClick = function (buttonToTest){
-	// console.log(this.click.x >= buttonToTest.x);
-	// console.log(this.click.x <= buttonToTest.x + buttonToTest.width);
-	// console.log(this.click.y >= buttonToTest.y);
-	// console.log(this.click.y <= buttonToTest.y + buttonToTest.height);
 	return(this.click.canvasx >= buttonToTest.x && this.click.canvasx <= buttonToTest.x + buttonToTest.width && this.click.canvasy >= buttonToTest.y && this.click.canvasy <= buttonToTest.y + buttonToTest.height)
 }
 
@@ -760,7 +786,7 @@ GameEngine.prototype.menuLoop = function () {
 	//console.log(document.getElementById('gameWorld').style.cursor = 'pointer');
 	document.getElementById('gameWorld').style.cursor = 'pointer';
 	//console.log(document.getElementById('gameWorld')._proto_;
-	this.drawStartMenu();
+	this.drawMenu();
 	
 	//if there is a click, see if it clicked a button
 	//console.log(this.click);
@@ -773,8 +799,9 @@ GameEngine.prototype.menuLoop = function () {
 			//console.log(this.startButton);
 			if (this.checkMenuClick(this.startButton)){
 				//console.log("should be starting");
+				this.restart();
 				document.getElementById('gameWorld').style.cursor = '';
-				this.menuMode = "Game";
+				this.menuMode = "Game";				
 			}
 			// } else if (this.checkMenuClick(this.restartButton)){
 				// this.restart();
@@ -783,16 +810,24 @@ GameEngine.prototype.menuLoop = function () {
 			// }
 		} else if (this.menuMode == "Pause") {
 			if (this.checkMenuClick(this.continueButton)){
-				console.log("should be continuing");
+				//console.log("should be continuing");
 				document.getElementById('gameWorld').style.cursor = '';
 				this.menuMode = "Game";
 			} else if (this.checkMenuClick(this.startButton)){
-				console.log("should be restarting");
+				//console.log("should be restarting");
 				this.restart();
 				document.getElementById('gameWorld').style.cursor = '';
 				this.menuMode = "Game";
 			}
-		} 
+		} else if (this.menuMode == "Lose" || this.menuMode == "Win") {
+			if (this.checkMenuClick(this.okButton)){								
+				this.menuMode = "Start";
+			}
+		} else if (this.menuMode == "EndLevel") {
+			if (this.checkMenuClick(this.okButton)){
+				//increment level
+			}
+		}
 		
 	}
 	
@@ -822,13 +857,19 @@ GameEngine.prototype.menuLoop = function () {
  */
 GameEngine.prototype.loop = function () {
 	//pauses the game if game looses focus
+	// if (this.click != null) {
+		// console.log(this.click);
+	// }
+
 	if (this.ctx.lostfocus == "True") {
 		//console.log("lostfocus");
 		this.ctx.lostfocus = "False";
 		this.menuMode = "Pause";
 	}
     this.clockTick = this.timer.tick(); // increments the clock tick
+
     this.update(); // updates the GameEngine and all the entities in the game
-    this.draw(); // draws the GameEngine and all the entities in the game
+
+	this.draw(); // draws the GameEngine and all the entities in the game
     this.click = null; // resets the click to null
 }

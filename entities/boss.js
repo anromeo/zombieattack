@@ -1,7 +1,6 @@
 function Boss(game, x, y) {
     LivingEntity.call(this, game, 150, 150);
     this.radius = 32;
-    this.name = "Boss";
     this.SpriteWidth = 128;
     this.SpriteHeight = 128;
     this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/boss-moving.png"), this.SpriteWidth, this.SpriteHeight, .05, 24, true, false, 6);
@@ -21,12 +20,14 @@ function Boss(game, x, y) {
     this.canvasY = this.y;
     this.radialOffset = this.radius;
     this.team = "Black";
+	this.name = "FinalBoss";
     this.type = "villain";
     this.game = game;
     this.ctx = game.ctx;
     this.visualRadius = 1000;
     this.maxSpeed = 80;
-    this.health = 600;
+	this.healthMAX = 2000;
+    this.health = this.healthMAX;
     this.attackRange = 50; // always make sure attack range is larger than comfort zone
     this.comfortZone = 25;
     this.angleOffset = 270;
@@ -58,6 +59,7 @@ Boss.prototype.ability3 = function(entity) {
     console.log("Heal thyself!");
     entity.ability3Timer = 4;
     entity.healingCircle = 50 + this.radius;
+	this.health += 25;
 }
 
 Boss.prototype.draw = function(ctx) {
@@ -76,7 +78,6 @@ Boss.prototype.update = function() {
         this.velocity.x = 0;
         this.velocity.y = 0;
     } else {
-        this.health += 25;
         this.ability3Timer = false;
         this.healingCircle = false;
     }

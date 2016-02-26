@@ -323,6 +323,17 @@ playerControlled.prototype.update = function () {
             this.weapon = weap.name;
         }
     }
+	
+	for (i = 0; i < this.game.items.length; i++) {
+        var item = this.game.items[i];
+        if (!(((this.y + 54) < (item.y)) ||
+        (this.y > (item.y + item.width))||
+        ((this.x + 54) < item.x) ||
+        (this.x > (item.x + item.height)))) {
+            //item action
+			item.action(this);           
+        }
+    }
 
 
     // console.log(this.velocity);
