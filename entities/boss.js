@@ -32,6 +32,7 @@ function Boss(game, x, y) {
     this.comfortZone = 25;
     this.angleOffset = 270;
     this.cooldown = 1;
+    this.exp = 30;
 
     this.ability1Attributes.cooldown = 4;
     this.ability1Attributes.maxCooldown = 4;

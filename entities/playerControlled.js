@@ -515,6 +515,25 @@ playerControlled.prototype.update = function () {
           console.log(Distance);
           }
 
+    if ((this.velocity.x > -15 && this.velocity.x < 15) && (this.velocity.y > -15 && this.velocity.y < 15)) {
+        // this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/shooter-walking2.png"), this.SpriteWidth, this.SpriteHeight, .09, 1, true, false, 3);
+       ///  console.log(this.movingAnimation.frames);
+       //  this.movingAnimation.setFrames(1);
+          console.log("standing");
+         this.movingAnimation = new Animation(ASSET_MANAGER.getAsset("./images/shooter-walking2.png"), this.SpriteWidth, this.SpriteHeight, .09, 8, true, false, 3);
+     } else {
+       // console.log("walking");
+        // this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/shooter-walking2.png"), this.SpriteWidth, this.SpriteHeight, .09, 8, true, false, 3);
+       // console.log(this.movingAnimation.frames);
+      // this.movingAnimation.setFrames(8);
+        console.log("running");
+     //  this.movingAnimation = new Animation(ASSET_MANAGER.getAsset("./images/shooter-walking2.png"), this.SpriteWidth, this.SpriteHeight, .09, 8, true, false, 3);
+     }
+
+    // console.log(this.movingAnimation.frames);
+
+    //console.log(this.x + " " + this.y);
+
 };
 
 playerControlled.prototype.draw = function (ctx) {

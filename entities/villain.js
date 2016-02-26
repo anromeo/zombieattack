@@ -36,6 +36,7 @@ function Villain(game, clone) {
 
     this.attackRange = 40; // always make sure attack range is larger than comfort zone
     this.comfortZone = 25;
+    this.exp = 10;
 
     this.angleOffset = 260;
     this.name = "Villain";

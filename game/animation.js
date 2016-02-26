@@ -13,6 +13,10 @@ function Animation(spriteSheet, frameWidth, frameHeight, frameDuration, frames, 
     this.frozen = false;
 }
 
+Animation.prototype.setFrames = function (frames) {
+    this.frames = frames;
+}
+
 // @deprecated function
 // Animation.prototype.drawFrame = function (tick, ctx, x, y) {
 //     this.elapsedTime += tick;

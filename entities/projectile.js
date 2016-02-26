@@ -97,3 +97,4 @@ Projectile.prototype.draw = function (ctx) {
     ctx.closePath();
 
 };
+

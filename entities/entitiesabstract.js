@@ -797,9 +797,15 @@ LivingEntity.prototype.update = function () {
     if (this.health <= 0) {
         // REMOVE it from the world
         this.removeFromWorld = true;
-        if (this.team !== this.game.getPlayer().team) {
+        if (this.game.getPlayer() && this.team != this.game.getPlayer().team) {
             // IF the team of this item is not equal to the team of the player
             this.game.kills++;
+            // console.log("the level:" + this.game.kills);
+            // console.log("the level:" + this.game.exp);
+            // console.log("the expTolevelUp:" + this.game.expToLevelUp);
+            if (this.exp !== undefined) {
+                 this.game.expEarned  += this.exp;
+            }
         }
     }
 
