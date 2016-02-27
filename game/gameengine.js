@@ -694,7 +694,7 @@ GameEngine.prototype.drawMenu = function() {
 		
 		//startButton
 		this.startButton = {x:this.ctx.canvas.width/2 - width/2, y:this.ctx.canvas.height/2 - height/2, height:height, width:width};	
-        this.drawMessage("Get 100 kills, walk through the portal and kill the boss to win!", 70, 288);
+        this.drawMessage("Get 20 kills, walk through the portal and kill the boss to win!", 70, 288);
         this.drawMessage("Make sure to get the flamethrower before going through the portal!", 40, 330);
 
         this.startButton.lines = ["New Game"];
@@ -914,7 +914,7 @@ GameEngine.prototype.loop = function () {
 	this.draw(); // draws the GameEngine and all the entities in the game
     this.click = null; // resets the click to null
 
-    if (this.kills > 99 && !this.unlocked) {
+    if (this.kills > 19 && !this.unlocked) {
             var bossMap = new Map(this, ASSET_MANAGER.getAsset("./images/bossMap1.png"), "Boss Map - Level 1", 800, 800, 800, 800, 0.5);
             bossMap.addVillain(new Boss(this));
             bossMap.isBossMap = true;
