@@ -67,6 +67,7 @@ ASSET_MANAGER.queueDownload("./images/shooter-walking2.png");
 // Moving Animations
 ASSET_MANAGER.queueDownload("./images/boss-moving.png");
 ASSET_MANAGER.queueDownload("./images/zombie-moving.png");
+ASSET_MANAGER.queueDownload("./images/Rzombie-moving.png");
 
 // Attacking Animations
 ASSET_MANAGER.queueDownload("./images/boss-attacking.png");
