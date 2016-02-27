@@ -64,7 +64,7 @@ function GameEngine() {
 
     this.kills = 0; // this is the number of kills that the player has total
 
-    this.showOutlines = false; // this shows the outline of the entities
+    this.showOutlines = true; // this shows the outline of the entities
     this.ctx = null; // this is the object being used to draw on the map
     this.click = null; // this is the click value (if null, not being clicked)
 
@@ -249,14 +249,15 @@ GameEngine.prototype.setupGameState = function () {
     // Map(game, image, name, worldWidth, worldHeight, mapRatioWidth, mapRatioHeight, ratio) 
 
     var hospital = new Map(this, ASSET_MANAGER.getAsset("./images/hospital.png"), "Hospital", 1400, 1350, 400, 400, 0.5);
-     // hospital.addWall(new Wall(this, 38, 132, 70, 210));
+    var ruins = new Map(this, ASSET_MANAGER.getAsset("./images/ruins.png"), "Ruins", 1400, 1350, 550, 550, 0.68);
+    hospital.addWall(new Wall(this, 38, 132, 70, 210));
 
     hospital.addWall(new Wall(this, 38, 132, 70, 210));
     hospital.addWall(new Wall(this, 38, 460, 70, 210));
     hospital.addWall(new Wall(this, 275, 0, 95, 115));
     hospital.addWall(new Wall(this, 275, 208, 95, 240));
     hospital.addWall(new Wall(this, 489, 258, 185, 100));
-    //hospital.addWall(new Wall(this, 275, 540, 100, 215));
+    hospital.addWall(new Wall(this, 275, 540, 100, 215));
     hospital.addWall(new Wall(this, 370, 258, 385, 55));
     hospital.addWall(new Wall(this, 755, 258, 90, 364));
     hospital.addWall(new Wall(this, 845, 490, 258, 85));
@@ -284,8 +285,6 @@ GameEngine.prototype.setupGameState = function () {
     hospital.addWall(new Wall(this, 755, 258, 90, 364));
     hospital.addWall(new Wall(this, 755, 490, 447, 85));
     hospital.addWall(new Wall(this, 1103, 258, 98, 364));
-    // hospital.addWall(new Wall(this, 0, 0, 14000, 50));
-    // hospital.addWall(new Wall(this, 0, 0, 58, 12000));
     hospital.addWall(new Wall(this, 0, 752, 596, 74));
     hospital.addWall(new Wall(this, 696, 752, 160, 74));
     hospital.addWall(new Wall(this, 1083, 752, 675, 74));
@@ -294,7 +293,6 @@ GameEngine.prototype.setupGameState = function () {
     hospital.addWall(new Wall(this, 1083, 1086, 75, 300));
     hospital.addWall(new Wall(this, 180, 970, 78, 400));
     hospital.addWall(new Wall(this, 0, 1280, 14000, 80));
-
     hospital.addAttracter(new Attracter(this, 330, 160, 45));
     hospital.addAttracter(new Attracter(this, 330, 495, 45));
     hospital.addAttracter(new Attracter(this, 645, 800, 49));
@@ -303,16 +301,76 @@ GameEngine.prototype.setupGameState = function () {
     hospital.addAttracter(new Attracter(this, 1182, 660, 33));
     hospital.addAttracter(new Attracter(this, 1182, 144, 70));
     hospital.addAttracter(new Attracter(this, 1123, 1040, 39));
-    this.setMap(hospital);
 
-	var flamethrower = new FlameThrower(this, ASSET_MANAGER.getAsset("./images/flamethrower.png"));
-    this.addEntity(flamethrower);
+    ruins.addWall(new Wall(this, 285, 212, 70, 210));
+    ruins.addWall(new Wall(this, 285, 282, 212, 75));
+    ruins.addWall(new Wall(this, 145, 355, 212, 75));
+
+
+
+    var hospitalItems = [];
+    var ruinItems = [];
+
+    // Hospital flamethrower
+    HospitalflameSpawn = [];
+    HospitalflameSpawn[0] = { x: 100, y: 100 };
+    HospitalflameSpawn[1] = { x: 440, y: 360 };
+    HospitalflameSpawn[2] = { x: 570, y: 1150 };
+    HospitalflameSpawn[3] = { x: 1020, y: 650 };
+    HospitalflameSpawn[4] = { x: 980, y: 370 };
+
+	var flamethrower = new FlameThrower(this, ASSET_MANAGER.getAsset("./images/flamethrower.png"), HospitalflameSpawn);
+    hospitalItems.push(flamethrower);
+
+
+    // Hospital health
+    HospitalhealthSpawn = [];
+    HospitalhealthSpawn[0] = { x: 500, y: 1150 };
+    HospitalhealthSpawn[1] = { x: 1270, y: 1050 };
+    HospitalhealthSpawn[2] = { x: 970, y: 335 };
 	
-	var healthpack = new HealthPack(this, ASSET_MANAGER.getAsset("./images/HealthPack.png"));
-	this.addEntity(healthpack);
+	var healthpack = new HealthPack(this, ASSET_MANAGER.getAsset("./images/HealthPack.png"), HospitalhealthSpawn);
+	hospitalItems.push(healthpack);
 
-    var speed = new Speed(this, ASSET_MANAGER.getAsset("./images/speed.png"));
-    this.addEntity(speed);
+    // Hospital speed
+    HospitalspeedSpawn = [];
+    HospitalspeedSpawn[0] = { x: 640, y: 450 };
+    HospitalspeedSpawn[1] = { x: 1300, y: 700 };
+    HospitalspeedSpawn[2] = { x: 1000, y: 1170 };
+
+    var speed = new Speed(this, ASSET_MANAGER.getAsset("./images/speed.png"), HospitalspeedSpawn);
+    hospitalItems.push(speed);
+
+
+
+    // Ruins flamethrower
+    RuinflameSpawn = [];
+    RuinflameSpawn[0] = { x: 100, y: 100 };
+
+    var flamethrower = new FlameThrower(this, ASSET_MANAGER.getAsset("./images/flamethrower.png"), RuinflameSpawn);
+    ruinItems.push(flamethrower);
+
+    // Ruins health
+    RuinhealthSpawn = [];
+    RuinhealthSpawn[0] = { x: 500, y: 1150 };
+
+    var healthpack = new HealthPack(this, ASSET_MANAGER.getAsset("./images/HealthPack.png"), RuinhealthSpawn);
+    ruinItems.push(healthpack);
+
+    // Ruins speed
+    RuinspeedSpawn = [];
+    RuinspeedSpawn[0] = { x: 640, y: 450 };
+
+    var speed = new Speed(this, ASSET_MANAGER.getAsset("./images/speed.png"), RuinspeedSpawn);
+    ruinItems.push(speed);
+
+    // this.setMap(hospital);
+    this.setMap(ruins);
+
+    // this.setItems(hospitalItems);
+    this.setItems(ruinItems);
+
+
 	
 	var player = new playerControlled(this);
     player.controlled = true;
@@ -643,6 +701,21 @@ GameEngine.prototype.update = function () {
 		this.menuMode = "Lose";
 	}
 	
+}
+
+GameEngine.prototype.setItems = function(Items) {
+
+        // Removes all old items 
+       for (var i = 0; i < this.items.length; i++) {
+            // Sets the remove from world for all weapons to true
+            this.items[i].removeFromWorld = true;
+       }
+       // Sets all new items
+        for (var i = 0; i < Items.length; i++) {
+            // Sets the remove from world for all weapons to true
+            this.addEntity(Items[i]);
+       }
+
 }
 
 

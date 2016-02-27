@@ -76,6 +76,7 @@ ASSET_MANAGER.queueDownload("./images/boss2.png");
 
 ASSET_MANAGER.queueDownload("./images/portal.png");
 ASSET_MANAGER.queueDownload("./images/bossMap1.png");
+ASSET_MANAGER.queueDownload("./images/ruins.png");
 
 ASSET_MANAGER.downloadAll(function () {
     console.log("starting up da sheild");

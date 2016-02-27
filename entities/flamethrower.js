@@ -1,23 +1,20 @@
-function FlameThrower(game, image) {
+function FlameThrower(game, image, spawnPoints) {
     // NonLivingEntity.prototype.setImage.call(this, image);
     NonLivingEntity.prototype.setNonLiving.call(this, true);
     this.image = image;
     this.game = game;
     // this.x = Math.random() * 600;
     // this.y = Math.random() * 600;
+    this.spawnPoints = spawnPoints;
 
-    this.spawnPoints = [];
-    this.spawnPoints[0] = { x: 100, y: 100 };
-    this.spawnPoints[1] = { x: 440, y: 360 };
-    this.spawnPoints[2] = { x: 570, y: 1150 };
-    this.spawnPoints[3] = { x: 1020, y: 650 };
-    this.spawnPoints[4] = { x: 980, y: 370 };
-
+    if (spawnPoints.length < 1) {
+        this.x = 200;
+        this.y = 200;
+    } else {
     var spawnpoint = this.spawnPoints[Math.floor(Math.random() * this.spawnPoints.length)];
-
     this.x = spawnpoint.x;
     this.y = spawnpoint.y;
-
+    }
     // this.spawnPoints = [];
     // this.spawnPoints[0] = { x: 190, y: 213 };
     // this.spawnPoints[1] = { x: 659, y: 136 };

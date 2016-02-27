@@ -1,18 +1,19 @@
-function Speed(game, image) {
+function Speed(game, image, spawnPoints) {
     NonLivingEntity.prototype.setNonLiving.call(this, true);
     this.image = image;
     this.game = game;
 
-    this.spawnPoints = [];
-    this.spawnPoints[0] = { x: 640, y: 450 };
-    this.spawnPoints[1] = { x: 1300, y: 700 };
-    this.spawnPoints[2] = { x: 1000, y: 1170 };
+    this.spawnPoints = spawnPoints;
 
-
+    if (spawnPoints.length < 1) {
+        this.x = 200;
+        this.y = 200;
+    } else {
     var spawnpoint = this.spawnPoints[Math.floor(Math.random() * this.spawnPoints.length)];
-
     this.x = spawnpoint.x;
     this.y = spawnpoint.y;
+    }
+
     this.width = 35;
     this.height = 35;
 
