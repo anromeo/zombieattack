@@ -49,7 +49,7 @@ Background.prototype.draw = function (ctx) {
 
 /** From 435 */
 
-ASSET_MANAGER.queueDownload("./images/demon.png");
+// ASSET_MANAGER.queueDownload("./images/demon.png");
 ASSET_MANAGER.queueDownload("./images/ZombieWalking.png");
 ASSET_MANAGER.queueDownload("./images/Player2.png");
 
@@ -60,13 +60,16 @@ ASSET_MANAGER.queueDownload("./images/flamethrower.png");
 ASSET_MANAGER.queueDownload("./images/HealthPack.png");
 ASSET_MANAGER.queueDownload("./images/speed.png");
 ASSET_MANAGER.queueDownload("./images/flame3.png");
-ASSET_MANAGER.queueDownload("./images/cone.png");
+// ASSET_MANAGER.queueDownload("./images/cone.png");
 ASSET_MANAGER.queueDownload("./images/shooter-walking.png");
 ASSET_MANAGER.queueDownload("./images/shooter-walking2.png");
 
 // Moving Animations
 ASSET_MANAGER.queueDownload("./images/boss-moving.png");
 ASSET_MANAGER.queueDownload("./images/zombie-moving.png");
+
+// Attacking Animations
+ASSET_MANAGER.queueDownload("./images/boss-attacking.png");
 
 ASSET_MANAGER.queueDownload("./images/boss2.png");
 

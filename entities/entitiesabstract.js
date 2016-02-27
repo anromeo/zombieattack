@@ -40,6 +40,33 @@ Entity.prototype.update = function () {
 Entity.prototype.draw = function (ctx) {
 }
 
+/**
+ * Draws a circle around the living entity // MAYBE PULL OUT AS CORE FUNCTION ?
+ * @param ctx rendering object used to draw on
+ * @param color String representing the color used to color the object
+ * @param centerX float representing the center x-coordinate of this circle
+ * @param centerY float representing the center y-coordinate of this circle
+ * @param radius int representing the radius (default is 5)
+ */
+Entity.prototype.drawCircle = function(ctx, color, centerX, centerY, radius) {
+
+    if (radius === undefined) {
+        radius = 5;
+    }
+    ctx.beginPath();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1;
+    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2, false);
+    ctx.closePath();
+    ctx.stroke();
+}
+
+/**
+ * Collides with circular objects
+ */
+Entity.prototype.collide = function (other) {
+    return distance(this, other) < this.radius + other.radius;
+};
 // END ENTITY
 
 // START LIVINGENTITY
@@ -112,6 +139,10 @@ function LivingEntity(game, x, y) {
 LivingEntity.prototype = new Entity();
 LivingEntity.prototype.constructor = LivingEntity;
  
+
+LivingEntity.prototype.setStrength = function(strength) {
+    this.strength = strength;
+}
 /**
  * This function sets the moving Animation.
  * The moving Animation is the animation that the character
@@ -438,9 +469,9 @@ LivingEntity.prototype.aiSelectAction = function(type) {
     if (target) {
 
         action.target = calculateInterceptionPoint(target, target.velocity, this, maxSpeed);
-        if (this.playerControlled) {
-            console.log(target);
-        }
+        // if (this.playerControlled) {
+        //     console.log(target);
+        // }
         // IF the target is within the attack range
         if (distance(target, this) < this.attackRange + target.radius) {
             action.willAttack = true;
@@ -486,27 +517,6 @@ LivingEntity.prototype.drawPlayer = function(ctx) {
     this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius - this.CenterOffsetX - this.game.getWindowX() - this.radialOffset, 
       this.y - this.radius - this.CenterOffsetY - this.game.getWindowY() - this.radialOffset, deg,
       this.SpriteRotateOffsetX, this.SpriteRotateOffsetY);
-}
-
-/**
- * Draws a circle around the living entity // MAYBE PULL OUT AS CORE FUNCTION ?
- * @param ctx rendering object used to draw on
- * @param color String representing the color used to color the object
- * @param centerX float representing the center x-coordinate of this circle
- * @param centerY float representing the center y-coordinate of this circle
- * @param radius int representing the radius (default is 5)
- */
-LivingEntity.prototype.drawCircle = function(ctx, color, centerX, centerY, radius) {
-
-    if (radius === undefined) {
-        radius = 5;
-    }
-    ctx.beginPath();
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 1;
-    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2, false);
-    ctx.closePath();
-    ctx.stroke();
 }
 
 /**
@@ -603,6 +613,12 @@ LivingEntity.prototype.draw = function (ctx) {
     // IF this object has a movingAnimation set
     // AND the type of this object is playerControlled
     // AND this.controlled is true
+    var positionX = (this.x - this.radius - this.game.getWindowX() - this.radialOffset);
+
+    var positionY = (this.y - this.radius - this.game.getWindowY() - this.radialOffset);
+
+    if (positionX < this.game.surfaceWidth &&  positionX > 0 &&
+        positionY < this.game.surfaceHeight && positionY > 0){
     if (this.movingAnimation && this.type === "playerControlled" && this.controlled === true) {
 
         // Draws the Player
@@ -622,14 +638,11 @@ LivingEntity.prototype.draw = function (ctx) {
     if (this.game.showOutlines) {
         this.drawOutlines(ctx);
     }
+    }
 
 }
 
 // START DEFAULT COLLIDE METHODS
-LivingEntity.prototype.collide = function (other) {
-    return distance(this, other) < this.radius + other.radius;
-};
-
 LivingEntity.prototype.collideLeft = function () {
     return (this.x - this.radius) < 0;
 };
@@ -657,7 +670,7 @@ LivingEntity.prototype.attack = function(target) {
  * Flocks all the villains together when there are no more targets available
  */
 LivingEntity.prototype.flockTogether = function() {
-    var acceleration = 100000;
+    var acceleration = 1000;
     ent = this.game.villains[randomInt(this.game.villains.length)];
     var dist = distance(this, ent);
     if (dist > this.radius + ent.radius + 2) {
@@ -858,13 +871,19 @@ NonLivingEntity.prototype.setNonLiving = function (bool) {
 }
 
 // START DEFAULT COLLIDE METHODS
-NonLivingEntity.prototype.collide = function (livingEntity) {
-    return distance(this, other) < this.radius + other.radius;
-};
+// NonLivingEntity.prototype.collideWithCirclular = function (livingEntity) {
+//     return distance(this, other) < this.radius + other.radius;
+// };
 
 var collisionOffset = 3;
 
-NonLivingEntity.prototype.collideTop = function(other) {
+NonLivingEntity.prototype.collideTop = function(other, visualRadius) {
+
+ 
+    if (visualRadius === undefined) {
+        visualRadius = 0;
+    }
+
     var leftThis = this.x;
     var rightThis = this.x + this.width;
     var topThis = this.y;
@@ -877,7 +896,14 @@ NonLivingEntity.prototype.collideTop = function(other) {
     var difference = bottomOther - topThis;
     var checkPoint2 = topThis + difference;
 
-    if (topOther <= topThis && bottomOther == checkPoint2) {
+    var check = false;
+    if (visualRadius === 0 && bottomOther == checkPoint2) {
+        check = true;
+    } else if (topThis - visualRadius < bottomOther) {
+        check = true;
+    }
+
+    if (topOther <= topThis && check) {
         if (leftOther < leftThis) { // if the other is more left than this
             var checkPoint = leftThis + (leftOther - leftThis);
             if (checkPoint == leftOther) {
@@ -892,7 +918,12 @@ NonLivingEntity.prototype.collideTop = function(other) {
     }
     return false;
 };
-NonLivingEntity.prototype.collideBottom = function(other) {
+NonLivingEntity.prototype.collideBottom = function(other, visualRadius) {
+
+    if (visualRadius === undefined) {
+        visualRadius = 0;
+    }
+
     var leftThis = this.x;
     var rightThis = this.x + this.width;
     var topThis = this.y;
@@ -906,7 +937,14 @@ NonLivingEntity.prototype.collideBottom = function(other) {
     var difference = bottomThis - topOther;
     var checkPoint2 = topOther + difference;
 
-    if (bottomOther >= bottomThis && bottomThis == checkPoint2) {
+    var check = false;
+    if (visualRadius === 0 && bottomThis == checkPoint2) {
+        check = true;
+    } else if (topOther - visualRadius < bottomThis) {
+        check = true;
+    }
+
+    if (bottomOther >= bottomThis && check) {
         if (leftOther < leftThis) {
             var checkPoint = leftThis + (leftOther - leftThis);
             if (checkPoint == leftOther) {
@@ -922,7 +960,12 @@ NonLivingEntity.prototype.collideBottom = function(other) {
     return false;
 };
 
-NonLivingEntity.prototype.collideLeft= function(other) {
+NonLivingEntity.prototype.collideLeft= function(other, visualRadius) {
+
+    if (visualRadius === undefined) {
+        visualRadius = 0;
+    }
+
     var leftThis = this.x;
     var rightThis = this.x + this.width;
     var topThis = this.y;
@@ -936,7 +979,14 @@ NonLivingEntity.prototype.collideLeft= function(other) {
     var difference = rightOther - leftThis;
     var checkPoint2 = leftThis + difference;
 
-    if (leftOther <= leftThis && rightOther == checkPoint2) {
+    var check = false;
+    if (visualRadius === 0 && rightOther == checkPoint2) {
+        check = true;
+    } else if (leftThis - visualRadius < rightOther) {
+        check = true;
+    }
+
+    if (leftOther <= leftThis && check) {
         if (topOther < topThis) {
             var checkPoint = topThis + (topOther - topThis);
             if (checkPoint == topOther) {
@@ -952,7 +1002,12 @@ NonLivingEntity.prototype.collideLeft= function(other) {
     return false;
 };
 
-NonLivingEntity.prototype.collideRight = function(other) {
+NonLivingEntity.prototype.collideRight = function(other, visualRadius) {
+
+    if (visualRadius === undefined) {
+        visualRadius = 0;
+    }
+
     var leftThis = this.x;
     var rightThis = this.x + this.width;
     var topThis = this.y;
@@ -963,10 +1018,17 @@ NonLivingEntity.prototype.collideRight = function(other) {
     var bottomOther = other.y + other.radius + collisionOffset;
     var topOther = other.y - other.radius - collisionOffset;
 
-    var difference = rightThis - leftOther;
+    var difference = rightThis - leftOther + visualRadius;
     var checkPoint2 = leftOther + difference;
 
-    if (rightOther >= rightThis && rightThis == checkPoint2) {
+    var check = false;
+    if (visualRadius === 0 && rightThis == checkPoint2) {
+        check = true;
+    } else if (rightThis + visualRadius > leftOther) {
+        check = true;
+    }
+
+    if (rightOther >= rightThis && check) {
         if (topOther < topThis) {
             var checkPoint = topThis + (topOther - topThis);
             if (checkPoint == topOther) {

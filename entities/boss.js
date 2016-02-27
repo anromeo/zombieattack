@@ -4,6 +4,11 @@ function Boss(game, x, y) {
     this.SpriteWidth = 128;
     this.SpriteHeight = 128;
     this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/boss-moving.png"), this.SpriteWidth, this.SpriteHeight, .05, 24, true, false, 6);
+    
+    var attackingSpriteWidth = 192;
+    var attackingSpriteHeight = 192;
+    this.setAttackAnimation(ASSET_MANAGER.getAsset("./images/boss-attacking.png"), attackingSpriteWidth, attackingSpriteHeight, .05, 20, true, false, 5);
+
     if (x === undefined) {
         this.x = this.game.surfaceWidth / 2;
     } else {

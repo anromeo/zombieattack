@@ -1,4 +1,4 @@
-function Villain(game, clone) {
+function Villain(game, x, y) {
     // LivingEntity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1);
     // LivingEntity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1);
 
@@ -24,19 +24,29 @@ function Villain(game, clone) {
 
     LivingEntity.call(this, game, spawnpoint.x, spawnpoint.y);
 
-	this.x = 850;
-	this.y = this.game.surfaceHeight * Math.random();
+    if (this.x !== undefined) {
+        this.x = x;
+    } else {
+        this.x = 850;
+    }
+
+    if (this.y !== undefined) {
+        this.y = y;
+    } else {
+    	this.y = this.game.surfaceHeight * Math.random();
+    }
 	
 	this.radius = 64;
 	this.SpriteHeight = 60;
 	this.SpriteWidth = 60;
     this.player = 1;
     this.radius = 32;
-    this.visualRadius = 10000;
+    this.visualRadius = 100;
+    this.approachingDistance = 600;
 
     this.attackRange = 40; // always make sure attack range is larger than comfort zone
     this.comfortZone = 25;
-    this.exp = 10;
+    this.exp = 2;
 
     this.angleOffset = 260;
     this.name = "Villain";

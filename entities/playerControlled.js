@@ -27,7 +27,8 @@ function playerControlled(game) {
 
     var spawnpoint = this.spawnPoints[Math.floor(Math.random() * this.spawnPoints.length)];
 
-    LivingEntity.call(this, game, spawnpoint.x, spawnpoint.y);
+    // LivingEntity.call(this, game, spawnpoint.x, spawnpoint.y);
+    LivingEntity.call(this, game, 100, 100);
 
     this.player = 1;
     // this.SpriteWidth = 80;
@@ -37,7 +38,6 @@ function playerControlled(game) {
     this.SpriteHeight = 176 / 3;
 
     this.radius = 30;
-    this.strength = 100;
     this.controlled = false;
     this.action;
     this.weapon = null;
@@ -91,6 +91,7 @@ playerControlled.prototype.attack = function(target) {
     } else {
         shot = new Projectile(this.game);
     }
+    shot.strength += this.strength;
     shot.x = this.x + dir.x * (this.radius + shot.radius + 20);
     shot.y = this.y + dir.y * (this.radius + shot.radius + 20);
     shot.velocity.x = dir.x * shot.maxSpeed;
@@ -545,12 +546,14 @@ playerControlled.prototype.update = function () {
         // this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/shooter-walking2.png"), this.SpriteWidth, this.SpriteHeight, .09, 1, true, false, 3);
        ///  console.log(this.movingAnimation.frames);
        //  this.movingAnimation.setFrames(1);
+//          console.log("standing");
          this.movingAnimation = new Animation(ASSET_MANAGER.getAsset("./images/shooter-walking2.png"), this.SpriteWidth, this.SpriteHeight, .09, 8, true, false, 3);
      } else {
        // console.log("walking");
         // this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/shooter-walking2.png"), this.SpriteWidth, this.SpriteHeight, .09, 8, true, false, 3);
        // console.log(this.movingAnimation.frames);
       // this.movingAnimation.setFrames(8);
+//        console.log("running");
      //  this.movingAnimation = new Animation(ASSET_MANAGER.getAsset("./images/shooter-walking2.png"), this.SpriteWidth, this.SpriteHeight, .09, 8, true, false, 3);
      }
 
@@ -565,6 +568,8 @@ playerControlled.prototype.draw = function (ctx) {
         this.game.setWindowX(this.x - 400);
         this.game.setWindowY(this.y - 400);
     }
+//    console.log("X: " + this.x + " | Y: " + this.y);
+
     // ctx.beginPath();
     // ctx.fillStyle = this.color;
     // ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);

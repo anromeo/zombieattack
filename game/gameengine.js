@@ -62,7 +62,7 @@ function GameEngine() {
     this.zombieCooldownNumInitial = 3;  // how often a zombie will appear initially
     this.zombieCooldown = this.zombieCooldownNumInitial; // the cooldown until the next zombie appears
 
-    this.kills = 10; // this is the number of kills that the player has total
+    this.kills = 0; // this is the number of kills that the player has total
 
     this.showOutlines = false; // this shows the outline of the entities
     this.ctx = null; // this is the object being used to draw on the map
@@ -73,6 +73,7 @@ function GameEngine() {
     this.surfaceWidth = null; // the width of the canvas
     this.surfaceHeight = null; // the height of the canvas
 
+    this.unlocked = false;
     // FOREST MAP
     // this.worldWidth = 1600; // the width of the world within the canvas FOREST
     // this.worldHeight = 1600; // the height of the world within the canvas FOREST
@@ -210,7 +211,7 @@ GameEngine.prototype.restart = function () {
 
     this.map = null;
 
-    this.kills = 10; // this is the number of kills that the player has total
+    this.kills = 0; // this is the number of kills that the player has total
 
     this.mouse = {x:0, y:0, mousedown:false}; // this is the mouse coordinates and whether the mouse is pressed or not
 	this.keyState = {}; // this is the current keystate which is an object that is nothing
@@ -294,6 +295,14 @@ GameEngine.prototype.setupGameState = function () {
     hospital.addWall(new Wall(this, 180, 970, 78, 400));
     hospital.addWall(new Wall(this, 0, 1280, 14000, 80));
 
+    hospital.addAttracter(new Attracter(this, 330, 160, 45));
+    hospital.addAttracter(new Attracter(this, 330, 495, 45));
+    hospital.addAttracter(new Attracter(this, 645, 800, 49));
+    hospital.addAttracter(new Attracter(this, 225, 895, 72));
+    hospital.addAttracter(new Attracter(this, 826, 660, 39));
+    hospital.addAttracter(new Attracter(this, 1182, 660, 33));
+    hospital.addAttracter(new Attracter(this, 1182, 144, 70));
+    hospital.addAttracter(new Attracter(this, 1123, 1040, 39));
     this.setMap(hospital);
 
 	var flamethrower = new FlameThrower(this, ASSET_MANAGER.getAsset("./images/flamethrower.png"));
@@ -463,6 +472,9 @@ GameEngine.prototype.draw = function (top, left) {
             // to draw them
             this.map.walls[i].draw(this.ctx);
         }
+        for (var i = 0; i < this.map.attracters.length; i++) {
+            this.map.attracters[i].draw(this.ctx);
+        }
     }
 
     // this cycles through the entities that exist in the game
@@ -510,10 +522,11 @@ GameEngine.prototype.update = function () {
 
     var entitiesCount = this.entities.length; // count of all the different entities in the game
 
+
     // this cycles through the walls to check for collissions
-    for (var i = 0; i < this.map.walls.length; i++) {
+    for (var i = 0; i < this.map.attracters.length; i++) {
         // to draw them
-        this.map.walls[i].update();
+        this.map.attracters[i].update();
     }
 
     // Sets the player to the current player
@@ -523,6 +536,10 @@ GameEngine.prototype.update = function () {
         ++this.level;
         console.log("My level is " + this.level);
         this.expToLevelUp *= 2;
+        this.getPlayer().strength += 5;
+        this.getPlayer().maxHealth += 5;
+        this.getPlayer().maxSpeed += 5;
+        console.log(this.getPlayer().strength);
     }
 
     // If the map is not a BossMap
@@ -614,6 +631,13 @@ GameEngine.prototype.update = function () {
             this.players.splice(i, 1);
         }
     }
+
+    // this cycles through the walls to check for collissions
+    for (var i = 0; i < this.map.walls.length; i++) {
+        // to draw them
+        this.map.walls[i].update();
+    }
+
 	//if the players array is empty it is game over you lose
 	if (this.players.length == 0) {
 		this.menuMode = "Lose";
@@ -670,7 +694,7 @@ GameEngine.prototype.drawMenu = function() {
 		
 		//startButton
 		this.startButton = {x:this.ctx.canvas.width/2 - width/2, y:this.ctx.canvas.height/2 - height/2, height:height, width:width};	
-        this.drawMessage("Get 10 kills, walk through the portal and kill the boss to win!", 70, 288);
+        this.drawMessage("Get 100 kills, walk through the portal and kill the boss to win!", 70, 288);
         this.drawMessage("Make sure to get the flamethrower before going through the portal!", 40, 330);
 
         this.startButton.lines = ["New Game"];
@@ -890,10 +914,11 @@ GameEngine.prototype.loop = function () {
 	this.draw(); // draws the GameEngine and all the entities in the game
     this.click = null; // resets the click to null
 
-    if (this.kills > 9) {
+    if (this.kills > 99 && !this.unlocked) {
             var bossMap = new Map(this, ASSET_MANAGER.getAsset("./images/bossMap1.png"), "Boss Map - Level 1", 800, 800, 800, 800, 0.5);
             bossMap.addVillain(new Boss(this));
             bossMap.isBossMap = true;
+            this.unlocked = true;
             this.addEntity(new Portal(this, 94, 1186, bossMap, 700, 200));
     }
 
