@@ -6,6 +6,7 @@ function Map(game, image, name, worldWidth, worldHeight, mapRatioWidth, mapRatio
 	  this.ratio = ratio;
 
 	  this.walls = [];
+    this.attracters = [];
 
     this.worldWidth = worldWidth; 
     this.worldHeight = worldHeight; 
@@ -20,6 +21,10 @@ function Map(game, image, name, worldWidth, worldHeight, mapRatioWidth, mapRatio
 
 Map.prototype.addWall = function (wall) {
 	 this.walls.push(wall);
+}
+
+Map.prototype.addAttracter = function (attracter) {
+   this.attracters.push(attracter);
 }
 
 Map.prototype.addVillain = function(villain) {

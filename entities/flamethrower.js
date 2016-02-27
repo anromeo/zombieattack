@@ -29,14 +29,11 @@ function FlameThrower(game, image) {
 
     // var spawnpoint = this.spawnPoints[Math.floor(Math.random() * this.spawnPoints.length)];
 
-    this.x = 100;
-    this.y = 100;
-
     this.width = 45;
     this.height = 20;
 
-    this.canvasX = 100;
-    this.canvasY = 100;
+    this.canvasX = spawnpoint.x;
+    this.canvasY = spawnpoint.y;
 
     this.shooting = false;
     this.radius = 30;

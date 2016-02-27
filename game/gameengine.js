@@ -73,6 +73,7 @@ function GameEngine() {
     this.surfaceWidth = null; // the width of the canvas
     this.surfaceHeight = null; // the height of the canvas
 
+    this.unlocked = false;
     // FOREST MAP
     // this.worldWidth = 1600; // the width of the world within the canvas FOREST
     // this.worldHeight = 1600; // the height of the world within the canvas FOREST
@@ -294,25 +295,34 @@ GameEngine.prototype.setupGameState = function () {
     hospital.addWall(new Wall(this, 180, 970, 78, 400));
     hospital.addWall(new Wall(this, 0, 1280, 14000, 80));
 
+    hospital.addAttracter(new Attracter(this, 330, 160, 45));
+    hospital.addAttracter(new Attracter(this, 330, 495, 45));
+    hospital.addAttracter(new Attracter(this, 645, 800, 49));
+    hospital.addAttracter(new Attracter(this, 225, 895, 72));
+    hospital.addAttracter(new Attracter(this, 826, 660, 39));
+    hospital.addAttracter(new Attracter(this, 1182, 660, 33));
+    hospital.addAttracter(new Attracter(this, 1182, 144, 70));
+    hospital.addAttracter(new Attracter(this, 1123, 1040, 39));
     this.setMap(hospital);
 
 	var flamethrower = new FlameThrower(this, ASSET_MANAGER.getAsset("./images/flamethrower.png"));
     this.addEntity(flamethrower);
 	
 	var healthpack = new HealthPack(this, ASSET_MANAGER.getAsset("./images/HealthPack.png"));
-	healthpack.x = 1280;
-	healthpack.y = 1040;
 	this.addEntity(healthpack);
+
+    var speed = new Speed(this, ASSET_MANAGER.getAsset("./images/speed.png"));
+    this.addEntity(speed);
 	
 	var player = new playerControlled(this);
     player.controlled = true;
     this.addEntity(player);
 
-    var bossMap = new Map(this, ASSET_MANAGER.getAsset("./images/bossMap1.png"), "Boss Map - Level 1", 800, 800, 800, 800, 0.5);
-    bossMap.addVillain(new Boss(this));
-    bossMap.isBossMap = true;
+    // var bossMap = new Map(this, ASSET_MANAGER.getAsset("./images/bossMap1.png"), "Boss Map - Level 1", 800, 800, 800, 800, 0.5);
+    // bossMap.addVillain(new Boss(this));
+    // bossMap.isBossMap = true;
 
-    this.addEntity(new Portal(this, 94, 1186, bossMap, 700, 200));
+    // this.addEntity(new Portal(this, 94, 1186, bossMap, 700, 200));
 //    this.setMap(bossMap);
     // var player2 = new playerControlled(this);
     // this.addEntity(player2);
@@ -462,6 +472,9 @@ GameEngine.prototype.draw = function (top, left) {
             // to draw them
             this.map.walls[i].draw(this.ctx);
         }
+        for (var i = 0; i < this.map.attracters.length; i++) {
+            this.map.attracters[i].draw(this.ctx);
+        }
     }
 
     // this cycles through the entities that exist in the game
@@ -509,10 +522,11 @@ GameEngine.prototype.update = function () {
 
     var entitiesCount = this.entities.length; // count of all the different entities in the game
 
+
     // this cycles through the walls to check for collissions
-    for (var i = 0; i < this.map.walls.length; i++) {
+    for (var i = 0; i < this.map.attracters.length; i++) {
         // to draw them
-        this.map.walls[i].update();
+        this.map.attracters[i].update();
     }
 
     // Sets the player to the current player
@@ -522,6 +536,10 @@ GameEngine.prototype.update = function () {
         ++this.level;
         console.log("My level is " + this.level);
         this.expToLevelUp *= 2;
+        this.getPlayer().strength += 5;
+        this.getPlayer().maxHealth += 5;
+        this.getPlayer().maxSpeed += 5;
+        console.log(this.getPlayer().strength);
     }
 
     // If the map is not a BossMap
@@ -613,6 +631,13 @@ GameEngine.prototype.update = function () {
             this.players.splice(i, 1);
         }
     }
+
+    // this cycles through the walls to check for collissions
+    for (var i = 0; i < this.map.walls.length; i++) {
+        // to draw them
+        this.map.walls[i].update();
+    }
+
 	//if the players array is empty it is game over you lose
 	if (this.players.length == 0) {
 		this.menuMode = "Lose";
@@ -669,8 +694,14 @@ GameEngine.prototype.drawMenu = function() {
 		
 		//startButton
 		this.startButton = {x:this.ctx.canvas.width/2 - width/2, y:this.ctx.canvas.height/2 - height/2, height:height, width:width};	
-		this.startButton.lines = ["New Game"];
-		
+        this.drawMessage("Get 20 kills, walk through the portal and kill the boss to win!", 70, 288);
+        this.drawMessage("Make sure to get the flamethrower before going through the portal!", 40, 330);
+
+        this.startButton.lines = ["New Game"];
+
+		this.drawMessage("Walk with WASD", 305, 490);
+        this.drawMessage("Use mouse to rotate player", 265, 540);
+        this.drawMessage("Click mouse to shoot", 285, 590);
 		
 		this.drawButton(this.startButton);
 	} else if (this.menuMode == "Pause") {
@@ -694,8 +725,8 @@ GameEngine.prototype.drawMenu = function() {
 		var height = 200;
 		var width = this.ctx.canvas.width/2 - 100;
 		
-		this.drawMessage ("GAME OVER", height, width);
-		this.drawMessage ("you lost.", height + 30, width);
+		this.drawMessage ("GAME OVER", height + 127, width + 30);
+		this.drawMessage ("you lost.", height + 161, width + 60);
 		
 		height = 50;
 		width = 200;
@@ -709,8 +740,8 @@ GameEngine.prototype.drawMenu = function() {
 		var height = 200;
 		var width = this.ctx.canvas.width/2 - 100;
 		
-		this.drawMessage ("GAME OVER", height, width);
-		this.drawMessage ("You Win!!", height + 30, width);
+		this.drawMessage ("GAME OVER", height + 127, width + 30);
+		this.drawMessage ("You Win!!", height + 151, width + 60);
 		
 		height = 50;
 		width = 200;
@@ -723,7 +754,7 @@ GameEngine.prototype.drawMenu = function() {
 
 }
 
-GameEngine.prototype.drawMessage = function(messageToDraw, startY, startX) {
+GameEngine.prototype.drawMessage = function(messageToDraw, startX, startY) {
 		this.ctx.save();
 		this.ctx.fillStyle = "white";
 		this.ctx.font="25px Arial";
@@ -882,4 +913,14 @@ GameEngine.prototype.loop = function () {
 
 	this.draw(); // draws the GameEngine and all the entities in the game
     this.click = null; // resets the click to null
+
+    if (this.kills > 19 && !this.unlocked) {
+            var bossMap = new Map(this, ASSET_MANAGER.getAsset("./images/bossMap1.png"), "Boss Map - Level 1", 800, 800, 800, 800, 0.5);
+            bossMap.addVillain(new Boss(this));
+            bossMap.isBossMap = true;
+            this.unlocked = true;
+            this.addEntity(new Portal(this, 94, 1186, bossMap, 700, 200));
+    }
+
+
 }

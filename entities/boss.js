@@ -4,6 +4,11 @@ function Boss(game, x, y) {
     this.SpriteWidth = 128;
     this.SpriteHeight = 128;
     this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/boss-moving.png"), this.SpriteWidth, this.SpriteHeight, .05, 24, true, false, 6);
+    
+    var attackingSpriteWidth = 192;
+    var attackingSpriteHeight = 192;
+    this.setAttackAnimation(ASSET_MANAGER.getAsset("./images/boss-attacking.png"), attackingSpriteWidth, attackingSpriteHeight, .05, 20, true, false, 5);
+
     if (x === undefined) {
         this.x = this.game.surfaceWidth / 2;
     } else {
@@ -26,7 +31,7 @@ function Boss(game, x, y) {
     this.ctx = game.ctx;
     this.visualRadius = 1000;
     this.maxSpeed = 80;
-	this.healthMAX = 2000;
+	this.healthMAX = 20000;
     this.health = this.healthMAX;
     this.attackRange = 50; // always make sure attack range is larger than comfort zone
     this.comfortZone = 25;

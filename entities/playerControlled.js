@@ -21,14 +21,14 @@ function playerControlled(game) {
     this.spawnPoints[7] = { x: 138, y: 688 };
     this.spawnPoints[8] = { x: 449, y: 672 };
     this.spawnPoints[9] = { x: 136, y: 888 };
-    this.spawnPoints[10] = { x: 298, y: 1192};
     this.spawnPoints[11] = { x: 664, y: 416 };
     this.spawnPoints[12] = { x: 190, y: 80 };
     
 
     var spawnpoint = this.spawnPoints[Math.floor(Math.random() * this.spawnPoints.length)];
 
-    LivingEntity.call(this, game, spawnpoint.x, spawnpoint.y);
+    // LivingEntity.call(this, game, spawnpoint.x, spawnpoint.y);
+    LivingEntity.call(this, game, 100, 100);
 
     this.player = 1;
     // this.SpriteWidth = 80;
@@ -38,7 +38,6 @@ function playerControlled(game) {
     this.SpriteHeight = 176 / 3;
 
     this.radius = 30;
-    this.strength = 100;
     this.controlled = false;
     this.action;
     this.weapon = null;
@@ -67,10 +66,20 @@ function playerControlled(game) {
     this.velocity = { x: 0, y: 0 };
 
     this.ability1Attributes.activate = false;
+
+  //  this.maxSpeed = 200;
+
+    this.timerForSpeed = 0;
+    this.originalSpeed = 100;
 };
 
 playerControlled.prototype = new LivingEntity();
 playerControlled.prototype.constructor = playerControlled;
+
+playerControlled.prototype.upSpeed = function() {
+    this.timerForSpeed = 8; 
+    this.maxSpeed = 175;
+}
 
 // This function will eventually move to the shooter class.
 playerControlled.prototype.attack = function(target) {
@@ -82,6 +91,7 @@ playerControlled.prototype.attack = function(target) {
     } else {
         shot = new Projectile(this.game);
     }
+    shot.strength += this.strength;
     shot.x = this.x + dir.x * (this.radius + shot.radius + 20);
     shot.y = this.y + dir.y * (this.radius + shot.radius + 20);
     shot.velocity.x = dir.x * shot.maxSpeed;
@@ -306,6 +316,18 @@ playerControlled.prototype.selectAction = function () {
 
 playerControlled.prototype.update = function () {
 
+
+    if (this.timerForSpeed) {
+        if (this.timerForSpeed <= 0) {
+            this.timerForSpeed = 0;
+            this.maxSpeed = this.originalSpeed;
+            console.log(this.maxSpeed);
+        } else {
+            this.timerForSpeed -= this.game.clockTick;
+        }
+    }
+
+
     if (!this.controlled && !this.removeFromWorld) {
         this.aiUpdate(this.type);
         return;
@@ -326,6 +348,7 @@ playerControlled.prototype.update = function () {
         }
     }
 	
+    // Item collision
 	for (i = 0; i < this.game.items.length; i++) {
         var item = this.game.items[i];
         if (!(((this.y + 54) < (item.y)) ||
@@ -523,14 +546,14 @@ playerControlled.prototype.update = function () {
         // this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/shooter-walking2.png"), this.SpriteWidth, this.SpriteHeight, .09, 1, true, false, 3);
        ///  console.log(this.movingAnimation.frames);
        //  this.movingAnimation.setFrames(1);
-          console.log("standing");
+//          console.log("standing");
          this.movingAnimation = new Animation(ASSET_MANAGER.getAsset("./images/shooter-walking2.png"), this.SpriteWidth, this.SpriteHeight, .09, 8, true, false, 3);
      } else {
        // console.log("walking");
         // this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/shooter-walking2.png"), this.SpriteWidth, this.SpriteHeight, .09, 8, true, false, 3);
        // console.log(this.movingAnimation.frames);
       // this.movingAnimation.setFrames(8);
-        console.log("running");
+//        console.log("running");
      //  this.movingAnimation = new Animation(ASSET_MANAGER.getAsset("./images/shooter-walking2.png"), this.SpriteWidth, this.SpriteHeight, .09, 8, true, false, 3);
      }
 
@@ -545,6 +568,8 @@ playerControlled.prototype.draw = function (ctx) {
         this.game.setWindowX(this.x - 400);
         this.game.setWindowY(this.y - 400);
     }
+//    console.log("X: " + this.x + " | Y: " + this.y);
+
     // ctx.beginPath();
     // ctx.fillStyle = this.color;
     // ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
