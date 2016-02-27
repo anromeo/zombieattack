@@ -11,6 +11,8 @@ function Animation(spriteSheet, frameWidth, frameHeight, frameDuration, frames, 
     this.reverse = reverse;
     this.numFramesInRow = numFramesInRow;
     this.frozen = false;
+    this.isActivated = false;
+    this.isAnimationOver = false;
 }
 
 Animation.prototype.setFrames = function (frames) {
@@ -38,6 +40,10 @@ Animation.prototype.setFrames = function (frames) {
 // }
 
 Animation.prototype.drawFrameRotate = function (tick, ctx, x, y, theAngle, xOffset, yOffset) {
+
+    if (this.numFramesInRow - 1 === this.currentFrame()) {
+        this.isAnimationOver = true;
+    }
 
     if (xOffset === undefined) {
         xOffset = 0;

@@ -7,7 +7,7 @@ function Boss(game, x, y) {
     
     var attackingSpriteWidth = 192;
     var attackingSpriteHeight = 192;
-    this.setAttackAnimation(ASSET_MANAGER.getAsset("./images/boss-attacking.png"), attackingSpriteWidth, attackingSpriteHeight, .05, 20, true, false, 5);
+    this.setAttackAnimation(ASSET_MANAGER.getAsset("./images/boss-attacking.png"), attackingSpriteWidth, attackingSpriteHeight, .05, 20, true, false, 20);
 
     if (x === undefined) {
         this.x = this.game.surfaceWidth / 2;

@@ -134,6 +134,9 @@ function LivingEntity(game, x, y) {
     this.comfortZone = 200; // the comfortable distance between this LivingEntity and an enemy LivingEntity
     this.personalBubble = 200; // this is the personal space needed for this LivingEntity and allied LivingEntities
 
+    // the current type of animation that is being used
+    this.currentAnimation = "moving";
+
 }
 
 LivingEntity.prototype = new Entity();
@@ -654,7 +657,19 @@ LivingEntity.prototype.draw = function (ctx) {
 
 
     } else { // If any uncontrolled LivingEntity
-        this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius - this.game.getWindowX() - this.radialOffset, this.y - this.radius - this.game.getWindowY() - this.radialOffset, this.angle);
+
+        if (this.currentAnimation && this.currentAnimation === "attack" && this.attackAnimation !== undefined) {
+
+            this.attackAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius - this.game.getWindowX() - this.radialOffset, this.y - this.radius - this.game.getWindowY() - this.radialOffset, this.angle);
+            if (this.attackAnimation.isAnimationOver) {
+                this.attackAnimation.elapsedTime = 0;
+                this.attackAnimation.isAnimationOver = false;
+                this.attackAnimation.isActivated = false;
+                this.currentAnimation = "moving";
+            }
+        } else {
+            this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius - this.game.getWindowX() - this.radialOffset, this.y - this.radius - this.game.getWindowY() - this.radialOffset, this.angle);
+        }
     }
 	
 	  // SHOW health bar if set
@@ -689,8 +704,12 @@ LivingEntity.prototype.collideBottom = function () {
 
 
 LivingEntity.prototype.attack = function(target) {
-    if (target.entTarget) {
+    this.currentAnimation = "attack";
+    if (target.entTarget && ((this.attackAnimation === undefined) || !this.attackAnimation.isActivated)) {
         target.entTarget.health -= this.strength;
+        if (this.attackAnimation !== undefined) {
+            this.attackAnimation.isActivated = true;
+        }
     }
 }
 
