@@ -62,7 +62,7 @@ function GameEngine() {
     this.zombieCooldownNumInitial = 3;  // how often a zombie will appear initially
     this.zombieCooldown = this.zombieCooldownNumInitial; // the cooldown until the next zombie appears
 
-    this.kills = 0; // this is the number of kills that the player has total
+    this.kills = 10; // this is the number of kills that the player has total
 
     this.showOutlines = false; // this shows the outline of the entities
     this.ctx = null; // this is the object being used to draw on the map
@@ -210,7 +210,7 @@ GameEngine.prototype.restart = function () {
 
     this.map = null;
 
-    this.kills = 0; // this is the number of kills that the player has total
+    this.kills = 10; // this is the number of kills that the player has total
 
     this.mouse = {x:0, y:0, mousedown:false}; // this is the mouse coordinates and whether the mouse is pressed or not
 	this.keyState = {}; // this is the current keystate which is an object that is nothing
@@ -300,19 +300,20 @@ GameEngine.prototype.setupGameState = function () {
     this.addEntity(flamethrower);
 	
 	var healthpack = new HealthPack(this, ASSET_MANAGER.getAsset("./images/HealthPack.png"));
-	healthpack.x = 1280;
-	healthpack.y = 1040;
 	this.addEntity(healthpack);
+
+    var speed = new Speed(this, ASSET_MANAGER.getAsset("./images/speed.png"));
+    this.addEntity(speed);
 	
 	var player = new playerControlled(this);
     player.controlled = true;
     this.addEntity(player);
 
-    var bossMap = new Map(this, ASSET_MANAGER.getAsset("./images/bossMap1.png"), "Boss Map - Level 1", 800, 800, 800, 800, 0.5);
-    bossMap.addVillain(new Boss(this));
-    bossMap.isBossMap = true;
+    // var bossMap = new Map(this, ASSET_MANAGER.getAsset("./images/bossMap1.png"), "Boss Map - Level 1", 800, 800, 800, 800, 0.5);
+    // bossMap.addVillain(new Boss(this));
+    // bossMap.isBossMap = true;
 
-    this.addEntity(new Portal(this, 94, 1186, bossMap, 700, 200));
+    // this.addEntity(new Portal(this, 94, 1186, bossMap, 700, 200));
 //    this.setMap(bossMap);
     // var player2 = new playerControlled(this);
     // this.addEntity(player2);
@@ -669,8 +670,14 @@ GameEngine.prototype.drawMenu = function() {
 		
 		//startButton
 		this.startButton = {x:this.ctx.canvas.width/2 - width/2, y:this.ctx.canvas.height/2 - height/2, height:height, width:width};	
-		this.startButton.lines = ["New Game"];
-		
+        this.drawMessage("Get 10 kills, walk through the portal and kill the boss to win!", 70, 288);
+        this.drawMessage("Make sure to get the flamethrower before going through the portal!", 40, 330);
+
+        this.startButton.lines = ["New Game"];
+
+		this.drawMessage("Walk with WASD", 305, 490);
+        this.drawMessage("Use mouse to rotate player", 265, 540);
+        this.drawMessage("Click mouse to shoot", 285, 590);
 		
 		this.drawButton(this.startButton);
 	} else if (this.menuMode == "Pause") {
@@ -694,8 +701,8 @@ GameEngine.prototype.drawMenu = function() {
 		var height = 200;
 		var width = this.ctx.canvas.width/2 - 100;
 		
-		this.drawMessage ("GAME OVER", height, width);
-		this.drawMessage ("you lost.", height + 30, width);
+		this.drawMessage ("GAME OVER", height + 127, width + 30);
+		this.drawMessage ("you lost.", height + 161, width + 60);
 		
 		height = 50;
 		width = 200;
@@ -709,8 +716,8 @@ GameEngine.prototype.drawMenu = function() {
 		var height = 200;
 		var width = this.ctx.canvas.width/2 - 100;
 		
-		this.drawMessage ("GAME OVER", height, width);
-		this.drawMessage ("You Win!!", height + 30, width);
+		this.drawMessage ("GAME OVER", height + 127, width + 30);
+		this.drawMessage ("You Win!!", height + 151, width + 60);
 		
 		height = 50;
 		width = 200;
@@ -723,7 +730,7 @@ GameEngine.prototype.drawMenu = function() {
 
 }
 
-GameEngine.prototype.drawMessage = function(messageToDraw, startY, startX) {
+GameEngine.prototype.drawMessage = function(messageToDraw, startX, startY) {
 		this.ctx.save();
 		this.ctx.fillStyle = "white";
 		this.ctx.font="25px Arial";
@@ -882,4 +889,13 @@ GameEngine.prototype.loop = function () {
 
 	this.draw(); // draws the GameEngine and all the entities in the game
     this.click = null; // resets the click to null
+
+    if (this.kills > 9) {
+            var bossMap = new Map(this, ASSET_MANAGER.getAsset("./images/bossMap1.png"), "Boss Map - Level 1", 800, 800, 800, 800, 0.5);
+            bossMap.addVillain(new Boss(this));
+            bossMap.isBossMap = true;
+            this.addEntity(new Portal(this, 94, 1186, bossMap, 700, 200));
+    }
+
+
 }
