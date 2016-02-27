@@ -1,4 +1,4 @@
-function Villain(game, x, y) {
+function Villain(game, clone, x, y) {
     // LivingEntity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1);
     // LivingEntity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1);
 
@@ -22,19 +22,17 @@ function Villain(game, x, y) {
 
     var spawnpoint = this.spawnPoints[Math.floor(Math.random() * this.spawnPoints.length)];
 
+
     LivingEntity.call(this, game, spawnpoint.x, spawnpoint.y);
 
-    if (this.x !== undefined) {
+    if (x !== undefined) {
         this.x = x;
-    } else {
-        this.x = 850;
     }
-
-    if (this.y !== undefined) {
+    if (y !== undefined) {
         this.y = y;
-    } else {
-    	this.y = this.game.surfaceHeight * Math.random();
     }
+	// this.x = 850;
+	// this.y = this.game.surfaceHeight * Math.random();
 	
 	this.radius = 64;
 	this.SpriteHeight = 60;

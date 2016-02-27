@@ -390,6 +390,34 @@ LivingEntity.prototype.aiSelectAction = function(type) {
                             // turn this entity into the new target of this LivingEntity
                             target = ent;
                         }
+
+                        if (this.collide(ent)) {
+                            // set up a temp x and y
+                            var temp = { x: this.velocity.x, y: this.velocity.y };
+
+                                // BUMP IT out of the way
+                            var dist = distance(this, ent);
+
+                            if (dist !== 0) {
+                                var delta = this.radius + ent.radius - dist;
+                                var difX = (this.x - ent.x) / dist;
+                                var difY = (this.y - ent.y) / dist;
+
+                                this.x += difX * delta / 2;
+                                this.y += difY * delta / 2;
+                                ent.x -= difX * delta / 2;
+                                ent.y -= difY * delta / 2;
+
+                                this.velocity.x = ent.velocity.x * friction;
+                                this.velocity.y = ent.velocity.y * friction;
+                                ent.velocity.x = temp.x * friction;
+                                ent.velocity.y = temp.y * friction;
+                                this.x += this.velocity.x * this.game.clockTick;
+                                this.y += this.velocity.y * this.game.clockTick;
+                                ent.x += ent.velocity.x * this.game.clockTick;
+                                ent.y += ent.velocity.y * this.game.clockTick;
+                            }
+                        }
                     // ELSE IF this is a projectile and the projectile collides with the ent
                     } else if (this.collide(ent)) {
                         // SUBTRACT the strength of this ent from the health of this LivingEntity
