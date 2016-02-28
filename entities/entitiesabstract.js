@@ -648,8 +648,8 @@ LivingEntity.prototype.draw = function (ctx) {
 
     var positionY = (this.y - this.radius - this.game.getWindowY() - this.radialOffset);
 
-    if (positionX < this.game.surfaceWidth &&  positionX > 0 &&
-        positionY < this.game.surfaceHeight && positionY > 0){
+    if (positionX < this.game.surfaceWidth + 10 &&  positionX > -10 &&
+        positionY < this.game.surfaceHeight + 10 && positionY > -100){
     if (this.movingAnimation && this.type === "playerControlled" && this.controlled === true) {
 
         // Draws the Player

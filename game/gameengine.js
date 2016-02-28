@@ -75,7 +75,7 @@ function GameEngine() {
 
     this.unlocked = false;
 
-    this.attributePoints = 5;
+    this.attributePoints = 0;
     // FOREST MAP
     // this.worldWidth = 1600; // the width of the world within the canvas FOREST
     // this.worldHeight = 1600; // the height of the world within the canvas FOREST
@@ -97,7 +97,7 @@ function GameEngine() {
     this.timer = new Timer(); // this creates the Object Timer for the Game Engine
     this.keyState = {}; // this is the current keystate which is an object that is nothing
 
-    this.expToLevelUp = 1;
+    this.expToLevelUp = 10;
     this.level = 1;
     this.expEarned = 0;
 
@@ -188,11 +188,12 @@ GameEngine.prototype.start = function () {
     console.log("starting game");
     var that = this;
     (function gameLoop() {
-		if (that.menuMode == "Game") {
+		// if (that.menuMode == "Game") {
 			that.loop();
-		} else {//if (that.menuMode == "Start" || that.menuMode == "Pause") {
-			that.menuLoop();
-		}       
+            // TURN ON AGAIN!!
+		// } else {//if (that.menuMode == "Start" || that.menuMode == "Pause") {
+		// 	that.menuLoop();
+		// }       
         requestAnimFrame(gameLoop, that.ctx.canvas); 
     })();
 }
@@ -253,11 +254,20 @@ GameEngine.prototype.setupGameState = function () {
 
     // Map(game, image, name, worldWidth, worldHeight, mapRatioWidth, mapRatioHeight, ratio) 
 
-    var hospital = new Map(this, ASSET_MANAGER.getAsset("./images/hospital.png"), "Hospital", 1400, 1350, 400, 400, 0.5);
-    var ruins = new Map(this, ASSET_MANAGER.getAsset("./images/ruins.png"), "Ruins", 1400, 1350, 550, 550, 0.68);
-    hospital.addWall(new Wall(this, 38, 132, 70, 210));
+    var hospital;
+    var ruins;
+    var mapRatioHospitalWidth = 400;
+    var mapRatioHosptialHeight = 400;
+    var mapRatioTerrainWidth = 550;
+    var mapRatioTerrainHeight = 550;
 
-    hospital.addWall(new Wall(this, 38, 132, 70, 210));
+    if (this.surfaceHeight === 600) {
+        mapRatioHosptialHeight = 300;
+        mapRatioHospitalHeight = .75 * mapRatioTerrainHeight;
+    }
+    hospital = new Map(this, ASSET_MANAGER.getAsset("./images/hospital.png"), "Hospital", 1400, 1350, mapRatioHospitalWidth, mapRatioHosptialHeight, 0.5);
+    ruins = new Map(this, ASSET_MANAGER.getAsset("./images/ruins.png"), "Ruins", 2285, 1500, 550, mapRatioHospitalHeight, 0.68);
+
     hospital.addWall(new Wall(this, 38, 460, 70, 210));
     hospital.addWall(new Wall(this, 275, 0, 95, 115));
     hospital.addWall(new Wall(this, 275, 208, 95, 240));
@@ -309,10 +319,41 @@ GameEngine.prototype.setupGameState = function () {
 
     ruins.addWall(new Wall(this, 285, 212, 70, 210));
     ruins.addWall(new Wall(this, 285, 282, 212, 75));
-    ruins.addWall(new Wall(this, 145, 355, 212, 75));
+    ruins.addWall(new Wall(this, 145, 355, 205, 75));
+    ruins.addWall(new Wall(this, 920, 77, 65, 130));
+    ruins.addWall(new Wall(this, 850, 145, 130, 68));
+    ruins.addWall(new Wall(this, 785, 355, 140, 140));
+    ruins.addWall(new Wall(this, 1360, -20, 60, 160));
 
+    ruins.addWall(new Wall(this, 1360, 350, 65, 220));
+    ruins.addWall(new Wall(this, 1080, 425, 420, 69));
+    ruins.addWall(new Wall(this, 1425, 425, 79, 283));
 
+    ruins.addWall(new Wall(this, 1932, 360, 65, 138));
+    ruins.addWall(new Wall(this, 1932, 360, 144, 64));
 
+    ruins.addWall(new Wall(this, 1932, 640, 70, 290));
+    ruins.addWall(new Wall(this, 1932, 1078, 70, 135));
+    ruins.addWall(new Wall(this, 1578, 1148, 70, 135));
+    ruins.addWall(new Wall(this, 1578, 1148, 424, 65));
+    ruins.addWall(new Wall(this, 1578, 1435, 70, 130));
+
+    ruins.addWall(new Wall(this, 283, 866, 70, 355));
+    ruins.addWall(new Wall(this, 283, 942, 215, 65));
+
+    ruins.addWall(new Wall(this, 865, 935, 270, 65));
+    ruins.addWall(new Wall(this, 860, 870, 140, 130));
+
+    ruins.addWall(new Wall(this, 856, 1220, 140, 130));
+    ruins.addWall(new Wall(this, 856, 1230, 65, 280));
+
+    ruins.addWall(new Wall(this, 1286, 935, 205, 60));
+    ruins.addWall(new Wall(this, 1360, 855, 140, 130));
+
+    ruins.addWall(new Wall(this, 855, 645, 65, 65));
+
+    ruins.addAttracter(new Attracter(this, 330, 90, 120));
+    ruins.addAttracter(new Attracter(this, 70, 400, 150));
     var hospitalItems = [];
     var ruinItems = [];
 
@@ -369,8 +410,8 @@ GameEngine.prototype.setupGameState = function () {
     var speed = new Speed(this, ASSET_MANAGER.getAsset("./images/speed.png"), RuinspeedSpawn);
     ruinItems.push(speed);
 
-    // this.setMap(hospital);
-    this.setMap(ruins);
+         // this.setMap(hospital);
+   this.setMap(ruins);
 
     // this.setItems(hospitalItems);
     this.setItems(ruinItems);
@@ -381,6 +422,9 @@ GameEngine.prototype.setupGameState = function () {
 	var player = new playerControlled(this);
     player.controlled = true;
     this.addEntity(player);
+
+    // var player2 = new playerControlled(this);
+    // this.addEntity(player2);
 
     // var bossMap = new Map(this, ASSET_MANAGER.getAsset("./images/bossMap1.png"), "Boss Map - Level 1", 800, 800, 800, 800, 0.5);
     // bossMap.addVillain(new Boss(this));
@@ -526,7 +570,7 @@ GameEngine.prototype.draw = function (top, left) {
     // Changed this.worldWidth and this.worldHeight from 1600 magic numbers
     // Changed this.surfaceWidth and this.surfaceHeight from 800 magic numbers
     // The forest level that is being drawn
-    this.ctx.drawImage(this.map.image, this.getWindowX() * this.map.ratio, this.getWindowY() * this.map.ratio, this.map.mapRatioWidth, this.map.mapRatioHeight, 0, 0, this.surfaceWidth, this.surfaceHeight);
+    this.ctx.drawImage(this.map.image, this.getWindowX() * this.map.ratioX, this.getWindowY() * this.map.ratioY, this.map.mapRatioWidth, this.map.mapRatioHeight, 0, 0, this.surfaceWidth, this.surfaceHeight);
 
 
 
@@ -556,31 +600,31 @@ GameEngine.prototype.draw = function (top, left) {
     this.ctx.fillText(message, 10, 50);
     //this.ctx.stroke(); 
     this.ctx.beginPath();
-    this.ctx.fillStyle = "Red";
-    this.ctx.font = "48px serif";
+    this.ctx.fillStyle = "blue";
+    this.ctx.font = "bolder 20px Arial";
     var message1 = "Level: " + this.level;
-    this.ctx.fillText(message1, 200, 100);
+    this.ctx.fillText(message1, this.surfaceWidth - 185 - 80, 30);
 	
     
 
     this.ctx.beginPath();
-    this.ctx.strokeStyle = "Gray";
-    this.ctx.fillStyle = "blue";
-    this.ctx.fillRect(195, 10, 110, 25);
+    this.ctx.strokeStyle = "black";
+    this.ctx.fillStyle = "";
+    this.ctx.fillRect(this.surfaceWidth - 185, 10, 170, 25);
 
     this.ctx.beginPath();
     //this.ctx.lineWidth = "6";
     //this.ctx.fillRect(195, 20, 105, 20);
     this.ctx.strokeStyle = "red";
-    this.ctx.fillStyle = "white";
-    this.ctx.fillRect(200, 15, 100, 15);
+    this.ctx.fillStyle = "black";
+    this.ctx.fillRect(this.surfaceWidth - 180, 15, 160, 15);
 
     var calculatewidth = this.expEarned / this.expToLevelUp;
     this.ctx.beginPath();
     //this.ctx.lineWidth = "6";
     this.ctx.strokeStyle = "blue";
-    this.ctx.fillStyle = "green";
-    this.ctx.fillRect(200, 15, 100 * calculatewidth, 15);
+    this.ctx.fillStyle = "blue";
+    this.ctx.fillRect(this.surfaceWidth - 180, 15, 160 * calculatewidth, 15);
     this.ctx.stroke(); 
     this.ctx.restore();
 }
@@ -627,10 +671,7 @@ GameEngine.prototype.update = function () {
         ++this.level;
         this.expToLevelUp *= 2;
         this.expEarned = 0;
-        this.getPlayer().strength += 5;
-        this.getPlayer().healthMAX += 5;
-        this.getPlayer().maxSpeed += 5;
-        this.attributePoints = 5;
+        this.attributePoints += 5;
     }
 
     // If the map is not a BossMap
@@ -798,18 +839,28 @@ GameEngine.prototype.drawMenu = function() {
 		var height = 50;
 		var width = 200;
 		
+        if (this.surfaceHeight == 600) {
+            this.drawMessage("Get 20 kills, walk through the portal and kill the boss to win!", 70, 160);
+            this.drawMessage("Make sure to get the flamethrower before going through the portal!", 40, 200);
+
+            this.drawMessage("Walk with WASD", 305, 400);
+            this.drawMessage("Use mouse to rotate player", 265, 440);
+            this.drawMessage("Click mouse to shoot", 285, 480);        
+        } else {
+            this.drawMessage("Get 20 kills, walk through the portal and kill the boss to win!", 70, 288);
+            this.drawMessage("Make sure to get the flamethrower before going through the portal!", 40, 330);
+
+            this.drawMessage("Walk with WASD", 305, 490);
+            this.drawMessage("Use mouse to rotate player", 265, 540);
+            this.drawMessage("Click mouse to shoot", 285, 590);
+            
+        }
 		//startButton
 		this.startButton = {x:this.ctx.canvas.width/2 - width/2, y:this.ctx.canvas.height/2 - height/2, height:height, width:width};	
-        this.drawMessage("Get 20 kills, walk through the portal and kill the boss to win!", 70, 288);
-        this.drawMessage("Make sure to get the flamethrower before going through the portal!", 40, 330);
 
         this.startButton.lines = ["New Game"];
-
-		this.drawMessage("Walk with WASD", 305, 490);
-        this.drawMessage("Use mouse to rotate player", 265, 540);
-        this.drawMessage("Click mouse to shoot", 285, 590);
-		
 		this.drawButton(this.startButton);
+
 	} else if (this.menuMode == "Pause") {
 		var height = 50;
 		var width = 200;
@@ -1020,7 +1071,7 @@ GameEngine.prototype.drawPlayerView = function(index, player) {
 
     var borderWidth = 10;
     var ctx = this.ctx;
-    var startX = (index + 1) * 25;
+    var startX = (index + 1) * 25 + (index * (this.surfaceWidth / 3 - 20));
     var startY = 25;
     var width = this.surfaceWidth / 3 - 20;
     var height = this.surfaceHeight - 200;

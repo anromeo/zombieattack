@@ -28,7 +28,7 @@ function playerControlled(game) {
     var spawnpoint = this.spawnPoints[Math.floor(Math.random() * this.spawnPoints.length)];
 
     // LivingEntity.call(this, game, spawnpoint.x, spawnpoint.y);
-    LivingEntity.call(this, game, 100, 100);
+    LivingEntity.call(this, game, 600, 600);
 
     this.player = 1;
     // this.SpriteWidth = 80;
@@ -69,10 +69,10 @@ function playerControlled(game) {
 
   //  this.maxSpeed = 200;
 
-    this.speed = 25;
+    this.speed = 30;
     this.vitality = 25;
-
     this.strength = 25;
+
     this.maxSpeed = this.speed * 4;
     this.healthMAX = this.vitality * 4;
 

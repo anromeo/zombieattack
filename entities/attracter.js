@@ -30,7 +30,7 @@ Attracter.prototype.update = function () {
     for (var i = 0; i < this.game.entities.length; i++) {
         var other = this.game.entities[i];
 
-        var acceleration = 10000;
+        var acceleration = 1000;
 
         if (!other.isNonLiving && this.collide({
             x: other.x,
