@@ -69,6 +69,13 @@ function playerControlled(game) {
 
   //  this.maxSpeed = 200;
 
+    this.speed = 25;
+    this.vitality = 25;
+
+    this.strength = 25;
+    this.maxSpeed = this.speed * 4;
+    this.healthMAX = this.vitality * 4;
+
     this.timerForSpeed = 0;
     this.originalSpeed = 100;
 };

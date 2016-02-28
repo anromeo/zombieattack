@@ -50,7 +50,7 @@ function GameEngine() {
 	this.items = [];
     this.villains = []; // All the Zombies | TODO ? Get rid or change ?
     this.players = []; // All the Players | TODO ? Get rid or change ?
-
+    this.gameRunning = true;
 
     // This is the x and y of the game, they control the rotation of the player
     this.x;
@@ -64,7 +64,7 @@ function GameEngine() {
 
     this.kills = 0; // this is the number of kills that the player has total
 
-    this.showOutlines = true; // this shows the outline of the entities
+    this.showOutlines = false; // this shows the outline of the entities
     this.ctx = null; // this is the object being used to draw on the map
     this.click = null; // this is the click value (if null, not being clicked)
 
@@ -74,6 +74,8 @@ function GameEngine() {
     this.surfaceHeight = null; // the height of the canvas
 
     this.unlocked = false;
+
+    this.attributePoints = 5;
     // FOREST MAP
     // this.worldWidth = 1600; // the width of the world within the canvas FOREST
     // this.worldHeight = 1600; // the height of the world within the canvas FOREST
@@ -95,7 +97,7 @@ function GameEngine() {
     this.timer = new Timer(); // this creates the Object Timer for the Game Engine
     this.keyState = {}; // this is the current keystate which is an object that is nothing
 
-    this.expToLevelUp = 10;
+    this.expToLevelUp = 1;
     this.level = 1;
     this.expEarned = 0;
 
@@ -373,6 +375,7 @@ GameEngine.prototype.setupGameState = function () {
     // this.setItems(hospitalItems);
     this.setItems(ruinItems);
 
+    this.addEntity(new Portal(this, 800, 600, hospital, 200, 200));
 
 	
 	var player = new playerControlled(this);
@@ -620,14 +623,14 @@ GameEngine.prototype.update = function () {
     this.player = this.getPlayer();
 
     if(this.expToLevelUp <= this.expEarned){
+        this.gameRunning = false;
         ++this.level;
-        console.log("My level is " + this.level);
         this.expToLevelUp *= 2;
         this.expEarned = 0;
         this.getPlayer().strength += 5;
-        this.getPlayer().maxHealth += 5;
+        this.getPlayer().healthMAX += 5;
         this.getPlayer().maxSpeed += 5;
-        console.log(this.getPlayer().strength);
+        this.attributePoints = 5;
     }
 
     // If the map is not a BossMap
@@ -857,19 +860,31 @@ GameEngine.prototype.drawMenu = function() {
 
 }
 
-GameEngine.prototype.drawMessage = function(messageToDraw, startX, startY) {
+GameEngine.prototype.drawMessage = function(messageToDraw, startX, startY, color, font) {
 		this.ctx.save();
-		this.ctx.fillStyle = "white";
-		this.ctx.font="25px Arial";
+        if (color === undefined) {
+		    this.ctx.fillStyle = "white";
+        } else {
+            this.ctx.fillStyle = color;
+        }
+        if (font === undefined) {
+		    this.ctx.font="25px Arial";
+        } else {
+            this.ctx.font = font;
+        }
 
 		this.ctx.fillText(messageToDraw, startX, startY);
 }
 
-GameEngine.prototype.drawButton = function(buttonToDraw) {
+GameEngine.prototype.drawButton = function(buttonToDraw, fillColor, textColor) {
 	this.ctx.save();
 	
 	this.ctx.beginPath();
-    this.ctx.fillStyle = "blue";
+    if (fillColor === undefined) {
+        this.ctx.fillStyle = "blue";
+    } else {
+        this.ctx.fillStyle = fillColor;        
+    }
     this.ctx.fillRect(buttonToDraw.x, buttonToDraw.y, buttonToDraw.width, buttonToDraw.height);
     this.ctx.fill();
     this.ctx.closePath();
@@ -880,7 +895,11 @@ GameEngine.prototype.drawButton = function(buttonToDraw) {
     this.ctx.stroke();
     this.ctx.closePath();
 	
-	this.ctx.fillStyle = "white";
+    if (textColor === undefined) {
+	   this.ctx.fillStyle = "white";
+    } else {
+        this.ctx.fillStyle = textColor;
+    }
 	this.ctx.font="25px Arial";
 
 	for (var i = 0; i < buttonToDraw.lines.length; i++) {
@@ -902,6 +921,7 @@ GameEngine.prototype.drawButton = function(buttonToDraw) {
 }
 
 GameEngine.prototype.checkMenuClick = function (buttonToTest){
+    console.log("X: " + this.click.canvasx + " | Y:" + this.click.canvasy);
 	return(this.click.canvasx >= buttonToTest.x && this.click.canvasx <= buttonToTest.x + buttonToTest.width && this.click.canvasy >= buttonToTest.y && this.click.canvasy <= buttonToTest.y + buttonToTest.height)
 }
 
@@ -996,6 +1016,87 @@ GameEngine.prototype.menuLoop = function () {
     this.click = null; // resets the click to null
 }
 
+GameEngine.prototype.drawPlayerView = function(index, player) {
+
+    var borderWidth = 10;
+    var ctx = this.ctx;
+    var startX = (index + 1) * 25;
+    var startY = 25;
+    var width = this.surfaceWidth / 3 - 20;
+    var height = this.surfaceHeight - 200;
+
+    ctx.fillStyle = "#3a3a3a";
+    roundRect(ctx, startX - borderWidth, startY - borderWidth, width + borderWidth * 2, height + borderWidth * 2, 5, true, true);
+    
+    var ctx = this.ctx;
+    ctx.beginPath();
+    ctx.fillStyle = "#464646";
+    ctx.fillRect(startX, startY, width, height);
+    ctx.stroke();
+
+    var indent = startX + 20;
+    var currentHeight = startY + 30;
+    this.drawMessage(player.name, indent, currentHeight);
+    var canAddAttributePoints = this.attributePoints > 0;
+    var addColor = "#464646";
+    if (canAddAttributePoints) {
+        addColor = "green";
+    }
+
+    currentHeight += 50;
+
+    if (canAddAttributePoints) {
+        this.drawMessage("Points Available: +" + this.attributePoints, indent, currentHeight, "red", "20px Arial");
+    }
+
+    currentHeight += 50;
+    this.drawMessage("Strength " + player.strength, indent + 60, currentHeight);
+    this.addButtonStrength = {x: indent, y: currentHeight - 35, height: 50, width: 50};
+    this.addButtonStrength.lines = ["+"];
+    this.drawButton(this.addButtonStrength, addColor);
+    if (this.click && this.checkMenuClick(this.addButtonStrength) && canAddAttributePoints) {
+        this.attributePoints -= 1;
+        player.strength += 1;
+    }
+
+    currentHeight += 70;
+    this.drawMessage("Vitality " + player.vitality, indent + 60, currentHeight);
+    this.addButtonVitality = {x: indent, y: currentHeight - 35, height: 50, width: 50};
+    this.addButtonVitality.lines = ["+"];
+    this.drawButton(this.addButtonVitality, addColor);
+    if (this.click && this.checkMenuClick(this.addButtonVitality) && canAddAttributePoints) {
+        this.attributePoints -= 1;
+        player.vitality += 1;
+        player.health += 4;
+        player.healthMAX = player.vitality * 4;
+    }
+
+
+    currentHeight += 70;
+    this.drawMessage("Speed " + player.speed, indent + 60, currentHeight);
+    this.addButtonSpeed = {x: indent, y: currentHeight - 35, height: 50, width: 50};
+    this.addButtonSpeed.lines = ["+"];
+    this.drawButton(this.addButtonSpeed, addColor);
+    if (this.click && this.checkMenuClick(this.addButtonSpeed) && canAddAttributePoints) {
+        this.attributePoints -= 1;
+        player.speed += 1;
+        player.maxSpeed = player.speed * 4;
+    }
+
+
+    // this.addButtonVitality = {x:};
+    // this.addButtonSpeed = {x:};
+
+    //okButton
+    this.doneButton = {x:indent, y: startY + height - 60, height:50, width:200};   
+    this.doneButton.lines = ["Ok"];
+    this.drawButton(this.doneButton);
+    if (this.click && this.checkMenuClick(this.doneButton)) {
+        this.gameRunning = true;
+    }
+
+}
+
 /**
  * This loops through the game engine until the game ends
  */
@@ -1010,11 +1111,18 @@ GameEngine.prototype.loop = function () {
 		this.ctx.lostfocus = "False";
 		//this.menuMode = "Pause";
 	}
-    this.clockTick = this.timer.tick(); // increments the clock tick
+    if (this.gameRunning) {
+        this.clockTick = this.timer.tick(); // increments the clock tick
 
-    this.update(); // updates the GameEngine and all the entities in the game
+        this.update(); // updates the GameEngine and all the entities in the game
 
-	this.draw(); // draws the GameEngine and all the entities in the game
+    	this.draw(); // draws the GameEngine and all the entities in the game
+    } else {
+        for (var i = 0; i < this.players.length; i++) {
+            this.drawPlayerView(i, this.players[i]);
+        }
+    }
+
     this.click = null; // resets the click to null
 
     if (this.kills > 19 && !this.unlocked) {
