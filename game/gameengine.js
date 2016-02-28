@@ -210,6 +210,9 @@ GameEngine.prototype.restart = function () {
     this.y;
 
     this.map = null;
+    this.expEarned = 0;
+    this.expToLevelUp = 10;
+    this.level = 1;
 
     this.kills = 0; // this is the number of kills that the player has total
 
@@ -548,8 +551,34 @@ GameEngine.prototype.draw = function (top, left) {
     this.ctx.font = "48px serif";
     var message = "Kills: " + this.kills;
     this.ctx.fillText(message, 10, 50);
-    this.ctx.stroke(); 
+    //this.ctx.stroke(); 
+    this.ctx.beginPath();
+    this.ctx.fillStyle = "Red";
+    this.ctx.font = "48px serif";
+    var message1 = "Level: " + this.level;
+    this.ctx.fillText(message1, 200, 100);
 	
+    
+
+    this.ctx.beginPath();
+    this.ctx.strokeStyle = "Gray";
+    this.ctx.fillStyle = "blue";
+    this.ctx.fillRect(195, 10, 110, 25);
+
+    this.ctx.beginPath();
+    //this.ctx.lineWidth = "6";
+    //this.ctx.fillRect(195, 20, 105, 20);
+    this.ctx.strokeStyle = "red";
+    this.ctx.fillStyle = "white";
+    this.ctx.fillRect(200, 15, 100, 15);
+
+    var calculatewidth = this.expEarned / this.expToLevelUp;
+    this.ctx.beginPath();
+    //this.ctx.lineWidth = "6";
+    this.ctx.strokeStyle = "blue";
+    this.ctx.fillStyle = "green";
+    this.ctx.fillRect(200, 15, 100 * calculatewidth, 15);
+    this.ctx.stroke(); 
     this.ctx.restore();
 }
 
@@ -594,6 +623,7 @@ GameEngine.prototype.update = function () {
         ++this.level;
         console.log("My level is " + this.level);
         this.expToLevelUp *= 2;
+        this.expEarned = 0;
         this.getPlayer().strength += 5;
         this.getPlayer().maxHealth += 5;
         this.getPlayer().maxSpeed += 5;
