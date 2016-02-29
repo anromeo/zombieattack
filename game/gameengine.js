@@ -429,7 +429,7 @@ GameEngine.prototype.setupGameState = function () {
         // }
 
         if (this.randomKillNumber === undefined) {
-            this.randomKillNumber = 1;//10 + randomInt(10);
+            this.randomKillNumber = 10 + randomInt(10);
             this.keyNeedsAdding = true;
         }
         if (this.game.kills === this.randomKillNumber && this.keyNeedsAdding && this.game.lastVillainKilledX) {
