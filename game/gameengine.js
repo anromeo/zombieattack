@@ -413,7 +413,7 @@ GameEngine.prototype.setupGameState = function () {
         }
     }
 
-    var portal = new Portal(this, 800, 600, hospital, 200, 200);
+    var portal = new Portal(this, 1700, 1400, hospital, 200, 200);
     ruins.update = function() {
 
         // if (this.storyClockTick === undefined) {
@@ -429,11 +429,15 @@ GameEngine.prototype.setupGameState = function () {
         // }
 
         if (this.randomKillNumber === undefined) {
-            this.randomKillNumber = 10 + randomInt(10);
+            this.randomKillNumber = 1;//10 + randomInt(10);
             this.keyNeedsAdding = true;
         }
-        if (this.game.kills === this.randomKillNumber && this.keyNeedsAdding) {
-            this.game.addEntity(new Key(this.game, 1700, 1400, portal));
+        if (this.game.kills === this.randomKillNumber && this.keyNeedsAdding && this.game.lastVillainKilledX) {
+
+            for (var i = 0; i < 20; i++) {
+                this.game.addEntity(new Villain(this.game));
+            }
+            this.game.addEntity(new Key(this.game, 1200, 800, portal));
             this.keyNeedsAdding = false;
         }
     }
@@ -770,7 +774,18 @@ GameEngine.prototype.update = function () {
     // cycles through all the villains entities backwards
     for (var i = this.villains.length - 1; i >= 0; --i) {
         if (this.villains[i].removeFromWorld) {
+            var villain = this.villains[i];
+            this.lastVillainKilledX = villain.x - villain.radius - this.getWindowX();
+
+            this.lastVillainKilledY = villain.y - villain.radius - this.getWindowY();
             this.villains.splice(i, 1);
+
+
+            // this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius - this.game.getWindowX() - this.radialOffset, this.y - this.radius - this.game.getWindowY() - this.radialOffset, this.angle);
+
+
+            console.log(this.lastVillainKilledX);
+            console.log(this.lastVillainKilledY);
         }
     }
 
@@ -970,7 +985,9 @@ GameEngine.prototype.drawStartMenu = function() {
         var width = 200;
         
         if (this.surfaceHeight == 600) {
-            this.drawMessage("Get 20 kills, walk through the portal and kill the boss to win!", 70, 160);
+            this.drawMessage("Find the key after killing one of the zombies!", 150, 80);
+            this.drawMessage("Get through the first portal!", 250, 120);
+            this.drawMessage("Then get 20 kills, walk through the portal and kill the boss to win!", 40, 160);
             this.drawMessage("Make sure to get the flamethrower before going through the portal!", 40, 200);
 
             this.drawMessage("Walk with WASD", 305, 400);
@@ -1137,7 +1154,7 @@ GameEngine.prototype.drawButton = function(buttonToDraw, fillColor, textColor) {
 }
 
 GameEngine.prototype.checkMenuClick = function (buttonToTest){
-    console.log("X: " + this.click.canvasx + " | Y:" + this.click.canvasy);
+    // console.log("X: " + this.click.canvasx + " | Y:" + this.click.canvasy);
 	return(this.click.canvasx >= buttonToTest.x && this.click.canvasx <= buttonToTest.x + buttonToTest.width && this.click.canvasy >= buttonToTest.y && this.click.canvasy <= buttonToTest.y + buttonToTest.height)
 }
 
