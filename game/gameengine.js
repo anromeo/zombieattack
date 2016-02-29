@@ -985,7 +985,7 @@ GameEngine.prototype.drawStartMenu = function() {
         var width = 200;
         
         if (this.surfaceHeight == 600) {
-            this.drawMessage("Find the key after killing one of the zombies!", 150, 80);
+            this.drawMessage("Find the key after killing some zombies!", 180, 80);
             this.drawMessage("Get through the first portal!", 250, 120);
             this.drawMessage("Then get 20 kills, walk through the portal and kill the boss to win!", 40, 160);
             this.drawMessage("Make sure to get the flamethrower before going through the portal!", 40, 200);
@@ -1069,7 +1069,7 @@ GameEngine.prototype.drawMenu = function() {
 	this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
     if (this.surfaceHeight == 600) {
-        this.ctx.drawImage(this.menuBackground, this.getWindowX(), this.getWindowY(), this.surfaceWidth, this.surfaceHeight, 0, 0, this.surfaceWidth, this.surfaceHeight);
+        this.ctx.drawImage(this.menuBackground, 0, 0, this.surfaceWidth, this.surfaceHeight, 0, 0, this.surfaceWidth, this.surfaceHeight);
     }
 
 	if (this.menuMode == "Start") {
@@ -1234,6 +1234,7 @@ GameEngine.prototype.menuLoop = function () {
             if ((this.beginButton && this.checkMenuClick(this.beginButton)) ||
             (this.skipIntroButton && this.checkMenuClick(this.skipIntroButton))) {
                 this.menuMode = "Game";
+                document.getElementById('gameWorld').style.cursor = '';
             }
         }
 		
