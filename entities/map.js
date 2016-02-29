@@ -22,7 +22,19 @@ function Map(game, image, name, worldWidth, worldHeight, mapRatioWidth, mapRatio
 
     this.villains = [];
     this.weapons = [];
+    this.items = [];
     this.isBossMap = false;
+    this.mapTrigger = null;
+}
+
+Map.prototype.setItems = function(items) {
+    this.items = items;
+}
+
+Map.prototype.update = function() {
+    if (this.mapTrigger !== null) {
+        this.mapTrigger();
+    }
 }
 
 Map.prototype.addWall = function (wall) {

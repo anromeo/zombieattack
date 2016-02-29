@@ -78,6 +78,10 @@ ASSET_MANAGER.queueDownload("./images/portal.png");
 ASSET_MANAGER.queueDownload("./images/bossMap1.png");
 ASSET_MANAGER.queueDownload("./images/ruins.png");
 
+ASSET_MANAGER.queueDownload("./images/key.png");
+
+ASSET_MANAGER.queueDownload(menuBackground);
+
 ASSET_MANAGER.downloadAll(function () {
     console.log("starting up da sheild");
     var canvas = document.getElementById('gameWorld');

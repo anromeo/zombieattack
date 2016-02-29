@@ -648,8 +648,8 @@ LivingEntity.prototype.draw = function (ctx) {
 
     var positionY = (this.y - this.radius - this.game.getWindowY() - this.radialOffset);
 
-    if (positionX < this.game.surfaceWidth + 10 &&  positionX > -10 &&
-        positionY < this.game.surfaceHeight + 10 && positionY > -100){
+    if (positionX < this.game.surfaceWidth + 100 &&  positionX > -100 &&
+        positionY < this.game.surfaceHeight + 100 && positionY > -100){
     if (this.movingAnimation && this.type === "playerControlled" && this.controlled === true) {
 
         // Draws the Player
@@ -871,14 +871,17 @@ LivingEntity.prototype.update = function () {
 
     if (this.ability1 !== undefined) {
         this.checkAbility(this.ability1Attributes, this.ability1);
+        this.ability1Attributes.activate = false;
     }
 
     if (this.ability2 !== undefined) {
         this.checkAbility(this.ability2Attributes, this.ability2);
+        this.ability2Attributes.activate = false;
     }
 
     if (this.ability3 !== undefined) {
         this.checkAbility(this.ability3Attributes, this.ability3);
+        this.ability3Attributes.activate = false;
     }
 }
 

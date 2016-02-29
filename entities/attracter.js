@@ -46,7 +46,6 @@ Attracter.prototype.update = function () {
                 var difY = (other.y - this.y) / dist;
                 other.velocity.x -= difX * acceleration / (dist * dist);
                 other.velocity.y -= difY * acceleration / (dist * dist);
-                console.log(other.name + " " + other.visualRadius);
                 // console.log("X: " + other.velocity.x + " | Y: " + other.velocity.y);
             }  
         }

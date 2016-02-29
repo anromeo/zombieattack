@@ -2,7 +2,7 @@
 var friction = 1;
 var maxSpeed = 100;
 var minSpeed = 5;
-
+var menuBackground = "./images/menu.png";
 
 
 /**

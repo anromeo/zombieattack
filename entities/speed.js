@@ -38,7 +38,9 @@ Speed.prototype.update = function () {
 }
 
 Speed.prototype.action = function (player) {
-      player.upSpeed();
+      if (!this.removeFromWorld) {
+          player.upSpeed();
+      }
       this.removeFromWorld = true;
 }
 

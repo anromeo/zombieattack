@@ -28,7 +28,7 @@ function playerControlled(game) {
     var spawnpoint = this.spawnPoints[Math.floor(Math.random() * this.spawnPoints.length)];
 
     // LivingEntity.call(this, game, spawnpoint.x, spawnpoint.y);
-    LivingEntity.call(this, game, 600, 600);
+    LivingEntity.call(this, game, 100, 100);
 
     this.player = 1;
     // this.SpriteWidth = 80;
@@ -78,14 +78,20 @@ function playerControlled(game) {
 
     this.timerForSpeed = 0;
     this.originalSpeed = 100;
+
+    this.currentAbility = 1;
 };
 
 playerControlled.prototype = new LivingEntity();
 playerControlled.prototype.constructor = playerControlled;
 
 playerControlled.prototype.upSpeed = function() {
+
     this.timerForSpeed = 8; 
-    this.maxSpeed = 175;
+    if (!this.originalSpeed) {
+        this.originalSpeed = this.maxSpeed;
+    }
+    this.maxSpeed = this.maxSpeed + 100;
 }
 
 // This function will eventually move to the shooter class.
@@ -99,6 +105,7 @@ playerControlled.prototype.attack = function(target) {
         shot = new Projectile(this.game);
     }
     shot.strength += this.strength;
+    shot.maxSpeed = this.maxSpeed * 2;
     shot.x = this.x + dir.x * (this.radius + shot.radius + 20);
     shot.y = this.y + dir.y * (this.radius + shot.radius + 20);
     shot.velocity.x = dir.x * shot.maxSpeed;
@@ -188,8 +195,23 @@ playerControlled.prototype.selectAction = function () {
 			//pause the game
 			if (this.game.keyState[80]||this.game.keyState[112]) {  //p, P
                 this.game.menuMode = "Pause";
+                // if (this.game.gameRunning) {
+                //     this.game.gameRunning = false;
+                // } else {
+                //     this.game.gameRunning = true;
+                // }
             }  
             
+            if (this.game.keyState[32]) {
+                switch (this.currentAbility) {
+                    case 1: this.ability1Attributes.activate = true;
+                    break
+                    case 2: ;
+                    break;
+                    case 3: ;
+                    break;
+                }
+            }
             action.direction.x += (x) * acceleration;
             action.direction.y += (y) * acceleration;
         }
@@ -320,6 +342,25 @@ playerControlled.prototype.selectAction = function () {
 //     this.velocity.x -= (1 - friction) * this.game.clockTick * this.velocity.x;
 //     this.velocity.y -= (1 - friction) * this.game.clockTick * this.velocity.y;
 // }
+playerControlled.prototype.ability1 = function(entity) {
+    console.log("Speeding up");
+    entity.upSpeed();
+    if (!this.originalCooldownStartControlled) {
+        this.originalCooldownStartControlled = this.cooldownStartControlled;
+        this.originalCooldownStartNotControlled = this.cooldownStartNotControlled;
+    }
+    this.cooldownStartControlled = this.cooldownStartControlled / 2;
+    this.originalCooldownStartNotControlled = this.originalCooldownStartNotControlled / 2;
+
+}
+
+playerControlled.prototype.ability2 = function(entity) {
+    console.log("Dropping Bomb");
+}
+
+playerControlled.prototype.ability3 = function(entity) {
+    console.log("Dropping Bomb");
+}
 
 playerControlled.prototype.update = function () {
 
@@ -328,7 +369,9 @@ playerControlled.prototype.update = function () {
         if (this.timerForSpeed <= 0) {
             this.timerForSpeed = 0;
             this.maxSpeed = this.originalSpeed;
-            console.log(this.maxSpeed);
+            this.originalSpeed = false;
+            this.cooldownStartControlled = this.originalCooldownStartControlled;
+            this.originalCooldownStartControlled = false;
         } else {
             this.timerForSpeed -= this.game.clockTick;
         }
@@ -363,7 +406,9 @@ playerControlled.prototype.update = function () {
         ((this.x + 54) < item.x) ||
         (this.x > (item.x + item.height)))) {
             //item action
-			item.action(this);           
+            if (item.action !== undefined) {
+			     item.action(this);
+            }
         }
     }
 
