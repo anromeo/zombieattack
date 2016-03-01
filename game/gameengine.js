@@ -184,6 +184,8 @@ GameEngine.prototype.init = function (ctx) {
 
     this.startInput();
 	this.setupGameState();
+	
+	this.backgroundaudio.play();	
 }
 
 GameEngine.prototype.start = function () {
@@ -195,8 +197,7 @@ GameEngine.prototype.start = function () {
             // TURN ON AGAIN!!
 		} else {//if (that.menuMode == "Start" || that.menuMode == "Pause") {
 			that.menuLoop();
-		}
-		that.backgroundaudio.play();		
+		}	
         requestAnimFrame(gameLoop, that.ctx.canvas); 
     })();
 }
@@ -228,6 +229,8 @@ GameEngine.prototype.restart = function () {
     this.windowX = 0; // This is the x-coordinate of the top left corner of the canvas currently
     this.windowY = 0; // This is the y-coordinate of the top left corner of the canvas currently   
 	this.setupGameState();
+	
+	this.backgroundaudio.play();	
 }
 
 GameEngine.prototype.setupGameState = function () {
@@ -599,7 +602,7 @@ GameEngine.prototype.drawExperience = function() {
 
     this.ctx.beginPath();
     this.ctx.strokeStyle = "black";
-    this.ctx.fillStyle = "";
+    this.ctx.fillStyle = "black";
     this.ctx.fillRect(this.surfaceWidth - 185, 10, 170, 25);
 
     this.ctx.beginPath();
@@ -622,7 +625,7 @@ GameEngine.prototype.drawExperience = function() {
 GameEngine.prototype.drawScore = function() {
     // draws the number of kills onto the canvas
     this.ctx.beginPath();
-    this.ctx.fillStyle = "Red";
+    this.ctx.fillStyle = "red";
     this.ctx.font = "48px serif";
     var message = "Kills: " + this.kills;
     this.ctx.fillText(message, 10, 50);
@@ -787,8 +790,8 @@ GameEngine.prototype.update = function () {
             // this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius - this.game.getWindowX() - this.radialOffset, this.y - this.radius - this.game.getWindowY() - this.radialOffset, this.angle);
 
 
-            console.log(this.lastVillainKilledX);
-            console.log(this.lastVillainKilledY);
+            //console.log(this.lastVillainKilledX);
+            //console.log(this.lastVillainKilledY);
         }
     }
 
@@ -1089,6 +1092,7 @@ GameEngine.prototype.drawMenu = function() {
 }
 
 GameEngine.prototype.drawMessage = function(messageToDraw, startX, startY, color, font) {
+	//console.log("color " + color);
 		this.ctx.save();
         if (color === undefined) {
             if (this.surfaceHeight === 600) {
@@ -1108,11 +1112,13 @@ GameEngine.prototype.drawMessage = function(messageToDraw, startX, startY, color
         } else {
             this.ctx.font = font;
         }
-
+		//console.log("this.ctx.fillStyle" + this.ctx.fillStyle);
 		this.ctx.fillText(messageToDraw, startX, startY);
 }
 
 GameEngine.prototype.drawButton = function(buttonToDraw, fillColor, textColor) {
+	//console.log("fillcolor" + fillColor);
+	//console.log("textColor" + textColor);
 	this.ctx.save();
 	
 	this.ctx.beginPath();
@@ -1169,9 +1175,9 @@ GameEngine.prototype.checkMenuClick = function (buttonToTest){
 	// return(this.click.x >= x && this.click.x <= x + width && this.click.y >= y && this.click.y <= y + height)
 // }
 
-function printout() {
-    console.log("printout called");
-}
+// function printout() {
+    // console.log("printout called");
+// }
 
 GameEngine.prototype.menuLoop = function () {
 	//console.log(window);
@@ -1215,11 +1221,13 @@ GameEngine.prototype.menuLoop = function () {
 		} else if (this.menuMode == "Pause") {
 			if (this.checkMenuClick(this.continueButton)){
 				//console.log("should be continuing");
+				this.backgroundaudio.play();	
 				document.getElementById('gameWorld').style.cursor = '';
 				this.menuMode = "Game";
 			} else if (this.checkMenuClick(this.startButton)){
 				//console.log("should be restarting");
 				this.restart();
+				this.backgroundaudio.play();	
 				document.getElementById('gameWorld').style.cursor = '';
 				this.menuMode = "Game";
 			}
@@ -1237,6 +1245,7 @@ GameEngine.prototype.menuLoop = function () {
             if ((this.beginButton && this.checkMenuClick(this.beginButton)) ||
             (this.skipIntroButton && this.checkMenuClick(this.skipIntroButton))) {
                 this.menuMode = "Game";
+				this.backgroundaudio.play();	
                 document.getElementById('gameWorld').style.cursor = '';
             }
         }
@@ -1359,7 +1368,7 @@ GameEngine.prototype.loop = function () {
 		//console.log("lostfocus");
 		this.ctx.lostfocus = "False";
 		this.backgroundaudio.pause();
-		//this.menuMode = "Pause";
+		this.menuMode = "Pause";
 	}
     if (this.gameRunning) {
         this.clockTick = this.timer.tick(); // increments the clock tick
