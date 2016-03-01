@@ -74,8 +74,21 @@ function GameEngine() {
     this.surfaceWidth = null; // the width of the canvas
     this.surfaceHeight = null; // the height of the canvas
 	
-	this.backgroundaudio = new Audio("./sound/backgroundmusic1.mp3", "./sound/backgroundmusic1.ogg");
+	this.backgroundaudio = new Audio();
+	console.log(this.backgroundaudio);
+	this.backgroundaudio.loop = true;
+	this.backgroundaudio.preload = "auto";
 
+	var source= document.createElement('source');
+	source.type= 'audio/ogg';
+	source.src= "./sound/backgroundmusic1.ogg";
+	this.backgroundaudio.appendChild(source);
+	source= document.createElement('source');
+	source.type= 'audio/mpeg';
+	source.src= "./sound/backgroundmusic1.mp3";
+	this.backgroundaudio.appendChild(source);
+console.log(this.backgroundaudio);
+	
     this.attributePoints = 0;
     // FOREST MAP
     // this.worldWidth = 1600; // the width of the world within the canvas FOREST
@@ -1383,7 +1396,8 @@ GameEngine.prototype.loop = function () {
     }
 
     this.click = null; // resets the click to null
-
+	
+	this.backgroundaudio.play();
     this.map.update();
 
 }
