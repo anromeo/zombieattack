@@ -44,6 +44,7 @@ Timer.prototype.tick = function () {
  */
 function GameEngine() {
 
+    this.allMaps = [];
     // Entities of the Game
     this.entities = []; // All entities of the game
     this.weapons = []; // All the weapons of the game
@@ -87,7 +88,7 @@ function GameEngine() {
 	source.type= 'audio/mpeg';
 	source.src= "./sound/backgroundmusic1.mp3";
 	this.backgroundaudio.appendChild(source);
-console.log(this.backgroundaudio);
+    console.log(this.backgroundaudio);
 	
     this.attributePoints = 0;
     // FOREST MAP
@@ -429,9 +430,15 @@ GameEngine.prototype.setupGameState = function () {
         if (this.startingKills === undefined) {
             this.startingKills = this.game.kills;
         }
-        if (this.game.kills - this.startingKills > 19 && !this.unlocked) {
+        if (this.game.kills - this.startingKills > 0 && !this.unlocked) {
                 var bossMap = new Map(this, ASSET_MANAGER.getAsset("./images/bossMap1.png"), "Boss Map - Level 1", 800, 600, 800, 600, 0.5);
-                bossMap.addVillain(new Boss(this.game));
+                var boss = new Boss(this.game);
+                bossMap.addVillain(boss);
+                bossMap.update = function() {
+                    if (boss.removeFromWorld === true) {
+                        new Portal(this, 400, 400, this.hospital, 200, 200);
+                    }
+                }
                 bossMap.isBossMap = true;
                 this.unlocked = true;
                 this.game.addEntity(new Portal(this.game, 94, 1186, bossMap, 700, 200));
@@ -481,9 +488,9 @@ GameEngine.prototype.setupGameState = function () {
     ruins.dialogue.push(new Dialogue(this, "Voice", "I've given one of my followers a key, but they've been turned into the undead. Find them and get the key.", "./images/gabrielle.png", 4, true));
     ruins.dialogue.push(new Dialogue(this, "Tristan", "Okay, crazy voice. Let's see what you have to say.", "./images/tristan.png", 4, true));
 
-   this.setMap(ruins);
+    //this.setMap(ruins);
    ruins.drawDialogue = true;
-
+   this.setMap(hospital);
     // this.setItems(hospitalItems);
 
     // this.addEntity(new Portal(this, 800, 600, hospital, 200, 200));
@@ -492,6 +499,11 @@ GameEngine.prototype.setupGameState = function () {
 	var player = new playerControlled(this);
     player.controlled = true;
     this.addEntity(player);
+
+    // After Boss maps
+
+    this.allMaps["ruins"] = ruins;
+    this.allMaps["hospital"] = hospital;
 
     // var player2 = new playerControlled(this);
     // this.addEntity(player2);
