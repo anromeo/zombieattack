@@ -11,7 +11,7 @@ function Map(game, image, name, worldWidth, worldHeight, mapRatioWidth, mapRatio
         this.ratioY = ratioY;
     }
 
-	  this.walls = [];
+	this.walls = [];
     this.attracters = [];
 
     this.worldWidth = worldWidth; 
@@ -25,6 +25,7 @@ function Map(game, image, name, worldWidth, worldHeight, mapRatioWidth, mapRatio
     this.items = [];
     this.isBossMap = false;
     this.mapTrigger = null;
+    this.dialogue = [];
 }
 
 Map.prototype.setItems = function(items) {

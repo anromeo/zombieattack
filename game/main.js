@@ -82,6 +82,8 @@ ASSET_MANAGER.queueDownload("./images/tristan.png");
 ASSET_MANAGER.queueDownload("./images/gabrielle.png");
 
 ASSET_MANAGER.queueDownload("./images/key.png");
+ASSET_MANAGER.queueDownload("./images/woman-shadow.png");
+
 
 ASSET_MANAGER.queueDownload(menuBackground);
 

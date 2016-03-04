@@ -400,9 +400,10 @@ GameEngine.prototype.setupGameState = function () {
 
     hospital.dialogue = [];
     hospital.dialogue.push(new Dialogue(this, "Tristan", "Now what?", "./images/tristan.png", 4));
-    hospital.dialogue.push(new Dialogue(this, "Voice", "I will cast you a portal. It will take me some time.", "./images/tristan.png", 4));
+    hospital.dialogue.push(new Dialogue(this, "Voice", "I will cast you a new portal. It will take me some time to gather energy.", "./images/woman-shadow.png", 4, true));
     hospital.dialogue.push(new Dialogue(this, "Tristan", "What do I do until then?", "./images/tristan.png", 4));
-    hospital.dialogue.push(new Dialogue(this, "Voice", "Survive...", "./images/tristan.png", 4));
+    hospital.dialogue.push(new Dialogue(this, "Voice", "Survive...", "./images/woman-shadow.png", 4, true));
+    hospital.dialogue.push(new Dialogue(this, "Tristan", "Thought that was a given.", "./images/tristan.png", 4));
 
     // Ruins flamethrower
     RuinflameSpawn = [];
@@ -425,21 +426,38 @@ GameEngine.prototype.setupGameState = function () {
     var speed = new Speed(this, ASSET_MANAGER.getAsset("./images/speed.png"), RuinspeedSpawn);
     ruinItems.push(speed);
 
+    var bossMap = new Map(this, ASSET_MANAGER.getAsset("./images/bossMap1.png"), "Boss Map - Level 1", 800, 600, 800, 600, 0.5);
+    var boss = new Boss(this);
+    boss.health = 5;
+    bossMap.addVillain(boss);
+    bossMap.isBossMap = true;
+
+    bossMap.update = function() {
+        //check if you defeated the boss
+        if (this.game.lastVillain && this.game.lastVillain.name == "FinalBoss") {
+            this.game.menuMode = "Win";
+        }
+    }
 
     hospital.update = function() {
         if (this.startingKills === undefined) {
             this.startingKills = this.game.kills;
+            this.mapTime = 0;
+            this.activateDialogue = true;
         }
-        if (this.game.kills - this.startingKills > 0 && !this.unlocked) {
-                var bossMap = new Map(this, ASSET_MANAGER.getAsset("./images/bossMap1.png"), "Boss Map - Level 1", 800, 600, 800, 600, 0.5);
-                var boss = new Boss(this.game);
-                bossMap.addVillain(boss);
-                bossMap.update = function() {
-                    if (boss.removeFromWorld === true) {
-                        new Portal(this, 400, 400, this.hospital, 200, 200);
-                    }
-                }
-                bossMap.isBossMap = true;
+        if (this.mapTime > 1.5 && this.activateDialogue === true) {
+            this.drawDialogue = true;
+            this.activateDialogue = false;
+            this.mapTime += this.game.timer.tick() * 10;
+        } else {
+            this.mapTime += this.game.timer.tick() * 10;
+        }
+
+        if (this.game.kills - this.startingKills > 19 && !this.unlocked) {
+                hospital.dialogue.push(new Dialogue(this, "Voice", "I'm casting the portal. Find it and save me!", "./images/woman-shadow.png", 4, true));
+                hospital.dialogue.push(new Dialogue(this, "Tristan", "You know... you are one pushy lady.", "./images/tristan.png", 4));
+
+                hospital.drawDialogue = true;
                 this.unlocked = true;
                 this.game.addEntity(new Portal(this.game, 94, 1186, bossMap, 700, 200));
         }
@@ -447,18 +465,6 @@ GameEngine.prototype.setupGameState = function () {
 
     var portal = new Portal(this, 1700, 1400, hospital, 200, 200);
     ruins.update = function() {
-
-        // if (this.storyClockTick === undefined) {
-        //     this.storyTimer = new Timer();
-        //     this.storyClockTick = 0;
-        //     this.storyClockSeconds = 0;
-        //     this.storyAlpha = [];
-        //     this.alpha1 = 0;
-        //     this.alpha2 = 0;
-        //     this.alpha3 = 0;
-        //     this.alpha4 = 0;
-        //     this.alpha5 = 0;
-        // }
 
         if (this.randomKillNumber === undefined) {
             this.randomKillNumber = 10 + randomInt(10);
@@ -469,28 +475,47 @@ GameEngine.prototype.setupGameState = function () {
             for (var i = 0; i < 20; i++) {
                 this.game.addEntity(new Villain(this.game));
             }
-            this.game.addEntity(new Key(this.game, this.game.lastVillainKilledX, this.game.lastVillainKilledY, portal));
+
+            var key = new Key(this.game, this.game.lastVillainKilledX, this.game.lastVillainKilledY, portal, 4);
+
+            key.update = function () {
+                var player = this.game.getPlayer();
+                if (player && this.collect(player)) {
+                    this.removeFromWorld = true;
+                    this.game.addEntity(this.portal);
+                    this.game.map.dialogue.push(new Dialogue(this, "Voice", "The energies of the orb are opening up a portal. Find the portal!", "./images/woman-shadow.png", 4, true));
+
+                    this.game.map.drawDialogue = true;
+                }
+            }
+
+            this.game.addEntity(key);
+
             this.keyNeedsAdding = false;
         }
     }
-         // this.setMap(hospital);
+    // this.setMap(hospital);
     ruins.setItems(ruinItems);
 
-    ruins.dialogue = [];
 
     ruins.dialogue.push(new Dialogue(this, "Tristan", "What the hell happened here?", "./images/tristan.png", 4));
-    ruins.dialogue.push(new Dialogue(this, "Voice", "Help Someone please help me...", "./images/gabrielle.png", 4, true));
-    ruins.dialogue.push(new Dialogue(this, "Tristan", "Who's that? Am I hearing voices now?", "./images/tristan.png", 4));
-    ruins.dialogue.push(new Dialogue(this, "Voice", "Is there someone out there? Someone alive?", "./images/gabrielle.png", 4, true));
-    ruins.dialogue.push(new Dialogue(this, "Tristan", "What's going on?", "./images/tristan.png", 4));
-    ruins.dialogue.push(new Dialogue(this, "Voice", "I will tell you everything, but I need you to save me.", "./images/gabrielle.png", 4, true));
-    ruins.dialogue.push(new Dialogue(this, "Tristan", "What...? How?", "./images/gabrielle.png", 4));
-    ruins.dialogue.push(new Dialogue(this, "Voice", "I've given one of my followers a key, but they've been turned into the undead. Find them and get the key.", "./images/gabrielle.png", 4, true));
-    ruins.dialogue.push(new Dialogue(this, "Tristan", "Okay, crazy voice. Let's see what you have to say.", "./images/tristan.png", 4, true));
+    ruins.dialogue.push(new Dialogue(this, "Voice", "Help me... Please, someone help ...", "./images/woman-shadow.png", 4, true));
+    ruins.dialogue.push(new Dialogue(this, "Tristan", "What the— Am I hearing voices now? You’re going crazy, Trist.", "./images/tristan.png", 4));
+    ruins.dialogue.push(new Dialogue(this, "Voice", "Is someone out there?", "./images/woman-shadow.png", 4, true));
+    ruins.dialogue.push(new Dialogue(this, "Tristan", "Yeah, someone’s out here. And someone’s crazy, pissed.", "./images/tristan.png", 4));
+    ruins.dialogue.push(new Dialogue(this, "Voice", "You’re not crazy. I’m communicating to you telepathically.", "./images/woman-shadow.png", 4, true));
+    ruins.dialogue.push(new Dialogue(this, "Tristan", "Who the hell are you? What's going on? What do you want from me?", "./images/tristan.png", 4));
+    ruins.dialogue.push(new Dialogue(this, "Voice", "I will answer all of your questions if you save me.", "./images/woman-shadow.png", 4, true));
+    ruins.dialogue.push(new Dialogue(this, "Tristan", "How do I save you?", "./images/tristan.png", 4));
+    ruins.dialogue.push(new Dialogue(this, "Voice", "I sent an ally of mine for help. They have an orb.",  "./images/woman-shadow.png", 4, true));
+    ruins.dialogue.push(new Dialogue(this, "Tristan", "That's good. Someone to help... Where are they now?", "./images/tristan.png", 4));
+    ruins.dialogue.push(new Dialogue(this, "Voice", "They walk among the dead now.", "./images/woman-shadow.png", 4, true));
+    ruins.dialogue.push(new Dialogue(this, "Tristan", "Well... shit...", "./images/tristan.png", 4));
+    ruins.dialogue.push(new Dialogue(this, "Voice", "Find them among the dead and get the orb. Come save me.", "./images/woman-shadow.png", 4, true));
 
-    //this.setMap(ruins);
-   ruins.drawDialogue = true;
-   this.setMap(hospital);
+    this.setMap(bossMap);
+    ruins.drawDialogue = true;
+
     // this.setItems(hospitalItems);
 
     // this.addEntity(new Portal(this, 800, 600, hospital, 200, 200));
@@ -677,12 +702,12 @@ GameEngine.prototype.drawScore = function() {
 }
 
 GameEngine.prototype.drawDialogue = function(dialogue) {
-    var margin = 20;
-    var imageWidth = 100;
-    var imageHeight = 100;
+    var margin = 15;
+    var imageWidth = 75;
+    var imageHeight = 75;
 
     var width = this.surfaceWidth - imageWidth - margin * 3;
-    var height = 100;
+    var height = 75;
 
     var lineSpacing = 30;
     this.ctx.fillStyle = "white";
@@ -871,10 +896,6 @@ GameEngine.prototype.update = function () {
     for (var i = this.entities.length - 1; i >= 0; --i) {
         // if the entities is removed from world
         if (this.entities[i].removeFromWorld) {            
-            //check if you defeated the boss
-			if (this.entities[i].name == "FinalBoss") {
-				this.menuMode = "Win";
-			}
 			// splice the array from i to 1
 			this.entities.splice(i, 1);
         }
@@ -884,6 +905,7 @@ GameEngine.prototype.update = function () {
     for (var i = this.villains.length - 1; i >= 0; --i) {
         if (this.villains[i].removeFromWorld) {
             var villain = this.villains[i];
+            this.lastVillain = villain;
             this.lastVillainKilledX = villain.x - villain.radius;
 
             this.lastVillainKilledY = villain.y - villain.radius;
