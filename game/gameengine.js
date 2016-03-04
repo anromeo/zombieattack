@@ -433,9 +433,30 @@ GameEngine.prototype.setupGameState = function () {
     bossMap.isBossMap = true;
 
     bossMap.update = function() {
+        if (this.unlocked === undefined) {
+            this.unlocked = false;
+        }
         //check if you defeated the boss
-        if (this.game.lastVillain && this.game.lastVillain.name == "FinalBoss") {
-            this.game.menuMode = "Win";
+        if (this.game.lastVillain && this.game.lastVillain.name === "FinalBoss"
+            && !this.unlocked) {
+            for(var i = 0; i < this.game.villains.length; i++) {
+                this.game.villains[i].removeFromWorld = true;
+            }
+            var hospital2 = this.game.allMaps["hospital"];
+            hospital2.dialogue = [];
+            hospital2.update = function() {
+                if (this.unlocked === undefined) {
+                    this.unlocked = false;
+                }
+                if (!this.unlocked) {                
+                    for (var i = 0; i < 150; i++) {
+                        this.game.addEntity(new Villain(this.game));
+                    }
+                    this.unlocked = true;
+                }
+            }
+            this.game.addEntity(new Portal(this.game, 400, 400, hospital2, 94, 1186));
+            this.unlocked = true;
         }
     }
 
