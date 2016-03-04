@@ -57,7 +57,7 @@ function GameEngine() {
     this.y;
 
     this.map = null;
-	this.menuMode = "Start";
+	this.menuMode = "Game";
     this.hasSeenIntro = false;
 
     this.zombieCooldownNumInitial = 3;  // how often a zombie will appear initially
@@ -397,6 +397,12 @@ GameEngine.prototype.setupGameState = function () {
     hospitalItems.push(speed);
     hospital.setItems(hospitalItems);
 
+    hospital.dialogue = [];
+    hospital.dialogue.push(new Dialogue(this, "Tristan", "Now what?", "./images/tristan.png", 4));
+    hospital.dialogue.push(new Dialogue(this, "Voice", "I will cast you a portal. It will take me some time.", "./images/tristan.png", 4));
+    hospital.dialogue.push(new Dialogue(this, "Tristan", "What do I do until then?", "./images/tristan.png", 4));
+    hospital.dialogue.push(new Dialogue(this, "Voice", "Survive...", "./images/tristan.png", 4));
+
     // Ruins flamethrower
     RuinflameSpawn = [];
     RuinflameSpawn[0] = { x: 1450, y: 100 };
@@ -456,13 +462,27 @@ GameEngine.prototype.setupGameState = function () {
             for (var i = 0; i < 20; i++) {
                 this.game.addEntity(new Villain(this.game));
             }
-            this.game.addEntity(new Key(this.game, 1200, 800, portal));
+            this.game.addEntity(new Key(this.game, this.game.lastVillainKilledX, this.game.lastVillainKilledY, portal));
             this.keyNeedsAdding = false;
         }
     }
          // this.setMap(hospital);
     ruins.setItems(ruinItems);
+
+    ruins.dialogue = [];
+
+    ruins.dialogue.push(new Dialogue(this, "Tristan", "What the hell happened here?", "./images/tristan.png", 4));
+    ruins.dialogue.push(new Dialogue(this, "Voice", "Help Someone please help me...", "./images/gabrielle.png", 4, true));
+    ruins.dialogue.push(new Dialogue(this, "Tristan", "Who's that? Am I hearing voices now?", "./images/tristan.png", 4));
+    ruins.dialogue.push(new Dialogue(this, "Voice", "Is there someone out there? Someone alive?", "./images/gabrielle.png", 4, true));
+    ruins.dialogue.push(new Dialogue(this, "Tristan", "What's going on?", "./images/tristan.png", 4));
+    ruins.dialogue.push(new Dialogue(this, "Voice", "I will tell you everything, but I need you to save me.", "./images/gabrielle.png", 4, true));
+    ruins.dialogue.push(new Dialogue(this, "Tristan", "What...? How?", "./images/gabrielle.png", 4));
+    ruins.dialogue.push(new Dialogue(this, "Voice", "I've given one of my followers a key, but they've been turned into the undead. Find them and get the key.", "./images/gabrielle.png", 4, true));
+    ruins.dialogue.push(new Dialogue(this, "Tristan", "Okay, crazy voice. Let's see what you have to say.", "./images/tristan.png", 4, true));
+
    this.setMap(ruins);
+   ruins.drawDialogue = true;
 
     // this.setItems(hospitalItems);
 
@@ -644,6 +664,39 @@ GameEngine.prototype.drawScore = function() {
     this.ctx.fillText(message, 10, 50);
 }
 
+GameEngine.prototype.drawDialogue = function(dialogue) {
+    var margin = 20;
+    var imageWidth = 100;
+    var imageHeight = 100;
+
+    var width = this.surfaceWidth - imageWidth - margin * 3;
+    var height = 100;
+
+    var lineSpacing = 30;
+    this.ctx.fillStyle = "white";
+    this.ctx.strokeStyle = "black";
+    var color = "maroon";
+    var roundRectX = imageWidth + (margin * 2);
+    var dialogueMessageX = imageWidth + (margin * 3);
+    var imageX = margin;
+    if (dialogue.rightSide) {
+        color = "green";
+        roundRectX = (margin);
+        dialogueMessageX = margin * 2;
+        imageX = this.surfaceWidth - imageWidth - margin;
+    }
+
+    roundRect(this.ctx, roundRectX, this.surfaceHeight - height - margin, width, height, 10, true, true);
+    
+    this.ctx.font = "bolder 22px Arial";
+    this.drawMessage(dialogue.name, dialogueMessageX, this.surfaceHeight - height + margin, color, "bolder 24px Arial");
+
+    this.drawMessage(dialogue.dialogue, dialogueMessageX, this.surfaceHeight - height + margin + lineSpacing, "black", "18px Arial");
+
+    this.ctx.drawImage(dialogue.img, 0, 0, imageWidth, imageHeight, imageX, this.surfaceHeight - margin - imageHeight, imageWidth, imageHeight);
+
+    // this.ctx.drawImage(dialogue.img, margin, this.surfaceHeight - margin, imageWidth, imageHeight, 0, 0, imageWidth, imageHeight);
+}
 /**
  * This is where the GameEngine is drawn
  * @param top
@@ -686,6 +739,31 @@ GameEngine.prototype.draw = function (top, left) {
 
     this.drawScore();
     this.drawExperience();
+    if (this.dialogue === undefined) {
+        this.dialogue = new Dialogue(this, "Tristan", "What the hell happened here?",
+            "./images/tristan.png", 4);
+    }
+    if (this.map.drawDialogue) {
+        if (this.map.dialogueStartTime === undefined) {
+            this.map.dialogueStartTime = 0;
+            this.map.currentDialogueIndex = 0;
+        }
+        if (this.map.dialogueChange === undefined || this.map.dialogueChange === false) {
+            this.map.dialogueChange = this.map.dialogue[this.map.currentDialogueIndex].dialogue.length / 150;
+        }
+        this.drawDialogue(this.map.dialogue[this.map.currentDialogueIndex]);
+        if (this.map.dialogueStartTime >= this.map.dialogueChange) {
+            this.map.currentDialogueIndex += 1;
+            this.map.dialogueStartTime = 0;
+            if (this.map.dialogue[this.map.currentDialogueIndex] === undefined) {
+                this.map.drawDialogue = false;
+                return;
+            }
+            this.map.dialogueChange = this.map.dialogue[this.map.currentDialogueIndex].dialogue.length / 150;
+        } else {
+            this.map.dialogueStartTime += this.timer.tick();
+        }
+    }
 }
 
 /**
@@ -794,9 +872,9 @@ GameEngine.prototype.update = function () {
     for (var i = this.villains.length - 1; i >= 0; --i) {
         if (this.villains[i].removeFromWorld) {
             var villain = this.villains[i];
-            this.lastVillainKilledX = villain.x - villain.radius - this.getWindowX();
+            this.lastVillainKilledX = villain.x - villain.radius;
 
-            this.lastVillainKilledY = villain.y - villain.radius - this.getWindowY();
+            this.lastVillainKilledY = villain.y - villain.radius;
             this.villains.splice(i, 1);
 
 
