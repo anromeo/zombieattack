@@ -443,16 +443,45 @@ GameEngine.prototype.setupGameState = function () {
                 this.game.villains[i].removeFromWorld = true;
             }
             var hospital2 = this.game.allMaps["hospital"];
+            var ruins2 =  this.game.allMaps["ruins"];
             hospital2.dialogue = [];
             hospital2.update = function() {
                 if (this.unlocked === undefined) {
                     this.unlocked = false;
+                    this.unlocked2 = false;
                 }
                 if (!this.unlocked) {                
-                    for (var i = 0; i < 150; i++) {
+                    for (var i = 0; i < 20; i++) {
                         this.game.addEntity(new Villain(this.game));
                     }
                     this.unlocked = true;
+                }
+                 if (this.randomKillNumber === undefined) {
+                    this.randomKillNumber = 5;
+                    
+                 }
+
+                if(this.game.kills === this.randomKillNumber && this.game.lastVillainKilledX && !this.unlocked2){
+                    for(var i = 0; i < this.game.villains.length; i++) {
+                        this.game.villains[i].removeFromWorld = true;
+                    }
+//                    this.unlocked2 = true;
+                   //ruins2.dialogue = [];
+                    ruins2.update = function(){
+                        if(this.unlocked === undefined){
+                            this.unlocked = false;
+                        }
+                        if(!this.unlocked){
+                            for (var i = 0; i < 20; i++) {
+                                this.game.addEntity(new Villain(this.game));
+                            }
+                            this.unlocked = true;
+
+                        }
+                    }
+
+                    this.game.addEntity(new Portal(this.game, 94, 1186, ruins2, 700, 200));
+                    this.unlocked2 = true;
                 }
             }
             this.game.addEntity(new Portal(this.game, 400, 400, hospital2, 94, 1186));
@@ -515,7 +544,7 @@ GameEngine.prototype.setupGameState = function () {
             this.keyNeedsAdding = false;
         }
     }
-    // this.setMap(hospital);
+    this.setMap(ruins);
     ruins.setItems(ruinItems);
 
 
