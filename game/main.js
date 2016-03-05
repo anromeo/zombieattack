@@ -84,6 +84,29 @@ ASSET_MANAGER.queueDownload("./images/gabrielle.png");
 ASSET_MANAGER.queueDownload("./images/key.png");
 ASSET_MANAGER.queueDownload("./images/woman-shadow.png");
 
+ASSET_MANAGER.queueDownload("./images/angel-walking.png");
+
+ASSET_MANAGER.queueDownload("./images/factory.png");
+
+ASSET_MANAGER.queueDownload("./images/smallroom.png");
+
+ASSET_MANAGER.queueDownload("./images/city.png");
+
+ASSET_MANAGER.queueDownload("./images/shooter-ability1.png");
+ASSET_MANAGER.queueDownload("./images/shooter-ability1-inactive.png");
+
+ASSET_MANAGER.queueDownload("./images/shooter-ability2.png");
+ASSET_MANAGER.queueDownload("./images/shooter-ability2-inactive.png");
+
+ASSET_MANAGER.queueDownload("./images/angel-ability1.png");
+ASSET_MANAGER.queueDownload("./images/angel-ability1-inactive.png");
+
+ASSET_MANAGER.queueDownload("./images/angel-ability2.png");
+ASSET_MANAGER.queueDownload("./images/angel-ability2-inactive.png");
+
+ASSET_MANAGER.queueDownload("./images/mansion.png");
+ASSET_MANAGER.queueDownload("./images/land-mine.png");
+ASSET_MANAGER.queueDownload("./images/land-mine-explosion.png");
 
 ASSET_MANAGER.queueDownload(menuBackground);
 

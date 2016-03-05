@@ -1,4 +1,4 @@
-function FlameThrower(game, image, spawnPoints) {
+function FlameThrower(game, image, spawnPoints, x, y) {
     // NonLivingEntity.prototype.setImage.call(this, image);
     NonLivingEntity.prototype.setNonLiving.call(this, true);
     this.image = image;
@@ -7,13 +7,16 @@ function FlameThrower(game, image, spawnPoints) {
     // this.y = Math.random() * 600;
     this.spawnPoints = spawnPoints;
 
-    if (spawnPoints.length < 1) {
+    if (x !== undefined && y !== undefined) {
+        this.x = x;
+        this.y = y;
+    } else if (spawnPoints.length < 1) {
         this.x = 200;
         this.y = 200;
     } else {
-    var spawnpoint = this.spawnPoints[Math.floor(Math.random() * this.spawnPoints.length)];
-    this.x = spawnpoint.x;
-    this.y = spawnpoint.y;
+        var spawnpoint = this.spawnPoints[Math.floor(Math.random() * this.spawnPoints.length)];
+        this.x = spawnpoint.x;
+        this.y = spawnpoint.y;
     }
     // this.spawnPoints = [];
     // this.spawnPoints[0] = { x: 190, y: 213 };
@@ -29,8 +32,8 @@ function FlameThrower(game, image, spawnPoints) {
     this.width = 45;
     this.height = 20;
 
-    this.canvasX = spawnpoint.x;
-    this.canvasY = spawnpoint.y;
+    this.canvasX = this.x;
+    this.canvasY = this.y;
 
     this.shooting = false;
     this.radius = 30;
@@ -74,7 +77,7 @@ function Flame(game, originator, dir) {
     this.radius = 30;
     this.maxSpeed = 200;
 	this.range = 100;
-    this.strength = 100;
+    this.strength = 60;
     this.velocity = { x: 50, y: 50 };
 }
 

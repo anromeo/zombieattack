@@ -1,24 +1,27 @@
-function Speed(game, image, spawnPoints) {
+function Speed(game, image, spawnPoints, x, y) {
     NonLivingEntity.prototype.setNonLiving.call(this, true);
     this.image = image;
     this.game = game;
 
     this.spawnPoints = spawnPoints;
 
-    if (spawnPoints.length < 1) {
+    if (x !== undefined && y !== undefined) {
+        this.x = x;
+        this.y = y;
+    } else if (spawnPoints.length < 1) {
         this.x = 200;
         this.y = 200;
     } else {
-    var spawnpoint = this.spawnPoints[Math.floor(Math.random() * this.spawnPoints.length)];
-    this.x = spawnpoint.x;
-    this.y = spawnpoint.y;
+        var spawnpoint = this.spawnPoints[Math.floor(Math.random() * this.spawnPoints.length)];
+        this.x = spawnpoint.x;
+        this.y = spawnpoint.y;
     }
 
     this.width = 35;
     this.height = 35;
 
-    this.canvasX = spawnpoint.x;
-    this.canvasY = spawnpoint.y;
+    this.canvasX = this.x;
+    this.canvasY = this.y;
 
     this.radius = 40;
     this.name = "Speed";

@@ -11,6 +11,7 @@ function Animation(spriteSheet, frameWidth, frameHeight, frameDuration, frames, 
     this.reverse = reverse;
     this.numFramesInRow = numFramesInRow;
     this.frozen = false;
+    this.frozenFrame = 1;
     this.isActivated = false;
     this.isAnimationOver = false;
 }
@@ -108,7 +109,7 @@ Animation.prototype.rotateAndCache = function (angle, xindex, yindex, translatex
 
 Animation.prototype.currentFrame = function () {
     if (this.frozen) {
-        return 1;
+        return this.frozenFrame;
     }
     return Math.floor(this.elapsedTime / this.frameDuration);
 }

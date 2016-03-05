@@ -36,7 +36,7 @@ function Boss(game, x, y) {
     this.attackRange = 50; // always make sure attack range is larger than comfort zone
     this.comfortZone = 25;
     this.angleOffset = 270;
-    this.cooldown = 1;
+    this.cooldown = 4;
     this.exp = 10;
 
     this.ability1Attributes.cooldown = 4;
@@ -52,7 +52,7 @@ Boss.prototype.ability1 = function(entity) {
     entity.maxSpeed *= 4;
     entity.movingAnimation.originalFrameDuration = entity.movingAnimation.frameDuration;
     entity.movingAnimation.frameDuration = entity.movingAnimation.frameDuration;
-    entity.ability1Timer = 2;
+    entity.ability1Timer = .5;
 }
 
 Boss.prototype.ability2 = function(entity) {
@@ -77,6 +77,9 @@ Boss.prototype.draw = function(ctx) {
 
 Boss.prototype.update = function() {
     this.aiUpdate("zombie");
+    if (this.frozen) {
+        return;
+    }
 
     if (this.ability3Timer >= 4) {
         this.healingCircle -= this.game.clockTick;

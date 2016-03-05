@@ -23,7 +23,7 @@ function playerControlled(game) {
     this.spawnPoints[9] = { x: 136, y: 888 };
     this.spawnPoints[11] = { x: 664, y: 416 };
     this.spawnPoints[12] = { x: 190, y: 80 };
-    
+    this.movingAnimationImage = ASSET_MANAGER.getAsset("./images/shooter-walking2.png");
 
     var spawnpoint = this.spawnPoints[Math.floor(Math.random() * this.spawnPoints.length)];
 
@@ -36,19 +36,22 @@ function playerControlled(game) {
 
     this.SpriteWidth = 110;
     this.SpriteHeight = 176 / 3;
+    this.numberOfMovingAnimations = 8;
+    this.numberOfMovingAnimationsInRow = 3;
 
     this.radius = 30;
     this.controlled = false;
     this.action;
     this.weapon = null;
     this.game = game;
-    this.name = "playerControlled";
-    this.type = this.name;
+    this.name = "Shooter";
+    this.type = "playerControlled";
     this.color = "Black";
     this.team = "blue";
     this.shootingLine = true;
     this.angleOffset = 0;
     this.radialOffset = 15;
+    this.attackType = "range";
 
     this.cooldown = 0;
     this.randomLine = {x:0, y:0};
@@ -56,7 +59,7 @@ function playerControlled(game) {
     this.linecooldownstart = .002;
     this.cooldownStartControlled = .45;
     this.cooldownStartNotControlled = .75;
-    this.angleOffset =  290;
+    this.angleOffset =  60;
     //this.corners = [{x:0, y:0}, {x:800, y:0}, {x:0, y:800}, {x:800, y:800}]
     this.CenterOffsetX = 10; // puts the center of the sprite in the center of the entity
     this.CenterOffsetY = 10; // puts the center of the sprite in the center of the entity
@@ -66,6 +69,24 @@ function playerControlled(game) {
     this.velocity = { x: 0, y: 0 };
 
     this.ability1Attributes.activate = false;
+    this.ability2Attributes.activate = false;
+
+
+    this.ability1Attributes.on = true;
+    this.ability2Attributes.on = true;
+
+    this.ability1PictureInactive = ASSET_MANAGER.getAsset("./images/shooter-ability1-inactive.png");
+    this.ability1PictureActive = ASSET_MANAGER.getAsset("./images/shooter-ability1.png");
+
+
+    this.ability2PictureActive = ASSET_MANAGER.getAsset("./images/shooter-ability2.png");
+    this.ability2PictureInactive = ASSET_MANAGER.getAsset("./images/shooter-ability2-inactive.png");
+
+    this.ability2Attributes.cooldown = 1;
+    this.ability2Attributes.maxCooldown = 1;
+
+    // this.ability3PictureInactive = ;
+    // this.ability3PictureActive = ;
 
   //  this.maxSpeed = 200;
 
@@ -160,6 +181,10 @@ playerControlled.prototype.swapIfCanSwap = function(game) {
 }
 
 playerControlled.prototype.selectAction = function () {
+    if (this.frozen) {
+        return;
+    }
+
     if (!this.controlled) {
         return this.aiSelectAction(this.name);
     }
@@ -205,8 +230,8 @@ playerControlled.prototype.selectAction = function () {
             if (this.game.keyState[32]) {
                 switch (this.currentAbility) {
                     case 1: this.ability1Attributes.activate = true;
-                    break
-                    case 2: ;
+                    break;
+                    case 2: this.ability2Attributes.activate = true;
                     break;
                     case 3: ;
                     break;
@@ -345,22 +370,23 @@ playerControlled.prototype.selectAction = function () {
 playerControlled.prototype.ability1 = function(entity) {
     console.log("Speeding up");
     entity.upSpeed();
-    if (!this.originalCooldownStartControlled) {
-        this.originalCooldownStartControlled = this.cooldownStartControlled;
-        this.originalCooldownStartNotControlled = this.cooldownStartNotControlled;
+    if (!entity.originalCooldownStartControlled) {
+        entity.originalCooldownStartControlled = entity.cooldownStartControlled;
+        entity.originalCooldownStartNotControlled = entity.cooldownStartNotControlled;
     }
-    this.cooldownStartControlled = this.cooldownStartControlled / 2;
-    this.originalCooldownStartNotControlled = this.originalCooldownStartNotControlled / 2;
+    entity.cooldownStartControlled = entity.cooldownStartControlled / 2;
+    entity.originalCooldownStartNotControlled = entity.originalCooldownStartNotControlled / 2;
 
 }
 
 playerControlled.prototype.ability2 = function(entity) {
     console.log("Dropping Bomb");
+    entity.game.addEntity(new Landmine(entity.game, entity.x, entity.y, entity.team));
 }
 
-playerControlled.prototype.ability3 = function(entity) {
-    console.log("Dropping Bomb");
-}
+// playerControlled.prototype.ability3 = function(entity) {
+//     console.log("Dropping Bomb");
+// }
 
 playerControlled.prototype.update = function () {
 
@@ -460,74 +486,6 @@ playerControlled.prototype.update = function () {
         this.y += this.velocity.y * this.game.clockTick;
     }
 
-    // Removed by Vlad, stupid loop makes the game crash
-
-    // for (var i = 0; i < this.game.entities.length; i++) {
-    //     var ent = this.game.entities[i];
-    //     if (ent !== this && this.collide(ent)) {
-    //         if (ent.name !== "Zombie" && ent.name !== "Rock" && ent.name !== "NonLiving") {
-    //             var temp = { x: this.velocity.x, y: this.velocity.y };
-    //             var dist = distance(this, ent);
-    //             var delta = this.radius + ent.radius - dist;
-
-    //             if (dist) {
-    //                 var difX = (this.x - ent.x) / dist;
-    //                 var difY = (this.y - ent.y) / dist;
-
-
-    //                 this.x += difX * delta / 2;
-    //                 this.y += difY * delta / 2;
-    //                 ent.x -= difX * delta / 2;
-    //                 ent.y -= difY * delta / 2;
-
-    //                 this.velocity.x = ent.velocity.x * friction;
-    //                 this.velocity.y = ent.velocity.y * friction;
-    //                 ent.velocity.x = temp.x * friction;
-    //                 ent.velocity.y = temp.y * friction;
-    //                 this.x += this.velocity.x * this.game.clockTick;
-    //                 this.y += this.velocity.y * this.game.clockTick;
-    //                 ent.x += ent.velocity.x * this.game.clockTick;
-    //                 ent.y += ent.velocity.y * this.game.clockTick;
-    //             }
-    //         }
-    //         // if (ent.name === "Rock" && this.rocks < 2) {
-    //             // this.rocks++;
-    //             // ent.removeFromWorld = true;
-    //         // }
-    //     }
-    // }
-
-    // for (var i = 0; i < this.game.entities.length; i++) {
-    //     var ent = this.game.entities[i];
-    //     if (ent !== this && this.collide(ent)) {
-    //         if (ent.name !== "Zombie" && ent.name !== "Rock" && ent.name !== "NonLiving") {
-    //             var temp = { x: this.velocity.x, y: this.velocity.y };
-    //             var dist = distance(this, ent);
-    //             var delta = this.radius + ent.radius - dist;
-    //             var difX = (this.x - ent.x) / dist;
-    //             var difY = (this.y - ent.y) / dist;
-
-    //             this.x += difX * delta / 2;
-    //             this.y += difY * delta / 2;
-    //             ent.x -= difX * delta / 2;
-    //             ent.y -= difY * delta / 2;
-
-    //             this.velocity.x = ent.velocity.x * friction;
-    //             this.velocity.y = ent.velocity.y * friction;
-    //             ent.velocity.x = temp.x * friction;
-    //             ent.velocity.y = temp.y * friction;
-    //             this.x += this.velocity.x * this.game.clockTick;
-    //             this.y += this.velocity.y * this.game.clockTick;
-    //             ent.x += ent.velocity.x * this.game.clockTick;
-    //             ent.y += ent.velocity.y * this.game.clockTick;
-    //         }
-    //         // if (ent.name === "Rock" && this.rocks < 2) {
-    //             // this.rocks++;
-    //             // ent.removeFromWorld = true;
-    //         // }
-    //     }
-    // }
-
     
     var rock;
     var flame;
@@ -599,7 +557,7 @@ playerControlled.prototype.update = function () {
        ///  console.log(this.movingAnimation.frames);
        //  this.movingAnimation.setFrames(1);
 //          console.log("standing");
-         this.movingAnimation = new Animation(ASSET_MANAGER.getAsset("./images/shooter-walking2.png"), this.SpriteWidth, this.SpriteHeight, .09, 8, true, false, 3);
+         this.movingAnimation = new Animation(this.movingAnimationImage, this.SpriteWidth, this.SpriteHeight, .09, this.numberOfMovingAnimations, true, false, this.numberOfMovingAnimationsInRow);
      } else {
        // console.log("walking");
         // this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/shooter-walking2.png"), this.SpriteWidth, this.SpriteHeight, .09, 8, true, false, 3);
@@ -620,6 +578,55 @@ playerControlled.prototype.draw = function (ctx) {
         this.game.setWindowX(this.x - 400);
         this.game.setWindowY(this.y - 400);
     }
+    if (this.timerForSpeed) {
+        if (this.trail === undefined) {
+            this.trail = 2;
+        }
+
+        if (this.trail < 0) {
+            this.trail = 2;
+        } else {
+            this.trail -= this.game.timer.tick();
+        }
+        ctx.beginPath();
+        ctx.strokeStyle = "lightblue";
+        ctx.lineWidth = this.trail * 1;
+        var x = this.canvasX;
+        var y = this.canvasY;
+
+        ctx.moveTo(
+                x,
+                y);
+        ctx.lineTo(
+                (x - (this.velocity.x / (this.trail + 1))),
+                (y - (this.velocity.y / (this.trail + 1))));
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.strokeStyle = "lightblue";
+        ctx.lineWidth = this.trail * 1;
+        ctx.moveTo(
+                x + this.radius / 4,
+                y + this.radius / 4);
+        ctx.lineTo(
+                (x - (this.velocity.x / (this.trail + 1)) + this.radius / 4),
+                (y - (this.velocity.y / (this.trail + 1))) + this.radius / 4);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.strokeStyle = "lightblue";
+        ctx.lineWidth = this.trail * 1;
+        ctx.moveTo(
+                x - this.radius / 4,
+                y - this.radius / 4);
+        ctx.lineTo(
+                (x - (this.velocity.x / (this.trail + 1)) - this.radius / 4),
+                (y - (this.velocity.y / (this.trail + 1))) - this.radius / 4);
+        ctx.stroke();
+
+        ctx.lineWidth = 1;
+    }
+
 //    console.log("X: " + this.x + " | Y: " + this.y);
 
     // ctx.beginPath();
@@ -680,6 +687,17 @@ playerControlled.prototype.draw = function (ctx) {
         //console.log(window);
     }
     
+
+    if (this.game.aura) {
+        ctx.beginPath();
+        ctx.strokeStyle = this.game.aura;
+        ctx.lineWidth = 3;
+        ctx.arc(this.canvasX, this.canvasY, this.radius + this.game.halo, 0, Math.PI * 2, false);
+        ctx.arc(this.canvasX, this.canvasY, this.radius + this.game.halo - 6, 0, Math.PI * 2, false);
+        ctx.closePath();
+        ctx.stroke();
+        ctx.lineWidth = 1;
+    }
         //this.angle = Math.atan2(this.action.target.x, this.action.target.y) * (180/Math.PI);
     // this.angle = Math.atan2(this.game.y - this.y, this.game.x - this.x) * (180/Math.PI);
     // var dir = direction(this.mouse, this);

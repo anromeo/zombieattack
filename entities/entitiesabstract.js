@@ -507,10 +507,11 @@ LivingEntity.prototype.aiSelectAction = function(type) {
         if (distance(target, this) < this.attackRange + target.radius) {
             action.willAttack = true;
         }
-        if (action.target) {
+        if (action.target && this.attackType != "range") {
             action.target.entTarget = target;
         } else {
             action.target = {x: target.x, y: target.y};
+            action.target.entTarget = target;
         }
     }
 
@@ -575,10 +576,12 @@ LivingEntity.prototype.drawOutlines = function(ctx) {
  */
 LivingEntity.prototype.drawHealthbar = function(ctx) {
 
+    var x = this.canvasX;
+    var y = this.canvasY;
     // draw a black background for the health bar
     ctx.beginPath();
     ctx.fillStyle = "black";
-    ctx.fillRect(this.healthBarCoords.BeginX + this.canvasX, this.healthBarCoords.BeginY + this.canvasY, this.healthBarCoords.Width, this.healthBarCoords.Height);
+    ctx.fillRect(this.healthBarCoords.BeginX + x, this.healthBarCoords.BeginY + y, this.healthBarCoords.Width, this.healthBarCoords.Height);
     ctx.stroke(); 
     
     // display actual health within health bar
@@ -613,8 +616,8 @@ LivingEntity.prototype.drawHealthbar = function(ctx) {
     }
 
     // Determine location of the healthbar
-    var calculatex = this.healthBarCoords.BeginX + this.canvasX;
-    var calculatey = this.healthBarCoords.BeginY + this.canvasY;
+    var calculatex = this.healthBarCoords.BeginX + x;
+    var calculatey = this.healthBarCoords.BeginY + y;
     var calculatewidth = this.healthBarCoords.Width * healthPercent;
 
     // color the healthbar
@@ -624,7 +627,7 @@ LivingEntity.prototype.drawHealthbar = function(ctx) {
     //outline the health bar in white
     ctx.beginPath();
     ctx.strokeStyle = "white";
-    ctx.rect(this.healthBarCoords.BeginX + this.canvasX ,this.healthBarCoords.BeginY + this.canvasY,this.healthBarCoords.Width,this.healthBarCoords.Height);
+    ctx.rect(this.healthBarCoords.BeginX + x ,this.healthBarCoords.BeginY + y,this.healthBarCoords.Width,this.healthBarCoords.Height);
     ctx.stroke(); 
 }
 
@@ -734,11 +737,11 @@ LivingEntity.prototype.flockTogether = function() {
  */
 LivingEntity.prototype.aiUpdate = function(type) {
 
+    LivingEntity.prototype.update.call(this);
+
     if (type === undefined) {
        type = "zombie";
     }
-
-    LivingEntity.prototype.update.call(this);
 
     // IF the cooldown is greater than 0 decrement
     if (this.cooldown > 0) this.cooldown -= this.game.clockTick;
@@ -749,7 +752,7 @@ LivingEntity.prototype.aiUpdate = function(type) {
     this.action = this.aiSelectAction(this.type);
 
     // IF NOT currently attacking
-    if (!this.action.willAttack) {
+    if (!this.action.willAttack || this.attackType != "range") {
         // INCREMENT the x and y coordinates of this LivingEntity
         this.x += this.velocity.x * this.game.clockTick;
         this.y += this.velocity.y * this.game.clockTick;
@@ -798,41 +801,48 @@ LivingEntity.prototype.aiUpdate = function(type) {
     }
     
 
-    // IF the attack cooldown reaches 0 and this action is set to willAttack
-    if (this.cooldown === 0 && this.action.willAttack) {
-        // SET the attack cooldown to the max cool down
-        this.cooldown = this.maxCoolDown;
-        // SET the target to the action's target
-        var target = this.action.target;
+    if (!this.frozen) {
+        // IF the attack cooldown reaches 0 and this action is set to willAttack
+        if (this.cooldown === 0 && this.action.willAttack) {
+            // SET the attack cooldown to the max cool down
+            this.cooldown = this.maxCoolDown;
+            // SET the target to the action's target
+            var target = this.action.target;
 
-        var borderRange = 20;
+            var borderRange = 20;
 
-        // IF the target is not null
-        // AND the target is within the screen
-        if (target != null
-          && target.x < this.game.map.worldWidth - borderRange && target.x > borderRange
-          && target.y < this.game.map.worldHeight - borderRange && target.y > borderRange) {
-            // LET loose the attack against the target
-            this.attack(target);
+            // IF the target is not null
+            // AND the target is within the screen
+            if (target != null
+              && target.x < this.game.map.worldWidth - borderRange && target.x > borderRange
+              && target.y < this.game.map.worldHeight - borderRange && target.y > borderRange) {
+                // LET loose the attack against the target
+                this.attack(target);
+            }
         }
+
+        // IF the action has a target TODO
+        if (this.action.target && this.type === "playerControlled") {
+            // FACE that target
+            this.angle = Math.atan2(this.action.target.x, this.action.target.y) * (180/Math.PI);
+        } else {
+            // OTHERWISE, set angle to current direction
+            this.angle = Math.atan2(this.velocity.y, this.velocity.x) * (180/Math.PI);
+        }
+
+        this.angle = this.angle + this.angleOffset;
+        while (this.angle > 360) {
+            this.angle = this.angle - 360;
+        }
+
+        this.velocity.x -= (1 - friction) * this.game.clockTick * this.velocity.x;
+        this.velocity.y -= (1 - friction) * this.game.clockTick * this.velocity.y;
+    }
+    if (this.frozen) {
+        this.velocity.x = 0;
+        this.velocity.y = 0;
     }
 
-    // IF the action has a target TODO
-    if (this.action.target && this.type === "playerControlled") {
-        // FACE that target
-        this.angle = Math.atan2(this.action.target.x, this.action.target.y) * (180/Math.PI);
-    } else {
-        // OTHERWISE, set angle to current direction
-        this.angle = Math.atan2(this.velocity.y, this.velocity.x) * (180/Math.PI);
-    }
-
-    this.angle = this.angle + this.angleOffset;
-    while (this.angle > 360) {
-        this.angle = this.angle - 360;
-    }
-
-    this.velocity.x -= (1 - friction) * this.game.clockTick * this.velocity.x;
-    this.velocity.y -= (1 - friction) * this.game.clockTick * this.velocity.y;
 }
 
 /**
@@ -867,6 +877,10 @@ LivingEntity.prototype.update = function () {
                  this.game.expEarned  += this.exp;
             }
         }
+    }
+
+    if (this.frozen) {
+        return;
     }
 
     if (this.ability1 !== undefined) {

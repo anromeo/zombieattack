@@ -95,8 +95,9 @@ Villain.prototype.collideBottom = function () {
 };
 
 Villain.prototype.update = function () {
+
     this.aiUpdate("zombie");
-    if (this.action.target === null) {
+    if (this.action && this.action.target === null) {
         this.flockTogether();
     }
 };
