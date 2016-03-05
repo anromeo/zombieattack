@@ -58,7 +58,7 @@ function GameEngine() {
     this.y;
 
     this.map = null;
-	this.menuMode = "Start";
+	this.menuMode = "Game";
     this.hasSeenIntro = false;
 
     this.zombieCooldownNumInitial = 3;  // how often a zombie will appear initially
@@ -66,7 +66,7 @@ function GameEngine() {
 
     this.kills = 0; // this is the number of kills that the player has total
 
-    this.showOutlines = false; // this shows the outline of the entities
+    this.showOutlines = true; // this shows the outline of the entities
     this.ctx = null; // this is the object being used to draw on the map
     this.click = null; // this is the click value (if null, not being clicked)
 
@@ -280,6 +280,7 @@ GameEngine.prototype.setupGameState = function () {
     // maps instantiated
     var hospital;
     var ruins;
+    var map1;
     var factory;
     var smallRoom;
     var city;
@@ -298,6 +299,7 @@ GameEngine.prototype.setupGameState = function () {
     // maps created and assigned
     hospital = new Map(this, ASSET_MANAGER.getAsset("./images/hospital.png"), "Hospital", 1400, 1350, mapRatioHospitalWidth, mapRatioHosptialHeight, 0.5);
     ruins = new Map(this, ASSET_MANAGER.getAsset("./images/ruins.png"), "Ruins", 2285, 1500, mapRatioTerrainWidth, mapRatioTerrainHeight, 0.68);
+    map1 = new Map(this, ASSET_MANAGER.getAsset("./images/map1.png"), "map1", 1385, 1300, 400, 400, 0.30);
 
     factory = new Map(this, ASSET_MANAGER.getAsset("./images/factory.png"), "Small Room", 1600, 1200, 400, 400, 0.5);
 
@@ -307,6 +309,10 @@ GameEngine.prototype.setupGameState = function () {
 
     mansion = new Map(this, ASSET_MANAGER.getAsset("./images/mansion.png"), "City", 2285, 1500, 200, 200, 0.5);
 
+    map1.isBossMap = true;
+    map1.addWall(new Wall(this, 220, 70,270,50));
+    map1.addWall(new Wall(this, 220, 70,270,50));
+    map1.addWall(new Wall(this, 170, 140,275,50));
     // adding all the walls and attractors for the hospital
     hospital.addWall(new Wall(this, 38, 460, 70, 210));
     hospital.addWall(new Wall(this, 275, 0, 95, 115));
@@ -458,7 +464,7 @@ GameEngine.prototype.setupGameState = function () {
     var speed = new Speed(this, ASSET_MANAGER.getAsset("./images/speed.png"), RuinspeedSpawn);
     ruinItems.push(speed);
 
-    var bossMap = new Map(this, ASSET_MANAGER.getAsset("./images/map3.png"), "Boss Map - Level 1", 800, 600, 800, 600, 0.5);
+    var bossMap = new Map(this, ASSET_MANAGER.getAsset("./images/bossMap1.png"), "Boss Map - Level 1", 800, 600, 800, 600, 0.5);
     var boss = new Boss(this);
     boss.health = 5;
     bossMap.addVillain(boss);
@@ -635,9 +641,9 @@ GameEngine.prototype.setupGameState = function () {
 
 
     // this.setMap(bossMap);
-    this.setMap(ruins);
-    ruins.setItems(ruinItems);
-    ruins.drawDialogue = true;
+    this.setMap(map1);
+    //map3.setItems(ruinItems);
+    //ruins.drawDialogue = true;
 
     // this.setItems(hospitalItems);
 
@@ -1456,7 +1462,7 @@ GameEngine.prototype.drawButton = function(buttonToDraw, fillColor, textColor) {
     // this.ctx.fill();
     // this.ctx.closePath();
 	
-	// this.ctx.fillText(line1,this.startButton.x + 32,this.startButton.y + 30);	
+	// this.ctx.fillText(line1,this.startButton.x + 32,this.startButton.y + 3);	
 	// this.ctx.fillText(line2,this.startButton.x + 35,this.startButton.y + 60);
 	// this.ctx.fillText(line3,this.startButton.x + 38,this.startButton.y + 90);
     this.ctx.restore();
