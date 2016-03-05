@@ -60,7 +60,7 @@ ASSET_MANAGER.queueDownload("./images/flamethrower.png");
 ASSET_MANAGER.queueDownload("./images/HealthPack.png");
 ASSET_MANAGER.queueDownload("./images/speed.png");
 ASSET_MANAGER.queueDownload("./images/flame3.png");
-// ASSET_MANAGER.queueDownload("./images/cone.png");
+ASSET_MANAGER.queueDownload("./images/map3.png");
 ASSET_MANAGER.queueDownload("./images/shooter-walking.png");
 ASSET_MANAGER.queueDownload("./images/shooter-walking2.png");
 

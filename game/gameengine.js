@@ -458,7 +458,7 @@ GameEngine.prototype.setupGameState = function () {
     var speed = new Speed(this, ASSET_MANAGER.getAsset("./images/speed.png"), RuinspeedSpawn);
     ruinItems.push(speed);
 
-    var bossMap = new Map(this, ASSET_MANAGER.getAsset("./images/bossMap1.png"), "Boss Map - Level 1", 800, 600, 800, 600, 0.5);
+    var bossMap = new Map(this, ASSET_MANAGER.getAsset("./images/map3.png"), "Boss Map - Level 1", 800, 600, 800, 600, 0.5);
     var boss = new Boss(this);
     boss.health = 5;
     bossMap.addVillain(boss);
