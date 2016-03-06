@@ -80,13 +80,13 @@ function GameEngine() {
 	this.backgroundaudio.loop = true;
 	this.backgroundaudio.preload = "auto";
 
-	var source= document.createElement('source');
-	source.type= 'audio/ogg';
-	source.src= "./sound/backgroundmusic1.ogg";
-	this.backgroundaudio.appendChild(source);
+	// var source= document.createElement('source');
+	// source.type= 'audio/ogg';
+	// source.src= "./sound/backgroundmusic1.ogg";
+	// this.backgroundaudio.appendChild(source);
 	source= document.createElement('source');
 	source.type= 'audio/mpeg';
-	source.src= "./sound/backgroundmusic1.mp3";
+	source.src= "./sound/fastfoot.mp3";
 	this.backgroundaudio.appendChild(source);
     console.log(this.backgroundaudio);
 	
