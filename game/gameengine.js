@@ -86,7 +86,7 @@ function GameEngine() {
 	// this.backgroundaudio.appendChild(source);
 	source= document.createElement('source');
 	source.type= 'audio/mpeg';
-	source.src= "./sound/fastfoot.mp3";
+	//source.src= "./sound/fastfoot.mp3";
 	this.backgroundaudio.appendChild(source);
     console.log(this.backgroundaudio);
 	
@@ -299,7 +299,7 @@ GameEngine.prototype.setupGameState = function () {
     // maps created and assigned
     hospital = new Map(this, ASSET_MANAGER.getAsset("./images/hospital.png"), "Hospital", 1400, 1350, mapRatioHospitalWidth, mapRatioHosptialHeight, 0.5);
     ruins = new Map(this, ASSET_MANAGER.getAsset("./images/ruins.png"), "Ruins", 2285, 1500, mapRatioTerrainWidth, mapRatioTerrainHeight, 0.68);
-    map1 = new Map(this, ASSET_MANAGER.getAsset("./images/map1.png"), "map1", 1385, 1300, 400, 400, 0.30);
+    map1 = new Map(this, ASSET_MANAGER.getAsset("./images/map1.png"), "map1", 2295, 1800, 400, 300, 0.50);
 
     factory = new Map(this, ASSET_MANAGER.getAsset("./images/factory.png"), "Small Room", 1600, 1200, 400, 400, 0.5);
 
@@ -310,9 +310,45 @@ GameEngine.prototype.setupGameState = function () {
     mansion = new Map(this, ASSET_MANAGER.getAsset("./images/mansion.png"), "City", 2285, 1500, 200, 200, 0.5);
 
     map1.isBossMap = true;
-    map1.addWall(new Wall(this, 220, 70,270,50));
-    map1.addWall(new Wall(this, 220, 70,270,50));
-    map1.addWall(new Wall(this, 170, 140,275,50));
+    map1.addWall(new Wall(this, 0, 0,2400,40));
+    map1.addWall(new Wall(this, 950, 0,190,100));
+    map1.addWall(new Wall(this, 1430, 0,30,360));
+    map1.addWall(new Wall(this, 1440, 520,30,200));
+    map1.addWall(new Wall(this, 1440, 820,30,100));
+    map1.addWall(new Wall(this, 1380, 880,470,40));
+    map1.addWall(new Wall(this, 1720, 880,30,120));
+    map1.addWall(new Wall(this, 1720, 1080,30,180));
+    map1.addWall(new Wall(this, 1720, 1130,230,30));
+    map1.addWall(new Wall(this, 1925, 1065,185,30));
+    map1.addWall(new Wall(this, 1925, 1065,30,95));
+    map1.addWall(new Wall(this, 2085, 1030,30,150));
+    map1.addWall(new Wall(this, 2240, 1250,30,425));
+    map1.addWall(new Wall(this, 1930, 880,350,55));
+    map1.addWall(new Wall(this, 0, 1765,2400,35));
+    map1.addWall(new Wall(this, 560, 223,300,100));
+    map1.addWall(new Wall(this, 920, 223,300,100));
+    map1.addWall(new Wall(this, 420, 440,320,120));
+    map1.addWall(new Wall(this, 790, 440,300,90));
+    map1.addWall(new Wall(this, 2020, 1650,250,35));
+    map1.addWall(new Wall(this, 1410, 1650,395,35));
+    map1.addWall(new Wall(this, 1185, 1650,145,35));
+    map1.addWall(new Wall(this, 1185, 580,40,1105));
+    map1.addWall(new Wall(this, 1185, 1350,125,50));
+    map1.addWall(new Wall(this, 1430, 1350,225,50));
+    map1.addWall(new Wall(this, 1185, 580,288,40));
+    map1.addWall(new Wall(this, 610, 880,700,60));
+    map1.addWall(new Wall(this, 1070, 1000,50,675));
+    map1.addWall(new Wall(this, 970, 1000,150,53));
+    map1.addWall(new Wall(this, 630, 1000,260,53));
+    map1.addWall(new Wall(this, 630, 1000,80,540));
+    map1.addWall(new Wall(this, 830, 1558,290,60));
+    map1.addWall(new Wall(this, 1800, 258,460,40));
+    map1.addWall(new Wall(this, 2260, 190,40,140));
+    map1.addWall(new Wall(this, 2240, 620,55,318));
+    map1.addWall(new Wall(this, 150, 150,45,558));
+    map1.addWall(new Wall(this, 145, 820,45,100));
+     map1.addWall(new Wall(this, 145, 880,300,45));
+    map1.addWall(new Wall(this, 1450, 1480,50, 205));
     // adding all the walls and attractors for the hospital
     hospital.addWall(new Wall(this, 38, 460, 70, 210));
     hospital.addWall(new Wall(this, 275, 0, 95, 115));
@@ -469,6 +505,10 @@ GameEngine.prototype.setupGameState = function () {
     boss.health = 5;
     bossMap.addVillain(boss);
     bossMap.isBossMap = true;
+    map1.update = function() {
+        console.log("windowX" + this.game.getWindowX);
+        console.log("windowy" + this.game.getWindowy);
+    }
 
 
     bossMap.update = function() {

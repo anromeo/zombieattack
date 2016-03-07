@@ -28,7 +28,7 @@ function playerControlled(game) {
     var spawnpoint = this.spawnPoints[Math.floor(Math.random() * this.spawnPoints.length)];
 
     // LivingEntity.call(this, game, spawnpoint.x, spawnpoint.y);
-    LivingEntity.call(this, game, 100, 100);
+    LivingEntity.call(this, game, 100, 700);
 
     this.player = 1;
     // this.SpriteWidth = 80;
@@ -489,6 +489,7 @@ playerControlled.prototype.update = function () {
     
     var rock;
     var flame;
+
     // if (!this.controlled) {
     //     console.log(this.action);
     // }
@@ -578,6 +579,7 @@ playerControlled.prototype.draw = function (ctx) {
         this.game.setWindowX(this.x - 400);
         this.game.setWindowY(this.y - 400);
     }
+    
     if (this.timerForSpeed) {
         if (this.trail === undefined) {
             this.trail = 2;
