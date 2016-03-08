@@ -1,4 +1,4 @@
-function Villain(game, x, y) {
+function Villain(game, x, y, spawnPoints) {
     // LivingEntity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1);
     // LivingEntity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2) * -1, this.radius + Math.random() * (800 - this.radius * 2) * -1);
 
@@ -42,7 +42,7 @@ function Villain(game, x, y) {
     this.visualRadius = 100;
     this.approachingDistance = 600;
 
-    this.attackRange = 40; // always make sure attack range is larger than comfort zone
+    this.attackRange = 34; // always make sure attack range is larger than comfort zone
     this.comfortZone = 25;
     this.exp = 1;
 

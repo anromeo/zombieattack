@@ -52,6 +52,7 @@ function playerControlled(game) {
     this.angleOffset = 0;
     this.radialOffset = 15;
     this.attackType = "range";
+    this.anglePlayerControlled = 100;
 
     this.cooldown = 0;
     this.randomLine = {x:0, y:0};
@@ -538,7 +539,7 @@ playerControlled.prototype.update = function () {
 
     if (this.action.target) {
         this.angle = Math.atan2(this.action.target.x, this.action.target.y) * (180/Math.PI);
-        this.angle = this.angle - 100;
+        this.angle = this.angle - this.anglePlayerControlled;
         //console.log(this.angle);
         while (this.angle > 360) {
             this.angle = this.angle - 360;
@@ -637,9 +638,9 @@ playerControlled.prototype.draw = function (ctx) {
 
         ctx.lineWidth = 1;
     }
-
-//    console.log("X: " + this.x + " | Y: " + this.y);
-
+    if (this.controlled) {
+        console.log("X: " + this.x + " | Y: " + this.y);
+    }
     // ctx.beginPath();
     // ctx.fillStyle = this.color;
     // ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
