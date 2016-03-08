@@ -75,20 +75,8 @@ function GameEngine() {
     this.surfaceWidth = null; // the width of the canvas
     this.surfaceHeight = null; // the height of the canvas
 	
-	this.backgroundaudio = new Audio();
-	console.log(this.backgroundaudio);
-	this.backgroundaudio.loop = true;
-	this.backgroundaudio.preload = "auto";
-
-	// var source= document.createElement('source');
-	// source.type= 'audio/ogg';
-	// source.src= "./sound/backgroundmusic1.ogg";
-	// this.backgroundaudio.appendChild(source);
-	source= document.createElement('source');
-	source.type= 'audio/mpeg';
-	//source.src= "./sound/fastfoot.mp3";
-	this.backgroundaudio.appendChild(source);
-    console.log(this.backgroundaudio);
+	this.setupSounds();
+	
 	
     this.attributePoints = 0;
     // FOREST MAP
@@ -121,6 +109,68 @@ function GameEngine() {
 
     this.maxHalo = 10;
     this.halo = this.maxHalo;
+}
+
+GameEngine.prototype.setupSounds = function () {
+	this.backgroundaudio = new Audio();
+	//console.log(this.backgroundaudio);
+	this.backgroundaudio.loop = true;
+	this.backgroundaudio.preload = "auto";
+
+	// var source= document.createElement('source');
+	// source.type= 'audio/ogg';
+	// source.src= "./sound/backgroundmusic1.ogg";
+	// this.backgroundaudio.appendChild(source);
+	source = document.createElement('source');
+	source.type= 'audio/mpeg';
+	//source.src= "./sound/fastfoot.mp3";
+	source.src= "./sound/backgroundmusic1.mp3";
+	this.backgroundaudio.appendChild(source);
+    //console.log(this.backgroundaudio);
+	
+	this.gunaudio = new Audio();
+	//console.log(this.backgroundaudio);
+	this.gunaudio.loop = true;
+	this.gunaudio.preload = "auto";	
+	sourceGunAudio = document.createElement('source');
+	sourceGunAudio.type= 'audio/mpeg';
+	sourceGunAudio.src= "./sound/MachineGun3.mp3";
+	//sourceGunAudio.src= "./sound/GunShot.mp3";
+	this.gunaudio.appendChild(sourceGunAudio);
+	//this.gunaudio.pause();
+	
+	this.flameaudio = new Audio();
+	this.flameaudio.loop = true;
+	this.flameaudio.preload = "auto";	
+	sourceflameaudio = document.createElement('source');
+	sourceflameaudio.type= 'audio/mpeg';
+	sourceflameaudio.src= "./sound/Firestrm.mp3";
+	this.flameaudio.appendChild(sourceflameaudio);
+	//this.gunaudio.pause();
+	
+	this.explosionaudio = new Audio();
+	this.explosionaudio.loop = false;
+	this.explosionaudio.preload = "auto";	
+	sourceexplosionaudio = document.createElement('source');
+	sourceexplosionaudio.type= 'audio/mpeg';
+	sourceexplosionaudio.src= "./sound/Explosion.mp3";
+	this.explosionaudio.appendChild(sourceexplosionaudio);
+	
+	this.endaudio = new Audio();
+	this.endaudio.loop = false;
+	this.endaudio.preload = "auto";	
+	sourceendaudio = document.createElement('source');
+	sourceendaudio.type= 'audio/mpeg';
+	sourceendaudio.src= "./sound/wickedmalelaugh1.mp3";
+	this.endaudio.appendChild(sourceendaudio);
+	
+	this.winaudio = new Audio();
+	this.winaudio.loop = false;
+	this.winaudio.preload = "auto";	
+	sourcewinaudio = document.createElement('source');
+	sourcewinaudio.type= 'audio/mpeg';
+	sourcewinaudio.src= "./sound/whahoo.mp3";
+	this.winaudio.appendChild(sourcewinaudio);
 }
 
 /**
@@ -505,10 +555,10 @@ GameEngine.prototype.setupGameState = function () {
     boss.health = 5;
     bossMap.addVillain(boss);
     bossMap.isBossMap = true;
-    map1.update = function() {
-        console.log("windowX" + this.game.getWindowX);
-        console.log("windowy" + this.game.getWindowy);
-    }
+    // map1.update = function() {
+        // console.log("windowX" + this.game.getWindowX);
+        // console.log("windowy" + this.game.getWindowy);
+    // }
 
 
     bossMap.update = function() {
@@ -1388,7 +1438,7 @@ GameEngine.prototype.drawLoseMenu = function() {
     } 
     this.drawMessage ("GAME OVER", width + 127, height + 30);
     this.drawMessage ("YOU LOST!", width + 135, height + 60);
-        
+	this.endaudio.play();   
     height = 50;
     width = 200;
         
@@ -1408,6 +1458,7 @@ GameEngine.prototype.drawWinMenu = function() {
 
     this.drawMessage ("GAME OVER", width + 127, height + 30);
     this.drawMessage ("You Win!!", width + 151, height + 60);
+	this.winaudio.play();
         
     height = 50;
     width = 200;

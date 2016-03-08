@@ -122,8 +122,10 @@ playerControlled.prototype.attack = function(target) {
     var shot;
     if (this.weapon === "FlameThrower") {
         shot = new Flame(this.game, this, dir);
+		this.game.flameaudio.play();
     } else {
         shot = new Projectile(this.game);
+		this.game.gunaudio.play();
     }
     shot.strength += this.strength;
     shot.maxSpeed = this.maxSpeed * 2;
@@ -247,7 +249,10 @@ playerControlled.prototype.selectAction = function () {
             action.target = this.game.mouse;
             action.willAttack = true;
             //this.game.click = null;
-        }
+        } else {
+			this.game.gunaudio.pause();
+			this.game.flameaudio.pause();
+		}
       
         return action;
     }
@@ -486,8 +491,6 @@ playerControlled.prototype.update = function () {
         this.y += this.velocity.y * this.game.clockTick;
     }
 
-    
-    var rock;
     var flame;
 
     // if (!this.controlled) {
@@ -578,6 +581,12 @@ playerControlled.prototype.draw = function (ctx) {
     if (this.controlled) {
         this.game.setWindowX(this.x - 400);
         this.game.setWindowY(this.y - 400);
+		//resets the mouse as we scroll
+        this.game.mouse.x =  this.game.mouse.canvasx - this.game.ctx.canvas.getBoundingClientRect().left + this.game.getWindowX();
+        this.game.mouse.y = this.game.mouse.canvasy - this.game.ctx.canvas.getBoundingClientRect().top + this.game.getWindowY();
+		
+		this.game.x = this.game.mouse.x;
+		this.game.y = this.game.mouse.y;
     }
     
     if (this.timerForSpeed) {
@@ -651,9 +660,16 @@ playerControlled.prototype.draw = function (ctx) {
         // var lineBeginY = this.canvasY + this.radius;
 		var lineBeginX = this.canvasX;
         var lineBeginY = this.canvasY;
+		// var dist = distance(this, this.game.mouse);
+		// console.log(dist);
+		// var dir = direction(this, this.game.mouse);
+		// console.log(dir.x * dist);
+		// console.log(dir.y * dist);
+		// var lineEndX = this.canvaseX + (dir.x * dist);
+        // var lineEndY = this.canvaseX + (dir.y * dist);
         var lineEndX = this.game.mouse.canvasx;
         var lineEndY = this.game.mouse.canvasy;
-        ctx.strokeStyle = "pink";
+        ctx.strokeStyle = "red";
         ctx.moveTo(lineBeginX,lineBeginY);
         ctx.lineTo(lineEndX, lineEndY);
         ctx.stroke();
