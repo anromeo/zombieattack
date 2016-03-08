@@ -84,11 +84,11 @@ function GameEngine() {
 	// source.type= 'audio/ogg';
 	// source.src= "./sound/backgroundmusic1.ogg";
 	// this.backgroundaudio.appendChild(source);
-	source= document.createElement('source');
-	source.type= 'audio/mpeg';
-	//source.src= "./sound/fastfoot.mp3";
-	this.backgroundaudio.appendChild(source);
-    console.log(this.backgroundaudio);
+	// source= document.createElement('source');
+	// source.type= 'audio/mpeg';
+	// source.src= "./sound/backgroundmusic1.mp3";
+	// this.backgroundaudio.appendChild(source);
+ //    console.log(this.backgroundaudio);
 	
     this.attributePoints = 0;
     // FOREST MAP
@@ -349,6 +349,7 @@ GameEngine.prototype.setupGameState = function () {
     map1.addWall(new Wall(this, 145, 820,45,100));
      map1.addWall(new Wall(this, 145, 880,300,45));
     map1.addWall(new Wall(this, 1450, 1480,50, 205));
+
     // adding all the walls and attractors for the hospital
     hospital.addWall(new Wall(this, 38, 460, 70, 210));
     hospital.addWall(new Wall(this, 275, 0, 95, 115));
@@ -502,14 +503,13 @@ GameEngine.prototype.setupGameState = function () {
 
     var bossMap = new Map(this, ASSET_MANAGER.getAsset("./images/bossMap1.png"), "Boss Map - Level 1", 800, 600, 800, 600, 0.5);
     var boss = new Boss(this);
-    boss.health = 5;
+    // boss.health = 5;
     bossMap.addVillain(boss);
     bossMap.isBossMap = true;
     map1.update = function() {
         console.log("windowX" + this.game.getWindowX);
         console.log("windowy" + this.game.getWindowy);
     }
-
 
     bossMap.update = function() {
         if (this.unlocked === undefined) {
@@ -681,22 +681,73 @@ GameEngine.prototype.setupGameState = function () {
 
 
     // this.setMap(bossMap);
-    this.setMap(map1);
+    // this.setMap(map1);
     //map3.setItems(ruinItems);
     //ruins.drawDialogue = true;
+    hospital.drawDialogue = false;
+    // this.setMap(hospital);
+    // this.setMap(ruins);
+    cemetary = new Map(this, ASSET_MANAGER.getAsset("./images/cemetary.png"), "Small Room", 5000, 3674, 450, 337.5, 0.5);
+    var mill = new Map(this, ASSET_MANAGER.getAsset("./images/mill.png"), "Small Room", 3300, 1730, 550, 550*.75, .69);
+
+    mill.addWall(new Wall(this, 343, 56, 190, 17));
+    mill.addWall(new Wall(this, 675, 56, 275, 17));
+    mill.addWall(new Wall(this, 470, 398, 713, 17));
+    mill.addWall(new Wall(this, 470, 398, 17, 460));
+    mill.addWall(new Wall(this, 470 + 713 - 23, 250, 23, 165));
+    mill.addWall(new Wall(this, 470 + 713 - 23, 250, 80, 17));
+    mill.addWall(new Wall(this, 470 + 872 - 23, 250, 100, 17));
+
+    mill.addWall(new Wall(this, 470 + 713 - 23 + 255, 250, 17, 325));
+    mill.addWall(new Wall(this, 470 + 500, 250 + 325 - 17, 463, 18));
+    mill.addWall(new Wall(this, 470 + 500 + 3, 250 + 325 - 50, 17, 50));
+
+    mill.addWall(new Wall(this, 470 + 500 + 3, 400, 17, 50));
+    mill.addWall(new Wall(this, 1054, 250 + 325 - 63, 120, 30));
+    mill.addWall(new Wall(this, 1320, 377, 43, 90));
+
+    mill.addWall(new Wall(this, 470, 842, 93, 17));
+    mill.addWall(new Wall(this, 640, 842, 238, 17));
+
+    mill.addWall(new Wall(this, 972, 560, 17, 20));
+    mill.addWall(new Wall(this, 964, 575, 17, 20));
+    mill.addWall(new Wall(this, 956, 590, 17, 20));
+    mill.addWall(new Wall(this, 948, 605, 17, 20));
+    mill.addWall(new Wall(this, 940, 620, 17, 20));
+    mill.addWall(new Wall(this, 932, 635, 17, 20));
+
+    mill.addWall(new Wall(this, 900, 740, 17, 20));
+    mill.addWall(new Wall(this, 895, 755, 17, 20));
+    mill.addWall(new Wall(this, 887, 770, 17, 20));
+    mill.addWall(new Wall(this, 879, 785, 17, 20));
+    mill.addWall(new Wall(this, 871, 800, 17, 20));
+    mill.addWall(new Wall(this, 864, 815, 17, 20));
+
+    mill.addWall(new Wall(this, 70, 730, 155, 140));
+    mill.addWall(new Wall(this, 70, 600, 17, 940));
+
+    mill.addWall(new Wall(this, 1320, 56, 1200, 17));
+    mill.addWall(new Wall(this, 1320 + 1155, -20, 200, 145));
+
+
+    this.setMap(mill);
+    ruins.setItems(ruinItems);
+    ruins.drawDialogue = false;
+
+    var player = new playerControlled(this);
+    player.x = 200;
+    player.y = 200;
+    player.controlled = true;
+    this.addEntity(player);
 
     // this.setItems(hospitalItems);
 
     // this.addEntity(new Portal(this, 800, 600, hospital, 200, 200));
 
 	
-	var player = new playerControlled(this);
-    player.controlled = true;
-    this.addEntity(player);
-
     // var angelPlayer = new Angel(this);
     // angelPlayer.x = 600;
-    // angelPlayer.canvasX = 600;
+    // angelPlayer.canvasX = 32;
     // this.addEntity(angelPlayer);
 
     // var warperPlayer = new TimeWarper(this);
@@ -717,7 +768,7 @@ GameEngine.prototype.setupGameState = function () {
     // bossMap.isBossMap = true;
 
     // this.addEntity(new Portal(this, 94, 1186, bossMap, 700, 200));
-//    this.setMap(bossMap);
+    // this.setMap(bossMap);
     // var player2 = new playerControlled(this);
     // this.addEntity(player2);
 

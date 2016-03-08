@@ -225,7 +225,7 @@ Wall.prototype.update = function () {
             var difY = 0;
             var acceleration = 10000000;
 
-           if (!other.isNonLiving && other.type !== "projectile" && other.name !== "playerControlled" && other.velocity !== undefined) {
+           if (!other.isNonLiving && other.type !== "projectile" && (other.type !== "playerControlled" || other.controlled === false) && other.velocity !== undefined) {
             // if (other.name === "playerControlled" && other.velocity !== undefined) {
 
                 if (closeToTop && topRepelOk) {
