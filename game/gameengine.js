@@ -360,6 +360,20 @@ GameEngine.prototype.setupGameState = function () {
 
     mansion = new Map(this, ASSET_MANAGER.getAsset("./images/mansion.png"), "City", 2285, 1500, 200, 200, 0.5);
 
+    ruins.spawnPoints =[{ x: 1360, y: 652 },
+                        { x: 1231, y: 322 },
+                        { x: 1338, y: 80 },
+                        { x: 1073, y: 460 },
+                        { x: 939, y: 965 },
+                        { x: 1027, y: 1225 },
+                        { x: 910, y: 683 },
+                        { x: 660, y: 1029 },
+                        { x: 360, y: 1233 },
+                        { x: 360, y: 924},
+                        { x: 752, y: 1250 },
+                        { x: 2200, y: 1200 },
+                        { x: 1248, y: 1221 }];
+
     map1.isBossMap = true;
     map1.addWall(new Wall(this, 0, 0,2400,40));
     map1.addWall(new Wall(this, 950, 0,190,100));
@@ -833,19 +847,29 @@ GameEngine.prototype.setupGameState = function () {
     mill.addWall(new Wall(this, 2265, 200, 10, 105));
     mill.addWall(new Wall(this, 2285, 385, 10, 60));
 
-    // mill.addWall(new Wall(this, 2217, 205, 50, 17));
-    // mill.addWall(new Wall(this, 2257, 200, 50, 17));
-    // mill.addWall(new Wall(this, 2297, 195, 50, 17));
-    // mill.addWall(new Wall(this, 2347, 190, 50, 17));
-    // mill.addWall(new Wall(this, 2387, 185, 60, 17));
+    this.menuMode = "Game";
+    mill.spawnPoints = [{x:200, y:200},
+                        {x:1200, y: 528},
+                        {x:2000, y:125},
+                        {x:1738, y: 1038},
+                        {x:1320, y: 1315},
+                        {x:2220, y: 1480},
+                        {x:524, y: 1305},
+                        {x:472, y: 1144}];
 
-    this.setMap(mill);
+    map1.spawnPoints = [{x:200, y:200},
+                        {x:1200, y: 528},
+                        {x:2000, y:125},
+                        {x:1738, y: 1038},
+                        {x:1320, y: 1315},
+                        {x:2220, y: 1480},
+                        {x:524, y: 1305},
+                        {x:472, y: 1144}];
+    this.setMap(map1);
     ruins.setItems(ruinItems);
-    ruins.drawDialogue = false;
+    ruins.drawDialogue = true;
 
     var player = new playerControlled(this);
-    player.x = 2065;
-    player.y = 230;
     player.controlled = true;
     this.addEntity(player);
 
@@ -1236,7 +1260,12 @@ GameEngine.prototype.update = function () {
                 }
 
                 // Adds the zombie entity to the game
-                var zom = new Villain(this);
+                var zom;
+                if (!this.map.spawnPoints) {
+                    zom = new Villain(this);
+                } else {
+                    zom = new Villain(this, undefined, undefined, this.map.spawnPoints);
+                }
                 this.addEntity(zom);
             }
         }
