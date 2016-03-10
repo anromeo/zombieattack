@@ -80,11 +80,11 @@ function GameEngine() {
 	// source.type= 'audio/ogg';
 	// source.src= "./sound/backgroundmusic1.ogg";
 	// this.backgroundaudio.appendChild(source);
-	source= document.createElement('source');
-	source.type= 'audio/mpeg';
-	source.src= "./sound/fastfoot.mp3";
-	this.backgroundaudio.appendChild(source);
-    console.log(this.backgroundaudio);
+	// source= document.createElement('source');
+	// source.type= 'audio/mpeg';
+	// source.src= "./sound/fastfoot.mp3";
+	// this.backgroundaudio.appendChild(source);
+ //    console.log(this.backgroundaudio);
 	this.setupSounds();
 
 	
@@ -385,7 +385,6 @@ GameEngine.prototype.setupGameState = function () {
                         { x: 1248, y: 1221 }];
 
     map1.isBossMap = true;
->>>>>>> 1cf404c19d3289f28374b6b933be486dce76ae00
     map1.addWall(new Wall(this, 0, 0,2400,40));
     map1.addWall(new Wall(this, 950, 0,190,100));
     map1.addWall(new Wall(this, 1430, 0,30,360));
