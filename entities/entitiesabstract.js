@@ -94,7 +94,7 @@ function LivingEntity(game, x, y) {
   	this.health = this.healthMAX; // determines the current health of this LivingEntity
 
     this.radialOffset = 0; // the offset of the radius
-
+	this.spriteAngleOffset = 0; //if the sprite is not lined up in spritesheet
   	this.angle = 0; // determines the current angle set on this LivingEntity
 
     this.strength = 25; // determines the current damage done by this LivingEntity
@@ -543,7 +543,7 @@ LivingEntity.prototype.drawPlayer = function(ctx) {
         // creates the angleOffset from the distance
         angleOffset = Math.tan(this.radius / dist) * (180/Math.PI) - 5;       
     }
-    deg -= angleOffset; // subtract the angle's offset by this offset
+    deg -= (angleOffset + this.spriteAngleOffset); // subtract the angle's offset by this offset
     
     // draw the current player
     this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius - this.CenterOffsetX - this.game.getWindowX() - this.radialOffset, 

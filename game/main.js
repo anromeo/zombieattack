@@ -124,14 +124,14 @@ ASSET_MANAGER.downloadAll(function () {
 	//to add entities, change maps and otherwise setup the game go to gameEngine SetupGameState
 	gameEngine.start();
 
-    var audioRunning = true;
-    document.getElementById("pause-audio").addEventListener("click", function(){
-
-        if (audioRunning === true) {
-            console.log(gameEngine.backgroundaudio.pause);
+	document.getElementById("pause-audio").addEventListener("click", function(){
+        if (gameEngine.musicPlaying === true) {
+            //console.log(gameEngine.backgroundaudio.pause);
             gameEngine.backgroundaudio.pause();
+			gameEngine.musicPlaying = false;
         } else {
             gameEngine.backgroundaudio.play();
+			gameEngine.musicPlaying = true;
         }
     });
 });

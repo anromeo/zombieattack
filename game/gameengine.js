@@ -52,6 +52,7 @@ function GameEngine() {
     this.villains = []; // All the Zombies | TODO ? Get rid or change ?
     this.players = []; // All the Players | TODO ? Get rid or change ?
     this.gameRunning = true;
+	this.musicPlaying = true;
 
     // This is the x and y of the game, they control the rotation of the player
     this.x;
@@ -262,8 +263,10 @@ GameEngine.prototype.init = function (ctx) {
 
     this.startInput();
 	this.setupGameState();
-	
-	this.backgroundaudio.play();	
+	if (this.musicPlaying) {
+		this.backgroundaudio.play();
+	}
+		
 }
 
 GameEngine.prototype.start = function () {
@@ -281,7 +284,7 @@ GameEngine.prototype.start = function () {
 }
 
 GameEngine.prototype.restart = function () {
-	
+	console.log("restart");
     // Entities of the Game
     this.entities = []; // All entities of the game
     this.weapons = []; // All the weapons of the game
@@ -306,9 +309,12 @@ GameEngine.prototype.restart = function () {
 
     this.windowX = 0; // This is the x-coordinate of the top left corner of the canvas currently
     this.windowY = 0; // This is the y-coordinate of the top left corner of the canvas currently   
-	this.setupGameState();
 	
-	this.backgroundaudio.play();	
+	this.setupGameState();
+	if (this.musicPlaying) {
+		this.backgroundaudio.play();
+	}
+		
 }
 
 GameEngine.prototype.generateRandomItem = function(x, y) {
@@ -329,6 +335,22 @@ GameEngine.prototype.generateRandomItem = function(x, y) {
 }
 
 GameEngine.prototype.setupGameState = function () {
+	this.setupMaps();
+	
+	//var player = new playerControlled(this);
+	var player = new Angel(this);
+    player.controlled = true;
+    this.addEntity(player);
+	//this.setMap(this.allMaps["ruins"]);
+	//this.setMap(this.allMaps["hospital"]);
+	this.setMap(this.allMaps["map1"]);
+	//this.menuMode = "Game";
+	this.menuMode = "Start";
+	
+	
+}
+
+GameEngine.prototype.setupMaps = function () {
 
     // FOREST MAP
     // this.worldWidth = 1600; // the width of the world within the canvas FOREST
@@ -757,7 +779,7 @@ GameEngine.prototype.setupGameState = function () {
 
 
     // this.setMap(bossMap);
-    this.setMap(ruins);
+    
     ruins.setItems(ruinItems);
     ruins.drawDialogue = false;
     // this.setMap(map1);
@@ -861,7 +883,7 @@ GameEngine.prototype.setupGameState = function () {
     mill.addWall(new Wall(this, 2265, 200, 10, 105));
     mill.addWall(new Wall(this, 2285, 385, 10, 60));
 
-    this.menuMode = "Game";
+    
     mill.spawnPoints = [{x:200, y:200},
                         {x:1200, y: 528},
                         {x:2000, y:125},
@@ -879,13 +901,10 @@ GameEngine.prototype.setupGameState = function () {
                         {x:2220, y: 1480},
                         {x:524, y: 1305},
                         {x:472, y: 1144}];
-    this.setMap(map1);
+    
     ruins.setItems(ruinItems);
     ruins.drawDialogue = true;
 
-    var player = new playerControlled(this);
-    player.controlled = true;
-    this.addEntity(player);
 
     // this.setItems(hospitalItems);
 
@@ -903,9 +922,11 @@ GameEngine.prototype.setupGameState = function () {
     // this.addEntity(warperPlayer);
 
     // After Boss maps
-
+	
+	//save all the maps to the all Maps Array
     this.allMaps["ruins"] = ruins;
     this.allMaps["hospital"] = hospital;
+	this.allMaps["map1"] = map1;
 
     // var player2 = new playerControlled(this);
     // this.addEntity(player2);
@@ -1757,7 +1778,7 @@ GameEngine.prototype.menuLoop = function () {
 			//console.log(this.startButton);
 			if (this.checkMenuClick(this.startButton)){
 				//console.log("should be starting");
-				this.restart();
+				//this.restart();
 				document.getElementById('gameWorld').style.cursor = '';
                 if (this.hasSeenIntro) {
     				this.menuMode = "Game";
@@ -1773,13 +1794,17 @@ GameEngine.prototype.menuLoop = function () {
 		} else if (this.menuMode == "Pause") {
 			if (this.checkMenuClick(this.continueButton)){
 				//console.log("should be continuing");
-				this.backgroundaudio.play();	
+				if (this.musicPlaying) {
+					this.backgroundaudio.play();
+				}					
 				document.getElementById('gameWorld').style.cursor = '';
 				this.menuMode = "Game";
 			} else if (this.checkMenuClick(this.startButton)){
 				//console.log("should be restarting");
 				this.restart();
-				this.backgroundaudio.play();	
+				if (this.musicPlaying) {
+					this.backgroundaudio.play();
+				}	
 				document.getElementById('gameWorld').style.cursor = '';
 				this.menuMode = "Game";
 			}
@@ -1797,7 +1822,9 @@ GameEngine.prototype.menuLoop = function () {
             if ((this.beginButton && this.checkMenuClick(this.beginButton)) ||
             (this.skipIntroButton && this.checkMenuClick(this.skipIntroButton))) {
                 this.menuMode = "Game";
-				this.backgroundaudio.play();	
+				if (this.musicPlaying) {
+					this.backgroundaudio.play();
+				}	
                 document.getElementById('gameWorld').style.cursor = '';
             }
         }
@@ -1939,7 +1966,9 @@ GameEngine.prototype.loop = function () {
 
     this.click = null; // resets the click to null
 	
-	this.backgroundaudio.play();
+	if (this.musicPlaying) {
+		this.backgroundaudio.play();
+	}
     this.map.update();
 
 }

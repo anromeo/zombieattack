@@ -6,6 +6,8 @@
 // Source Used: http://jaran.de/goodbits/2011/07/17/calculating-an-intercept-course-to-a-target-with-constant-direction-and-velocity-in-a-2-dimensional-plane/
 
 function Angel(game) {
+	//console.log("building angel");
+	//LivingEntity.call(this, game, 100, 100);
     playerControlled.call(this, game);
 
     this.player = 1;
@@ -80,7 +82,8 @@ function Angel(game) {
     this.ability2PictureInactive = ASSET_MANAGER.getAsset("./images/angel-ability2-inactive.png");
 
     this.angle = 0;
-    this.angleOffset = -210;
+    //this.angleOffset = -210;
+	this.spriteAngleOffset = 80;
 
     this.anglePlayerControlled = -100;
 };
@@ -95,7 +98,7 @@ Angel.prototype.ability2 = function(entity) {
 }
 
 Angel.prototype.update = function() {
-    console.log(this.angleOffset);
+    //console.log(this.spriteAngleOffset);
     if (this.frozen) {
         return;
     }
@@ -129,5 +132,5 @@ Angel.prototype.update = function() {
 }
 
 Angel.prototype.draw = function (ctx) {
-	playerControlled.prototype.draw.call(ctx, this);
+	playerControlled.prototype.draw.call(this, ctx);
 }

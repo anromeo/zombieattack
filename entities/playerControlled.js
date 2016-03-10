@@ -6,6 +6,7 @@
 // Source Used: http://jaran.de/goodbits/2011/07/17/calculating-an-intercept-course-to-a-target-with-constant-direction-and-velocity-in-a-2-dimensional-plane/
 
 function playerControlled(game) {
+	//console.log("building playerControlled");
     //LivingEntity.call(this, game, 0, 0, 0, 0, this.radius + Math.random() * (800 - this.radius * 2), this.radius + Math.random() * (800 - this.radius * 2));  
     // LivingEntity.call(this, game, game.surfaceWidth/2 * Math.random(), game.surfaceHeight/2 * Math.random());
 
@@ -396,7 +397,6 @@ playerControlled.prototype.ability2 = function(entity) {
 
 playerControlled.prototype.update = function () {
 
-
     if (this.timerForSpeed) {
         if (this.timerForSpeed <= 0) {
             this.timerForSpeed = 0;
@@ -638,9 +638,9 @@ playerControlled.prototype.draw = function (ctx) {
 
         ctx.lineWidth = 1;
     }
-    if (this.controlled) {
-        console.log("X: " + this.x + " | Y: " + this.y);
-    }
+    // if (this.controlled) {
+        // console.log("X: " + this.x + " | Y: " + this.y);
+    // }
     // ctx.beginPath();
     // ctx.fillStyle = this.color;
     // ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
@@ -655,7 +655,7 @@ playerControlled.prototype.draw = function (ctx) {
     // ctx.closePath();
 
         //shooting line
-    if (this.game.mouse && this.shootingLine && this.controlled) {
+    if (this.game.mouse && this.shootingLine && this.controlled && this.name != "Angel") {
         ctx.beginPath();
 		        // var lineBeginX = this.canvasX + this.radius;
         // var lineBeginY = this.canvasY + this.radius;
@@ -688,7 +688,7 @@ playerControlled.prototype.draw = function (ctx) {
     }
 
 
-    if (this.game.mouse && this.game.mouse.mousedown && this.controlled) {
+    if (this.game.mouse && this.game.mouse.mousedown && this.controlled && this.name != "Angel") {
         ctx.beginPath();
         // var lineBeginX = this.canvasX + this.radius;
         // var lineBeginY = this.canvasY + this.radius;
