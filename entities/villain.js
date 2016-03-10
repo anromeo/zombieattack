@@ -37,11 +37,12 @@ function Villain(game, x, y, spawnPoints) {
 	// this.x = 850;
 	// this.y = this.game.surfaceHeight * Math.random();
 	
-	this.radius = 64;
+	//this.radius = 64;
+	this.radius = 32;
 	this.SpriteHeight = 60;
 	this.SpriteWidth = 60;
     this.player = 1;
-    this.radius = 32;
+    
     this.visualRadius = 100;
     this.approachingDistance = 600;
 

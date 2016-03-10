@@ -65,6 +65,10 @@ function GameEngine() {
 
     this.zombieCooldownNumInitial = 3;  // how often a zombie will appear initially
     this.zombieCooldown = this.zombieCooldownNumInitial; // the cooldown until the next zombie appears
+	
+	
+	this.spiderCooldownNumInitial = 1; // how often a spider will appear
+	this.spiderCooldown = this.zombieCooldownNumInitial; // the cooldown until the next spider appears
 
     this.kills = 0; // this is the number of kills that the player has total
 
@@ -342,8 +346,8 @@ GameEngine.prototype.setupGameState = function () {
     player.controlled = true;
     this.addEntity(player);
 	//this.setMap(this.allMaps["ruins"]);
-	//this.setMap(this.allMaps["hospital"]);
-	this.setMap(this.allMaps["map1"]);
+	this.setMap(this.allMaps["hospital"]);
+	//this.setMap(this.allMaps["map1"]);
 	//this.menuMode = "Game";
 	this.menuMode = "Start";
 	
@@ -1305,6 +1309,7 @@ GameEngine.prototype.update = function () {
             }
         }
     }
+	AddSpiders(this);
 
     // cyles through all of the entities once again
     for (var i = 0; i < entitiesCount; i++) {
