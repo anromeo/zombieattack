@@ -28,7 +28,7 @@ function playerControlled(game) {
     var spawnpoint = this.spawnPoints[Math.floor(Math.random() * this.spawnPoints.length)];
 
     // LivingEntity.call(this, game, spawnpoint.x, spawnpoint.y);
-    LivingEntity.call(this, game, 100, 700);
+    LivingEntity.call(this, game, 100, 100);
 
     this.player = 1;
     // this.SpriteWidth = 80;

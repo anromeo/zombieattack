@@ -66,7 +66,7 @@ function GameEngine() {
 
     this.kills = 0; // this is the number of kills that the player has total
 
-    this.showOutlines = true; // this shows the outline of the entities
+    this.showOutlines = false; // this shows the outline of the entities
     this.ctx = null; // this is the object being used to draw on the map
     this.click = null; // this is the click value (if null, not being clicked)
 
@@ -86,7 +86,7 @@ function GameEngine() {
 	// this.backgroundaudio.appendChild(source);
 	source= document.createElement('source');
 	source.type= 'audio/mpeg';
-	//source.src= "./sound/fastfoot.mp3";
+	source.src= "./sound/fastfoot.mp3";
 	this.backgroundaudio.appendChild(source);
     console.log(this.backgroundaudio);
 	
@@ -309,7 +309,7 @@ GameEngine.prototype.setupGameState = function () {
 
     mansion = new Map(this, ASSET_MANAGER.getAsset("./images/mansion.png"), "City", 2285, 1500, 200, 200, 0.5);
 
-    map1.isBossMap = true;
+    //map1.isBossMap = true;
     map1.addWall(new Wall(this, 0, 0,2400,40));
     map1.addWall(new Wall(this, 950, 0,190,100));
     map1.addWall(new Wall(this, 1430, 0,30,360));
@@ -499,6 +499,7 @@ GameEngine.prototype.setupGameState = function () {
 
     var speed = new Speed(this, ASSET_MANAGER.getAsset("./images/speed.png"), RuinspeedSpawn);
     ruinItems.push(speed);
+    ruins.setItems(ruinItems);
 
     var bossMap = new Map(this, ASSET_MANAGER.getAsset("./images/bossMap1.png"), "Boss Map - Level 1", 800, 600, 800, 600, 0.5);
     var boss = new Boss(this);
@@ -681,9 +682,9 @@ GameEngine.prototype.setupGameState = function () {
 
 
     // this.setMap(bossMap);
-    this.setMap(map1);
-    //map3.setItems(ruinItems);
-    //ruins.drawDialogue = true;
+    this.setMap(ruins);
+    ruins.setItems(ruinItems);
+    ruins.drawDialogue = false;
 
     // this.setItems(hospitalItems);
 
