@@ -67,7 +67,7 @@ function GameEngine() {
 
     this.kills = 0; // this is the number of kills that the player has total
 
-    this.showOutlines = true; // this shows the outline of the entities
+    this.showOutlines = false; // this shows the outline of the entities
     this.ctx = null; // this is the object being used to draw on the map
     this.click = null; // this is the click value (if null, not being clicked)
 
@@ -739,7 +739,7 @@ GameEngine.prototype.setupGameState = function () {
     // this.setMap(hospital);
     // this.setMap(ruins);
     cemetary = new Map(this, ASSET_MANAGER.getAsset("./images/cemetary.png"), "Small Room", 5000, 3674, 450, 337.5, 0.5);
-    var mill = new Map(this, ASSET_MANAGER.getAsset("./images/mill.png"), "Small Room", 3300, 1730, 550, 550*.75, .69);
+    var mill = new Map(this, ASSET_MANAGER.getAsset("./images/mill.png"), "Small Room", 2560, 1730, 550, 550*.75, .69);
 
     mill.addWall(new Wall(this, 343, 56, 190, 17));
     mill.addWall(new Wall(this, 675, 56, 275, 17));
@@ -779,15 +779,73 @@ GameEngine.prototype.setupGameState = function () {
 
     mill.addWall(new Wall(this, 1320, 56, 1200, 17));
     mill.addWall(new Wall(this, 1320 + 1155, -20, 200, 145));
+    mill.addWall(new Wall(this, 2550, 0, 17, 1800));
+    // mill.addWall(new Wall(this, 2490, 1073, 200, 240));
 
+    mill.addWall(new Wall(this, 2300, 1400, 300, 150));
+    mill.addWall(new Wall(this, 1785, 1140, 200, 200));
+
+    // mill.addWall(new Wall(this, 2087, 235, 5, 240));
+    // mill.addWall(new Wall(this, 2110, 400, 5, 50));
+
+
+    // mill.addWall(new Wall(this, 2071, 235, 17, 45));
+    // mill.addWall(new Wall(this, 2076, 275, 17, 45));
+    // mill.addWall(new Wall(this, 2081, 315, 17, 45));
+    // mill.addWall(new Wall(this, 2091, 355, 17, 45));
+    // mill.addWall(new Wall(this, 2096, 395, 17, 45));
+    // mill.addWall(new Wall(this, 2101, 435, 17, 45));
+
+
+    // mill.addWall(new Wall(this, 2446, 180, 17, 45));
+    // mill.addWall(new Wall(this, 2451, 220, 17, 45));
+    // mill.addWall(new Wall(this, 2456, 260, 17, 45));
+    // mill.addWall(new Wall(this, 2461, 300, 17, 45));
+    // mill.addWall(new Wall(this, 2466, 340, 17, 45));
+    // mill.addWall(new Wall(this, 2471, 380, 17, 45));
+
+    // mill.addWall(new Wall(this, 2177, 210, 50, 17));
+    // mill.addWall(new Wall(this, 2217, 205, 50, 17));
+    // mill.addWall(new Wall(this, 2257, 200, 50, 17));
+    // mill.addWall(new Wall(this, 2297, 195, 50, 17));
+    // mill.addWall(new Wall(this, 2347, 190, 50, 17));
+    // mill.addWall(new Wall(this, 2387, 185, 80, 17));
+
+    mill.addWall(new Wall(this, 2071, 235, 17, 90));
+    mill.addWall(new Wall(this, 2081, 305, 17, 90));
+    mill.addWall(new Wall(this, 2091, 375, 17, 90));
+
+    mill.addWall(new Wall(this, 2446, 180, 17, 90));
+    mill.addWall(new Wall(this, 2460, 250, 17, 90));
+    mill.addWall(new Wall(this, 2465, 320, 17, 90));
+    // mill.addWall(new Wall(this, 2461, 300, 17, 45));
+    // mill.addWall(new Wall(this, 2466, 340, 17, 45));
+    // mill.addWall(new Wall(this, 2471, 380, 17, 45));
+
+    mill.addWall(new Wall(this, 2177, 200, 100, 17));
+    mill.addWall(new Wall(this, 2257, 190, 100, 17));
+    mill.addWall(new Wall(this, 2297, 180, 155, 17));
+
+    mill.addWall(new Wall(this, 2100, 460, 100, 17));
+    mill.addWall(new Wall(this, 2285, 430, 200, 17));
+    mill.addWall(new Wall(this, 2385, 405, 100, 17));
+
+    mill.addWall(new Wall(this, 2265, 200, 10, 105));
+    mill.addWall(new Wall(this, 2285, 385, 10, 60));
+
+    // mill.addWall(new Wall(this, 2217, 205, 50, 17));
+    // mill.addWall(new Wall(this, 2257, 200, 50, 17));
+    // mill.addWall(new Wall(this, 2297, 195, 50, 17));
+    // mill.addWall(new Wall(this, 2347, 190, 50, 17));
+    // mill.addWall(new Wall(this, 2387, 185, 60, 17));
 
     this.setMap(mill);
     ruins.setItems(ruinItems);
     ruins.drawDialogue = false;
 
     var player = new playerControlled(this);
-    player.x = 200;
-    player.y = 200;
+    player.x = 2065;
+    player.y = 230;
     player.controlled = true;
     this.addEntity(player);
 
@@ -1789,6 +1847,9 @@ GameEngine.prototype.drawPlayerView = function(index, player) {
     if (this.click && this.checkMenuClick(this.addButtonSpeed) && canAddAttributePoints) {
         this.attributePoints -= 1;
         player.speed += 1;
+        if (player.originalSpeed) {
+            player.originalSpeed += 1;
+        }
         player.maxSpeed = player.speed * 4;
     }
 
