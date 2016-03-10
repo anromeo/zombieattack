@@ -384,7 +384,7 @@ GameEngine.prototype.setupGameState = function () {
                         { x: 2200, y: 1200 },
                         { x: 1248, y: 1221 }];
 
-    map1.isBossMap = true;
+   // map1.isBossMap = true;
     map1.addWall(new Wall(this, 0, 0,2400,40));
     map1.addWall(new Wall(this, 950, 0,190,100));
     map1.addWall(new Wall(this, 1430, 0,30,360));
@@ -878,7 +878,17 @@ GameEngine.prototype.setupGameState = function () {
                         {x:1320, y: 1315},
                         {x:2220, y: 1480},
                         {x:524, y: 1305},
-                        {x:472, y: 1144}];
+                        {x:472, y: 1144}],
+                        {x:467, y: 100},
+                        {x:820, y: 137},
+                        {x:1295, y: 137},
+                        {x:578, y: 426},
+                        {x:218, y: 426},
+                        {x:760, y: 358},
+                        {x:281, y: 358},
+                        {x:490, y: 639},
+                        {x:490, y: 1052},
+                        {x:1387, y: 1547};
     this.setMap(map1);
     ruins.setItems(ruinItems);
     ruins.drawDialogue = true;
