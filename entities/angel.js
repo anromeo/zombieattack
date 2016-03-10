@@ -127,3 +127,7 @@ Angel.prototype.update = function() {
     }
     playerControlled.prototype.update.call(this);
 }
+
+Angel.prototype.draw = function (ctx) {
+	playerControlled.prototype.draw.call(ctx, this);
+}

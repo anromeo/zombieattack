@@ -58,7 +58,8 @@ function GameEngine() {
     this.y;
 
     this.map = null;
-	this.menuMode = "Game";
+	//this.menuMode = "Game";
+	this.menuMode = "Start";
     this.hasSeenIntro = false;
 
     this.zombieCooldownNumInitial = 3;  // how often a zombie will appear initially
@@ -123,8 +124,8 @@ GameEngine.prototype.setupSounds = function () {
 	// this.backgroundaudio.appendChild(source);
 	source = document.createElement('source');
 	source.type= 'audio/mpeg';
-	//source.src= "./sound/fastfoot.mp3";
-	source.src= "./sound/backgroundmusic1.mp3";
+	source.src= "./sound/fastfoot.mp3";
+	//source.src= "./sound/backgroundmusic1.mp3";
 	this.backgroundaudio.appendChild(source);
     //console.log(this.backgroundaudio);
 	
@@ -1362,14 +1363,16 @@ GameEngine.prototype.drawStory = function() {
         this.storyClockSeconds++;
     }
     var incrementTime = (this.storyClockTick - previousStoryClockTick) / 2;
-    var scene2 = 20;
-    var scene3 = 30;
+    var scene2 = 30;
+    var scene3 = 40;
     var indent = 70;
 
-    this.skipIntroButton = {x:this.surfaceWidth - 100, y: this.surfaceHeight - 75, height:50, width:75};    
+	if (this.alpha5 < 1) {
+		    this.skipIntroButton = {x:this.surfaceWidth - 100, y: this.surfaceHeight - 75, height:50, width:75};    
 
-    this.skipIntroButton.lines = ["Skip"];
-    this.drawButton(this.skipIntroButton, "transparent");
+		this.skipIntroButton.lines = ["Skip"];
+		this.drawButton(this.skipIntroButton, "transparent");
+	}
 
     if (this.storyClockSeconds > 1) {
         if (this.alpha1 < 1 && this.storyClockSeconds < scene2) {
