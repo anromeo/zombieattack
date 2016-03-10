@@ -369,9 +369,7 @@ GameEngine.prototype.setupGameState = function () {
 
     mansion = new Map(this, ASSET_MANAGER.getAsset("./images/mansion.png"), "City", 2285, 1500, 200, 200, 0.5);
 
-<<<<<<< HEAD
     //map1.isBossMap = true;
-=======
     ruins.spawnPoints =[{ x: 1360, y: 652 },
                         { x: 1231, y: 322 },
                         { x: 1338, y: 80 },
