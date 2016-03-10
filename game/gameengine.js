@@ -76,7 +76,6 @@ function GameEngine() {
     this.surfaceWidth = null; // the width of the canvas
     this.surfaceHeight = null; // the height of the canvas
 
-<<<<<<< HEAD
 	// var source= document.createElement('source');
 	// source.type= 'audio/ogg';
 	// source.src= "./sound/backgroundmusic1.ogg";
@@ -86,10 +85,8 @@ function GameEngine() {
 	source.src= "./sound/fastfoot.mp3";
 	this.backgroundaudio.appendChild(source);
     console.log(this.backgroundaudio);
-=======
 	this.setupSounds();
 
->>>>>>> 1cf404c19d3289f28374b6b933be486dce76ae00
 	
     this.attributePoints = 0;
     // FOREST MAP
@@ -763,11 +760,9 @@ GameEngine.prototype.setupGameState = function () {
 
 
     // this.setMap(bossMap);
-<<<<<<< HEAD
     this.setMap(ruins);
     ruins.setItems(ruinItems);
     ruins.drawDialogue = false;
-=======
     // this.setMap(map1);
     //map3.setItems(ruinItems);
     //ruins.drawDialogue = true;
@@ -894,7 +889,6 @@ GameEngine.prototype.setupGameState = function () {
     var player = new playerControlled(this);
     player.controlled = true;
     this.addEntity(player);
->>>>>>> 1cf404c19d3289f28374b6b933be486dce76ae00
 
     // this.setItems(hospitalItems);
 
