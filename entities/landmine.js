@@ -38,6 +38,7 @@ Landmine.prototype.update = function () {
                 if (this.enter(entity)) {
                     this.trigger = true;
                     this.setAnimation(ASSET_MANAGER.getAsset("./images/land-mine-explosion.png"), 96, 96, .1, 7, false, false, 5);
+					this.game.explosionaudio.play();
                     break;
                 }
             }

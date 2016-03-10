@@ -58,7 +58,8 @@ function GameEngine() {
     this.y;
 
     this.map = null;
-	this.menuMode = "Game";
+	//this.menuMode = "Game";
+	this.menuMode = "Start";
     this.hasSeenIntro = false;
 
     this.zombieCooldownNumInitial = 3;  // how often a zombie will appear initially
@@ -74,12 +75,8 @@ function GameEngine() {
 
     this.surfaceWidth = null; // the width of the canvas
     this.surfaceHeight = null; // the height of the canvas
-	
-	this.backgroundaudio = new Audio();
-	console.log(this.backgroundaudio);
-	this.backgroundaudio.loop = true;
-	this.backgroundaudio.preload = "auto";
 
+<<<<<<< HEAD
 	// var source= document.createElement('source');
 	// source.type= 'audio/ogg';
 	// source.src= "./sound/backgroundmusic1.ogg";
@@ -89,6 +86,10 @@ function GameEngine() {
 	source.src= "./sound/fastfoot.mp3";
 	this.backgroundaudio.appendChild(source);
     console.log(this.backgroundaudio);
+=======
+	this.setupSounds();
+
+>>>>>>> 1cf404c19d3289f28374b6b933be486dce76ae00
 	
     this.attributePoints = 0;
     // FOREST MAP
@@ -121,6 +122,68 @@ function GameEngine() {
 
     this.maxHalo = 10;
     this.halo = this.maxHalo;
+}
+
+GameEngine.prototype.setupSounds = function () {
+	this.backgroundaudio = new Audio();
+	//console.log(this.backgroundaudio);
+	this.backgroundaudio.loop = true;
+	this.backgroundaudio.preload = "auto";
+
+	// var source= document.createElement('source');
+	// source.type= 'audio/ogg';
+	// source.src= "./sound/backgroundmusic1.ogg";
+	// this.backgroundaudio.appendChild(source);
+	source = document.createElement('source');
+	source.type= 'audio/mpeg';
+	source.src= "./sound/fastfoot.mp3";
+	//source.src= "./sound/backgroundmusic1.mp3";
+	this.backgroundaudio.appendChild(source);
+    //console.log(this.backgroundaudio);
+	
+	this.gunaudio = new Audio();
+	//console.log(this.backgroundaudio);
+	this.gunaudio.loop = true;
+	this.gunaudio.preload = "auto";	
+	sourceGunAudio = document.createElement('source');
+	sourceGunAudio.type= 'audio/mpeg';
+	sourceGunAudio.src= "./sound/MachineGun3.mp3";
+	//sourceGunAudio.src= "./sound/GunShot.mp3";
+	this.gunaudio.appendChild(sourceGunAudio);
+	//this.gunaudio.pause();
+	
+	this.flameaudio = new Audio();
+	this.flameaudio.loop = true;
+	this.flameaudio.preload = "auto";	
+	sourceflameaudio = document.createElement('source');
+	sourceflameaudio.type= 'audio/mpeg';
+	sourceflameaudio.src= "./sound/Firestrm.mp3";
+	this.flameaudio.appendChild(sourceflameaudio);
+	//this.gunaudio.pause();
+	
+	this.explosionaudio = new Audio();
+	this.explosionaudio.loop = false;
+	this.explosionaudio.preload = "auto";	
+	sourceexplosionaudio = document.createElement('source');
+	sourceexplosionaudio.type= 'audio/mpeg';
+	sourceexplosionaudio.src= "./sound/Explosion.mp3";
+	this.explosionaudio.appendChild(sourceexplosionaudio);
+	
+	this.endaudio = new Audio();
+	this.endaudio.loop = false;
+	this.endaudio.preload = "auto";	
+	sourceendaudio = document.createElement('source');
+	sourceendaudio.type= 'audio/mpeg';
+	sourceendaudio.src= "./sound/wickedmalelaugh1.mp3";
+	this.endaudio.appendChild(sourceendaudio);
+	
+	this.winaudio = new Audio();
+	this.winaudio.loop = false;
+	this.winaudio.preload = "auto";	
+	sourcewinaudio = document.createElement('source');
+	sourcewinaudio.type= 'audio/mpeg';
+	sourcewinaudio.src= "./sound/whahoo.mp3";
+	this.winaudio.appendChild(sourcewinaudio);
 }
 
 /**
@@ -309,7 +372,25 @@ GameEngine.prototype.setupGameState = function () {
 
     mansion = new Map(this, ASSET_MANAGER.getAsset("./images/mansion.png"), "City", 2285, 1500, 200, 200, 0.5);
 
+<<<<<<< HEAD
     //map1.isBossMap = true;
+=======
+    ruins.spawnPoints =[{ x: 1360, y: 652 },
+                        { x: 1231, y: 322 },
+                        { x: 1338, y: 80 },
+                        { x: 1073, y: 460 },
+                        { x: 939, y: 965 },
+                        { x: 1027, y: 1225 },
+                        { x: 910, y: 683 },
+                        { x: 660, y: 1029 },
+                        { x: 360, y: 1233 },
+                        { x: 360, y: 924},
+                        { x: 752, y: 1250 },
+                        { x: 2200, y: 1200 },
+                        { x: 1248, y: 1221 }];
+
+    map1.isBossMap = true;
+>>>>>>> 1cf404c19d3289f28374b6b933be486dce76ae00
     map1.addWall(new Wall(this, 0, 0,2400,40));
     map1.addWall(new Wall(this, 950, 0,190,100));
     map1.addWall(new Wall(this, 1430, 0,30,360));
@@ -349,6 +430,7 @@ GameEngine.prototype.setupGameState = function () {
     map1.addWall(new Wall(this, 145, 820,45,100));
      map1.addWall(new Wall(this, 145, 880,300,45));
     map1.addWall(new Wall(this, 1450, 1480,50, 205));
+
     // adding all the walls and attractors for the hospital
     hospital.addWall(new Wall(this, 38, 460, 70, 210));
     hospital.addWall(new Wall(this, 275, 0, 95, 115));
@@ -503,14 +585,13 @@ GameEngine.prototype.setupGameState = function () {
 
     var bossMap = new Map(this, ASSET_MANAGER.getAsset("./images/bossMap1.png"), "Boss Map - Level 1", 800, 600, 800, 600, 0.5);
     var boss = new Boss(this);
-    boss.health = 5;
+    // boss.health = 5;
     bossMap.addVillain(boss);
     bossMap.isBossMap = true;
-    map1.update = function() {
-        console.log("windowX" + this.game.getWindowX);
-        console.log("windowy" + this.game.getWindowy);
-    }
-
+    // map1.update = function() {
+        // console.log("windowX" + this.game.getWindowX);
+        // console.log("windowy" + this.game.getWindowy);
+    // }
 
     bossMap.update = function() {
         if (this.unlocked === undefined) {
@@ -682,22 +763,147 @@ GameEngine.prototype.setupGameState = function () {
 
 
     // this.setMap(bossMap);
+<<<<<<< HEAD
     this.setMap(ruins);
     ruins.setItems(ruinItems);
     ruins.drawDialogue = false;
+=======
+    // this.setMap(map1);
+    //map3.setItems(ruinItems);
+    //ruins.drawDialogue = true;
+    hospital.drawDialogue = false;
+    // this.setMap(hospital);
+    // this.setMap(ruins);
+    cemetary = new Map(this, ASSET_MANAGER.getAsset("./images/cemetary.png"), "Small Room", 5000, 3674, 450, 337.5, 0.5);
+    var mill = new Map(this, ASSET_MANAGER.getAsset("./images/mill.png"), "Small Room", 2560, 1730, 550, 550*.75, .69);
+
+    mill.addWall(new Wall(this, 343, 56, 190, 17));
+    mill.addWall(new Wall(this, 675, 56, 275, 17));
+    mill.addWall(new Wall(this, 470, 398, 713, 17));
+    mill.addWall(new Wall(this, 470, 398, 17, 460));
+    mill.addWall(new Wall(this, 470 + 713 - 23, 250, 23, 165));
+    mill.addWall(new Wall(this, 470 + 713 - 23, 250, 80, 17));
+    mill.addWall(new Wall(this, 470 + 872 - 23, 250, 100, 17));
+
+    mill.addWall(new Wall(this, 470 + 713 - 23 + 255, 250, 17, 325));
+    mill.addWall(new Wall(this, 470 + 500, 250 + 325 - 17, 463, 18));
+    mill.addWall(new Wall(this, 470 + 500 + 3, 250 + 325 - 50, 17, 50));
+
+    mill.addWall(new Wall(this, 470 + 500 + 3, 400, 17, 50));
+    mill.addWall(new Wall(this, 1054, 250 + 325 - 63, 120, 30));
+    mill.addWall(new Wall(this, 1320, 377, 43, 90));
+
+    mill.addWall(new Wall(this, 470, 842, 93, 17));
+    mill.addWall(new Wall(this, 640, 842, 238, 17));
+
+    mill.addWall(new Wall(this, 972, 560, 17, 20));
+    mill.addWall(new Wall(this, 964, 575, 17, 20));
+    mill.addWall(new Wall(this, 956, 590, 17, 20));
+    mill.addWall(new Wall(this, 948, 605, 17, 20));
+    mill.addWall(new Wall(this, 940, 620, 17, 20));
+    mill.addWall(new Wall(this, 932, 635, 17, 20));
+
+    mill.addWall(new Wall(this, 900, 740, 17, 20));
+    mill.addWall(new Wall(this, 895, 755, 17, 20));
+    mill.addWall(new Wall(this, 887, 770, 17, 20));
+    mill.addWall(new Wall(this, 879, 785, 17, 20));
+    mill.addWall(new Wall(this, 871, 800, 17, 20));
+    mill.addWall(new Wall(this, 864, 815, 17, 20));
+
+    mill.addWall(new Wall(this, 70, 730, 155, 140));
+    mill.addWall(new Wall(this, 70, 600, 17, 940));
+
+    mill.addWall(new Wall(this, 1320, 56, 1200, 17));
+    mill.addWall(new Wall(this, 1320 + 1155, -20, 200, 145));
+    mill.addWall(new Wall(this, 2550, 0, 17, 1800));
+    // mill.addWall(new Wall(this, 2490, 1073, 200, 240));
+
+    mill.addWall(new Wall(this, 2300, 1400, 300, 150));
+    mill.addWall(new Wall(this, 1785, 1140, 200, 200));
+
+    // mill.addWall(new Wall(this, 2087, 235, 5, 240));
+    // mill.addWall(new Wall(this, 2110, 400, 5, 50));
+
+
+    // mill.addWall(new Wall(this, 2071, 235, 17, 45));
+    // mill.addWall(new Wall(this, 2076, 275, 17, 45));
+    // mill.addWall(new Wall(this, 2081, 315, 17, 45));
+    // mill.addWall(new Wall(this, 2091, 355, 17, 45));
+    // mill.addWall(new Wall(this, 2096, 395, 17, 45));
+    // mill.addWall(new Wall(this, 2101, 435, 17, 45));
+
+
+    // mill.addWall(new Wall(this, 2446, 180, 17, 45));
+    // mill.addWall(new Wall(this, 2451, 220, 17, 45));
+    // mill.addWall(new Wall(this, 2456, 260, 17, 45));
+    // mill.addWall(new Wall(this, 2461, 300, 17, 45));
+    // mill.addWall(new Wall(this, 2466, 340, 17, 45));
+    // mill.addWall(new Wall(this, 2471, 380, 17, 45));
+
+    // mill.addWall(new Wall(this, 2177, 210, 50, 17));
+    // mill.addWall(new Wall(this, 2217, 205, 50, 17));
+    // mill.addWall(new Wall(this, 2257, 200, 50, 17));
+    // mill.addWall(new Wall(this, 2297, 195, 50, 17));
+    // mill.addWall(new Wall(this, 2347, 190, 50, 17));
+    // mill.addWall(new Wall(this, 2387, 185, 80, 17));
+
+    mill.addWall(new Wall(this, 2071, 235, 17, 90));
+    mill.addWall(new Wall(this, 2081, 305, 17, 90));
+    mill.addWall(new Wall(this, 2091, 375, 17, 90));
+
+    mill.addWall(new Wall(this, 2446, 180, 17, 90));
+    mill.addWall(new Wall(this, 2460, 250, 17, 90));
+    mill.addWall(new Wall(this, 2465, 320, 17, 90));
+    // mill.addWall(new Wall(this, 2461, 300, 17, 45));
+    // mill.addWall(new Wall(this, 2466, 340, 17, 45));
+    // mill.addWall(new Wall(this, 2471, 380, 17, 45));
+
+    mill.addWall(new Wall(this, 2177, 200, 100, 17));
+    mill.addWall(new Wall(this, 2257, 190, 100, 17));
+    mill.addWall(new Wall(this, 2297, 180, 155, 17));
+
+    mill.addWall(new Wall(this, 2100, 460, 100, 17));
+    mill.addWall(new Wall(this, 2285, 430, 200, 17));
+    mill.addWall(new Wall(this, 2385, 405, 100, 17));
+
+    mill.addWall(new Wall(this, 2265, 200, 10, 105));
+    mill.addWall(new Wall(this, 2285, 385, 10, 60));
+
+    this.menuMode = "Game";
+    mill.spawnPoints = [{x:200, y:200},
+                        {x:1200, y: 528},
+                        {x:2000, y:125},
+                        {x:1738, y: 1038},
+                        {x:1320, y: 1315},
+                        {x:2220, y: 1480},
+                        {x:524, y: 1305},
+                        {x:472, y: 1144}];
+
+    map1.spawnPoints = [{x:200, y:200},
+                        {x:1200, y: 528},
+                        {x:2000, y:125},
+                        {x:1738, y: 1038},
+                        {x:1320, y: 1315},
+                        {x:2220, y: 1480},
+                        {x:524, y: 1305},
+                        {x:472, y: 1144}];
+    this.setMap(map1);
+    ruins.setItems(ruinItems);
+    ruins.drawDialogue = true;
+
+    var player = new playerControlled(this);
+    player.controlled = true;
+    this.addEntity(player);
+>>>>>>> 1cf404c19d3289f28374b6b933be486dce76ae00
 
     // this.setItems(hospitalItems);
 
     // this.addEntity(new Portal(this, 800, 600, hospital, 200, 200));
 
 	
-	var player = new playerControlled(this);
-    player.controlled = true;
-    this.addEntity(player);
-
     // var angelPlayer = new Angel(this);
     // angelPlayer.x = 600;
-    // angelPlayer.canvasX = 600;
+    // angelPlayer.canvasX = 32;
     // this.addEntity(angelPlayer);
 
     // var warperPlayer = new TimeWarper(this);
@@ -718,7 +924,7 @@ GameEngine.prototype.setupGameState = function () {
     // bossMap.isBossMap = true;
 
     // this.addEntity(new Portal(this, 94, 1186, bossMap, 700, 200));
-//    this.setMap(bossMap);
+    // this.setMap(bossMap);
     // var player2 = new playerControlled(this);
     // this.addEntity(player2);
 
@@ -1077,7 +1283,12 @@ GameEngine.prototype.update = function () {
                 }
 
                 // Adds the zombie entity to the game
-                var zom = new Villain(this);
+                var zom;
+                if (!this.map.spawnPoints) {
+                    zom = new Villain(this);
+                } else {
+                    zom = new Villain(this, undefined, undefined, this.map.spawnPoints);
+                }
                 this.addEntity(zom);
             }
         }
@@ -1262,14 +1473,16 @@ GameEngine.prototype.drawStory = function() {
         this.storyClockSeconds++;
     }
     var incrementTime = (this.storyClockTick - previousStoryClockTick) / 2;
-    var scene2 = 20;
-    var scene3 = 30;
+    var scene2 = 30;
+    var scene3 = 40;
     var indent = 70;
 
-    this.skipIntroButton = {x:this.surfaceWidth - 100, y: this.surfaceHeight - 75, height:50, width:75};    
+	if (this.alpha5 < 1) {
+		    this.skipIntroButton = {x:this.surfaceWidth - 100, y: this.surfaceHeight - 75, height:50, width:75};    
 
-    this.skipIntroButton.lines = ["Skip"];
-    this.drawButton(this.skipIntroButton, "transparent");
+		this.skipIntroButton.lines = ["Skip"];
+		this.drawButton(this.skipIntroButton, "transparent");
+	}
 
     if (this.storyClockSeconds > 1) {
         if (this.alpha1 < 1 && this.storyClockSeconds < scene2) {
@@ -1389,7 +1602,7 @@ GameEngine.prototype.drawLoseMenu = function() {
     } 
     this.drawMessage ("GAME OVER", width + 127, height + 30);
     this.drawMessage ("YOU LOST!", width + 135, height + 60);
-        
+	this.endaudio.play();   
     height = 50;
     width = 200;
         
@@ -1409,6 +1622,7 @@ GameEngine.prototype.drawWinMenu = function() {
 
     this.drawMessage ("GAME OVER", width + 127, height + 30);
     this.drawMessage ("You Win!!", width + 151, height + 60);
+	this.winaudio.play();
         
     height = 50;
     width = 200;
@@ -1685,6 +1899,9 @@ GameEngine.prototype.drawPlayerView = function(index, player) {
     if (this.click && this.checkMenuClick(this.addButtonSpeed) && canAddAttributePoints) {
         this.attributePoints -= 1;
         player.speed += 1;
+        if (player.originalSpeed) {
+            player.originalSpeed += 1;
+        }
         player.maxSpeed = player.speed * 4;
     }
 

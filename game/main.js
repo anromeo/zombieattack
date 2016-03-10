@@ -108,6 +108,9 @@ ASSET_MANAGER.queueDownload("./images/mansion.png");
 ASSET_MANAGER.queueDownload("./images/land-mine.png");
 ASSET_MANAGER.queueDownload("./images/land-mine-explosion.png");
 
+ASSET_MANAGER.queueDownload("./images/cemetary.png");
+
+ASSET_MANAGER.queueDownload("./images/mill.png");
 ASSET_MANAGER.queueDownload(menuBackground);
 
 ASSET_MANAGER.downloadAll(function () {
@@ -121,4 +124,14 @@ ASSET_MANAGER.downloadAll(function () {
 	//to add entities, change maps and otherwise setup the game go to gameEngine SetupGameState
 	gameEngine.start();
 
+    var audioRunning = true;
+    document.getElementById("pause-audio").addEventListener("click", function(){
+
+        if (audioRunning === true) {
+            console.log(gameEngine.backgroundaudio.pause);
+            gameEngine.backgroundaudio.pause();
+        } else {
+            gameEngine.backgroundaudio.play();
+        }
+    });
 });

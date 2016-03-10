@@ -24,8 +24,7 @@ function Angel(game) {
     this.color = "Black";
     this.team = "blue";
     this.shootingLine = true;
-    this.angleOffset = 0;
-    this.radialOffset = 15;
+    this.radialOffset = -5;
 
     this.cooldown = 0;
     this.randomLine = {x:0, y:0};
@@ -33,7 +32,6 @@ function Angel(game) {
     this.linecooldownstart = .002;
     this.cooldownStartControlled = .45;
     this.cooldownStartNotControlled = .75;
-    this.angleOffset =  290;
     //this.corners = [{x:0, y:0}, {x:800, y:0}, {x:0, y:800}, {x:800, y:800}]
     this.CenterOffsetX = 10; // puts the center of the sprite in the center of the entity
     this.CenterOffsetY = 10; // puts the center of the sprite in the center of the entity
@@ -60,12 +58,12 @@ function Angel(game) {
 
     this.approachingDistance = 40;
     this.attackingDistance = 25;
-    this.SpriteWidth = 515 / 5;
-    this.SpriteHeight = 56;
+    this.SpriteWidth = 448 / 8;
+    this.SpriteHeight = 58;
     this.numberOfMovingAnimations = 5;
     this.numberOfMovingAnimationsInRow = 5;
 
-    this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/angel-walking.png"), this.SpriteWidth, this.SpriteHeight, .04, 4, true, false, 4);
+    this.setMovingAnimation(ASSET_MANAGER.getAsset("./images/angel-walking.png"), this.SpriteWidth, this.SpriteHeight, .14, 8, true, false, 8);
 
     this.ability1Attributes.activate = false;
     this.ability2Attributes.activate = false;
@@ -81,6 +79,10 @@ function Angel(game) {
     this.ability2PictureActive = ASSET_MANAGER.getAsset("./images/angel-ability2.png");
     this.ability2PictureInactive = ASSET_MANAGER.getAsset("./images/angel-ability2-inactive.png");
 
+    this.angle = 0;
+    this.angleOffset = -210;
+
+    this.anglePlayerControlled = -100;
 };
 
 Angel.prototype = new playerControlled();
@@ -93,6 +95,7 @@ Angel.prototype.ability2 = function(entity) {
 }
 
 Angel.prototype.update = function() {
+    console.log(this.angleOffset);
     if (this.frozen) {
         return;
     }
@@ -123,4 +126,8 @@ Angel.prototype.update = function() {
         }
     }
     playerControlled.prototype.update.call(this);
+}
+
+Angel.prototype.draw = function (ctx) {
+	playerControlled.prototype.draw.call(ctx, this);
 }
