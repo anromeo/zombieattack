@@ -67,12 +67,15 @@ function GameEngine() {
     this.zombieCooldown = this.zombieCooldownNumInitial; // the cooldown until the next zombie appears
 	
 	
-	this.spiderCooldownNumInitial = 1; // how often a spider will appear
+	this.spiderCooldownNumInitial = 2; // how often a spider will appear
 	this.spiderCooldown = this.zombieCooldownNumInitial; // the cooldown until the next spider appears
+	
+	this.skeletonCooldownNumInitial = 4; // how often a skeleton will appear
+	this.skeletonCooldown = this.zombieCooldownNumInitial; // the cooldown until the next skeleton appears
 
     this.kills = 0; // this is the number of kills that the player has total
 
-    this.showOutlines = false; // this shows the outline of the entities
+    this.showOutlines = true; // this shows the outline of the entities
     this.ctx = null; // this is the object being used to draw on the map
     this.click = null; // this is the click value (if null, not being clicked)
 
@@ -1310,6 +1313,7 @@ GameEngine.prototype.update = function () {
         }
     }
 	AddSpiders(this);
+	AddSkeletons(this);
 
     // cyles through all of the entities once again
     for (var i = 0; i < entitiesCount; i++) {
@@ -1783,7 +1787,7 @@ GameEngine.prototype.menuLoop = function () {
 			//console.log(this.startButton);
 			if (this.checkMenuClick(this.startButton)){
 				//console.log("should be starting");
-				//this.restart();
+				this.restart();
 				document.getElementById('gameWorld').style.cursor = '';
                 if (this.hasSeenIntro) {
     				this.menuMode = "Game";

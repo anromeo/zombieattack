@@ -88,6 +88,9 @@ ASSET_MANAGER.queueDownload("./images/angel-walking.png");
 
 ASSET_MANAGER.queueDownload("./images/Spider1.png");
 
+ASSET_MANAGER.queueDownload("./images/SkeletonWalk.png");
+ASSET_MANAGER.queueDownload("./images/SkeletonAttack.png");
+
 ASSET_MANAGER.queueDownload("./images/factory.png");
 
 ASSET_MANAGER.queueDownload("./images/smallroom.png");

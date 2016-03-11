@@ -73,9 +73,13 @@ function Spider(game, x, y, spawnPoints) {
 	// this.x = 850;
 	// this.y = this.game.surfaceHeight * Math.random();
 	
-	this.radius = 5;
+	this.radius = 10;
 	this.SpriteHeight = 23;
 	this.SpriteWidth = 23;
+	this.CenterOffsetX = -15; // puts the center of the sprite in the center of the entity
+	this.CenterOffsetY = -15;  //puts the center of the sprite in the center of the entity
+
+	
     this.player = 1;
     
     this.visualRadius = 100;
@@ -105,7 +109,6 @@ function Spider(game, x, y, spawnPoints) {
         this.velocity.x *= ratio;
         this.velocity.y *= ratio;
     }
-    this.radius = 20;
     this.radialOffset = 15;
 
 	this.showHealthBar = false;
@@ -113,31 +116,3 @@ function Spider(game, x, y, spawnPoints) {
 
 Spider.prototype = new Villain();
 Spider.prototype.constructor = Spider;
-
-// Villain.prototype.collide = function (other) {
-    // return distance(this, other) < this.radius + other.radius;
-// };
-
-// Villain.prototype.collideLeft = function () {
-    // return false;//(this.x - this.radius) < 0;
-// };
-
-// Villain.prototype.collideRight = function () {
-    // return false;//(this.x + this.radius) > 800;
-// };
-
-// Villain.prototype.collideTop = function () {
-    // return false;//(this.y - this.radius) < 0;
-// };
-
-// Villain.prototype.collideBottom = function () {
-    // return false;//(this.y + this.radius) > 800;
-// };
-
-// Villain.prototype.update = function () {
-
-    // this.aiUpdate("zombie");
-    // if (this.action && this.action.target === null) {
-        // this.flockTogether();
-    // }
-// };

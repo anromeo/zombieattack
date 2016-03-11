@@ -653,37 +653,42 @@ LivingEntity.prototype.draw = function (ctx) {
 
     if (positionX < this.game.surfaceWidth + 100 &&  positionX > -100 &&
         positionY < this.game.surfaceHeight + 100 && positionY > -100){
-    if (this.movingAnimation && this.type === "playerControlled" && this.controlled === true) {
+		if (this.movingAnimation && this.type === "playerControlled" && this.controlled === true) {
 
-        // Draws the Player
-        this.drawPlayer(ctx);
+			// Draws the Player
+			this.drawPlayer(ctx);
 
 
-    } else { // If any uncontrolled LivingEntity
+		} else { // If any uncontrolled LivingEntity
 
-        if (this.currentAnimation && this.currentAnimation === "attack" && this.attackAnimation !== undefined) {
+			if (this.currentAnimation && this.currentAnimation === "attack" && this.attackAnimation !== undefined) {
 
-            this.attackAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius - this.game.getWindowX() - this.radialOffset, this.y - this.radius - this.game.getWindowY() - this.radialOffset, this.angle);
-            if (this.attackAnimation.isAnimationOver) {
-                this.attackAnimation.elapsedTime = 0;
-                this.attackAnimation.isAnimationOver = false;
-                this.attackAnimation.isActivated = false;
-                this.currentAnimation = "moving";
-            }
-        } else {
-            this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius - this.game.getWindowX() - this.radialOffset, this.y - this.radius - this.game.getWindowY() - this.radialOffset, this.angle);
-        }
-    }
-	
-	  // SHOW health bar if set
-  	if (this.showHealthBar) {
-        this.drawHealthbar(ctx);
-  	}
+				// this.attackAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius - this.game.getWindowX() - this.radialOffset, this.y - this.radius - this.game.getWindowY() - this.radialOffset, this.angle);
+				this.attackAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius - this.CenterOffsetX - this.game.getWindowX() - this.radialOffset, 
+					this.y - this.radius - this.CenterOffsetY - this.game.getWindowY() - this.radialOffset, this.angle);
+				if (this.attackAnimation.isAnimationOver) {
+					this.attackAnimation.elapsedTime = 0;
+					this.attackAnimation.isAnimationOver = false;
+					this.attackAnimation.isActivated = false;
+					this.currentAnimation = "moving";
+				}
+			} else {
+				// this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius - this.game.getWindowX() - this.radialOffset, this.y - this.radius - this.game.getWindowY() - this.radialOffset, this.angle);
+				this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius - this.CenterOffsetX - this.game.getWindowX() - this.radialOffset, 
+					this.y - this.radius - this.CenterOffsetY - this.game.getWindowY() - this.radialOffset, this.angle);
+				
+			}
+		}
+		
+		  // SHOW health bar if set
+		if (this.showHealthBar) {
+			this.drawHealthbar(ctx);
+		}
 
-    // SHOW outline if game's showOutlines is true
-    if (this.game.showOutlines) {
-        this.drawOutlines(ctx);
-    }
+		// SHOW outline if game's showOutlines is true
+		if (this.game.showOutlines) {
+			this.drawOutlines(ctx);
+		}
     }
 
 }
