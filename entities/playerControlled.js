@@ -174,6 +174,15 @@ playerControlled.prototype.swapIfCanSwap = function(game) {
         && game.players[indexOfSwappingPlayerControlled]
         && !game.players[indexOfSwappingPlayerControlled].controlled) {
 
+        game.players[indexOfSwappingPlayerControlled].x = this.game.getPlayer().x;
+        game.players[indexOfSwappingPlayerControlled].canvasX = this.game.getPlayer().canvasX;
+        game.players[indexOfSwappingPlayerControlled].y = this.game.getPlayer().y;
+        game.players[indexOfSwappingPlayerControlled].canvasY = this.game.getPlayer().canvasY;
+
+        this.game.getPlayer.x = -100000;
+        this.game.getPlayer().canvasX = -100000;
+        this.game.getPlayer().y = -10000;
+        this.game.getPlayer().canvasY = -100000;
         // for every playerControlled object of the gameWipes away the control for all playerControlled Objects of the game
         for(var i = 0; i < game.players.length; i++) {
             // Wipes away the control for all playerControlled Objects of the game
@@ -200,7 +209,6 @@ playerControlled.prototype.selectAction = function () {
         if (this.game.keyState) {
             var x = 0;
             var y = 0;
-
             // If the player has pressed a key '1' to '9' then swap players if
             // the other player exists
             this.swapIfCanSwap(this.game);            
@@ -232,14 +240,10 @@ playerControlled.prototype.selectAction = function () {
             }  
             
             if (this.game.keyState[32]) {
-                switch (this.currentAbility) {
-                    case 1: this.ability1Attributes.activate = true;
-                    break;
-                    case 2: this.ability2Attributes.activate = true;
-                    break;
-                    case 3: ;
-                    break;
-                }
+                this.ability2Attributes.activate = true;
+            }
+            if (this.game.keyState[16]) {
+                this.ability1Attributes.activate = true;
             }
             action.direction.x += (x) * acceleration;
             action.direction.y += (y) * acceleration;
@@ -588,6 +592,8 @@ playerControlled.prototype.draw = function (ctx) {
 		
 		this.game.x = this.game.mouse.x;
 		this.game.y = this.game.mouse.y;
+        // console.log("X " + this.game.x);
+        // console.log("Y " + this.game.y);
     }
     
     if (this.timerForSpeed) {

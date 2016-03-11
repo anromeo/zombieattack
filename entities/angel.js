@@ -91,6 +91,32 @@ function Angel(game) {
 Angel.prototype = new playerControlled();
 Angel.prototype.constructor = Angel;
 
+// This function will eventually move to the shooter class.
+Angel.prototype.attack = function(target) {
+
+    var dir = direction(target, this);
+    var shot;
+    if (this.weapon === "FlameThrower") {
+        shot = new Flame(this.game, this, dir);
+        this.game.flameaudio.play();
+    } else {
+        shot = new Projectile(this.game);
+        shot.radius = 15;
+        shot.color = "gold";
+    }
+    shot.strength += this.strength;
+    shot.maxSpeed = this.maxSpeed * 2;
+    shot.x = this.x + dir.x * (this.radius + shot.radius + 20);
+    shot.y = this.y + dir.y * (this.radius + shot.radius + 20);
+    shot.velocity.x = dir.x * shot.maxSpeed;
+    shot.velocity.y = dir.y * shot.maxSpeed;
+    //shot.thrown = true;
+    shot.thrower = this;
+    shot.team = this.team;
+    this.game.addEntity(shot);
+
+}
+
 Angel.prototype.ability1 = function(entity) {
 }
 

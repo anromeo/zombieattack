@@ -23,7 +23,7 @@ function TimeWarper(game) {
     this.spawnPoints[9] = { x: 136, y: 888 };
     this.spawnPoints[11] = { x: 664, y: 416 };
     this.spawnPoints[12] = { x: 190, y: 80 };
-    this.movingAnimationImage = ASSET_MANAGER.getAsset("./images/shooter-walking2.png");
+    this.movingAnimationImage = ASSET_MANAGER.getAsset("./images/alternativee-shooter-walking2.png");
 
     var spawnpoint = this.spawnPoints[Math.floor(Math.random() * this.spawnPoints.length)];
 
