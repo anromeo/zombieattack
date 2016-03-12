@@ -48,30 +48,31 @@ function GameEngine() {
     // Entities of the Game
     this.entities = []; // All entities of the game
     this.weapons = []; // All the weapons of the game
-	this.items = [];
+    this.items = [];
     this.villains = []; // All the Zombies | TODO ? Get rid or change ?
     this.players = []; // All the Players | TODO ? Get rid or change ?
     this.gameRunning = true;
-	this.musicPlaying = true;
+    this.musicPlaying = true;
+    this.deadPlayers = [];
 
     // This is the x and y of the game, they control the rotation of the player
     this.x;
     this.y;
 
     this.map = null;
-	//this.menuMode = "Game";
-	this.menuMode = "Start";
+    //this.menuMode = "Game";
+    this.menuMode = "Start";
     this.hasSeenIntro = false;
 
     this.zombieCooldownNumInitial = 3;  // how often a zombie will appear initially
     this.zombieCooldown = this.zombieCooldownNumInitial; // the cooldown until the next zombie appears
-	
-	
-	this.spiderCooldownNumInitial = 2; // how often a spider will appear
-	this.spiderCooldown = this.zombieCooldownNumInitial; // the cooldown until the next spider appears
-	
-	this.skeletonCooldownNumInitial = 4; // how often a skeleton will appear
-	this.skeletonCooldown = this.zombieCooldownNumInitial; // the cooldown until the next skeleton appears
+    
+    
+    this.spiderCooldownNumInitial = 2; // how often a spider will appear
+    this.spiderCooldown = this.zombieCooldownNumInitial; // the cooldown until the next spider appears
+    
+    this.skeletonCooldownNumInitial = 4; // how often a skeleton will appear
+    this.skeletonCooldown = this.zombieCooldownNumInitial; // the cooldown until the next skeleton appears
 
     this.kills = 0; // this is the number of kills that the player has total
 
@@ -84,18 +85,18 @@ function GameEngine() {
     this.surfaceWidth = null; // the width of the canvas
     this.surfaceHeight = null; // the height of the canvas
 
-	// var source= document.createElement('source');
-	// source.type= 'audio/ogg';
-	// source.src= "./sound/backgroundmusic1.ogg";
-	// this.backgroundaudio.appendChild(source);
-	// source= document.createElement('source');
-	// source.type= 'audio/mpeg';
-	// source.src= "./sound/fastfoot.mp3";
-	// this.backgroundaudio.appendChild(source);
+    // var source= document.createElement('source');
+    // source.type= 'audio/ogg';
+    // source.src= "./sound/backgroundmusic1.ogg";
+    // this.backgroundaudio.appendChild(source);
+    // source= document.createElement('source');
+    // source.type= 'audio/mpeg';
+    // source.src= "./sound/fastfoot.mp3";
+    // this.backgroundaudio.appendChild(source);
  //    console.log(this.backgroundaudio);
-	this.setupSounds();
+    this.setupSounds();
 
-	
+    
     this.attributePoints = 0;
     // FOREST MAP
     // this.worldWidth = 1600; // the width of the world within the canvas FOREST
@@ -129,66 +130,92 @@ function GameEngine() {
     this.halo = this.maxHalo;
 }
 
-GameEngine.prototype.setupSounds = function () {
-	this.backgroundaudio = new Audio();
-	//console.log(this.backgroundaudio);
-	this.backgroundaudio.loop = true;
-	this.backgroundaudio.preload = "auto";
+GameEngine.prototype.restoreSpeeds = function () {
+    for (var i = 0; i < this.entities.length; i++) {
+        var other = this.entities[i];
+        if (!other.isNonLiving && other.team != this.getPlayer().team && other.oldSpeed) {
+            other.maxSpeed = other.oldSpeed;
+            other.cooldown = other.oldCooldown;
+            if (other.movingAnimation) {
+                other.movingAnimation.frameDuration = other.movingAnimationOld;
+            }
+            if (other.attackAnimation) {
+                other.attackAnimation.frameDuration = other.attackAnimationOld;                        
+            }
+            other.oldSpeed = false;
+        }
+        if (!other.isNonLiving && other.team != this.getPlayer().team && other.frozen) {
+            if (other.movingAnimation) {
+                other.movingAnimation.frozen = false;
+            }
+            if (other.attackAnimation) {
+                other.attackAnimation.frozen = false;                        
+            }
+            other.frozen = false;
+        }
 
-	// var source= document.createElement('source');
-	// source.type= 'audio/ogg';
-	// source.src= "./sound/backgroundmusic1.ogg";
-	// this.backgroundaudio.appendChild(source);
-	source = document.createElement('source');
-	source.type= 'audio/mpeg';
-	source.src= "./sound/fastfoot.mp3";
-	//source.src= "./sound/backgroundmusic1.mp3";
-	this.backgroundaudio.appendChild(source);
+    }
+}
+GameEngine.prototype.setupSounds = function () {
+    this.backgroundaudio = new Audio();
     //console.log(this.backgroundaudio);
-	
-	this.gunaudio = new Audio();
-	//console.log(this.backgroundaudio);
-	this.gunaudio.loop = true;
-	this.gunaudio.preload = "auto";	
-	sourceGunAudio = document.createElement('source');
-	sourceGunAudio.type= 'audio/mpeg';
-	sourceGunAudio.src= "./sound/MachineGun3.mp3";
-	//sourceGunAudio.src= "./sound/GunShot.mp3";
-	this.gunaudio.appendChild(sourceGunAudio);
-	//this.gunaudio.pause();
-	
-	this.flameaudio = new Audio();
-	this.flameaudio.loop = true;
-	this.flameaudio.preload = "auto";	
-	sourceflameaudio = document.createElement('source');
-	sourceflameaudio.type= 'audio/mpeg';
-	sourceflameaudio.src= "./sound/Firestrm.mp3";
-	this.flameaudio.appendChild(sourceflameaudio);
-	//this.gunaudio.pause();
-	
-	this.explosionaudio = new Audio();
-	this.explosionaudio.loop = false;
-	this.explosionaudio.preload = "auto";	
-	sourceexplosionaudio = document.createElement('source');
-	sourceexplosionaudio.type= 'audio/mpeg';
-	sourceexplosionaudio.src= "./sound/Explosion.mp3";
-	this.explosionaudio.appendChild(sourceexplosionaudio);
-	
-	this.endaudio = new Audio();
-	this.endaudio.loop = false;
-	this.endaudio.preload = "auto";	
-	sourceendaudio = document.createElement('source');
-	sourceendaudio.type= 'audio/mpeg';
-	sourceendaudio.src= "./sound/wickedmalelaugh1.mp3";
-	this.endaudio.appendChild(sourceendaudio);
-	
-	this.winaudio = new Audio();
-	this.winaudio.loop = false;
-	this.winaudio.preload = "auto";	
-	sourcewinaudio = document.createElement('source');
-	sourcewinaudio.type= 'audio/mpeg';
-	sourcewinaudio.src= "./sound/whahoo.mp3";
-	this.winaudio.appendChild(sourcewinaudio);
+    this.backgroundaudio.loop = true;
+    this.backgroundaudio.preload = "auto";
+
+    // var source= document.createElement('source');
+    // source.type= 'audio/ogg';
+    // source.src= "./sound/backgroundmusic1.ogg";
+    // this.backgroundaudio.appendChild(source);
+    source = document.createElement('source');
+    source.type= 'audio/mpeg';
+    source.src= "./sound/FastFoot.mp3";
+    //source.src= "./sound/backgroundmusic1.mp3";
+    this.backgroundaudio.appendChild(source);
+    //console.log(this.backgroundaudio);
+    
+    this.gunaudio = new Audio();
+    //console.log(this.backgroundaudio);
+    this.gunaudio.loop = true;
+    this.gunaudio.preload = "auto"; 
+    sourceGunAudio = document.createElement('source');
+    sourceGunAudio.type= 'audio/mpeg';
+    sourceGunAudio.src= "./sound/MachineGun3.mp3";
+    //sourceGunAudio.src= "./sound/GunShot.mp3";
+    this.gunaudio.appendChild(sourceGunAudio);
+    //this.gunaudio.pause();
+    
+    this.flameaudio = new Audio();
+    this.flameaudio.loop = true;
+    this.flameaudio.preload = "auto";   
+    sourceflameaudio = document.createElement('source');
+    sourceflameaudio.type= 'audio/mpeg';
+    sourceflameaudio.src= "./sound/Firestrm.mp3";
+    this.flameaudio.appendChild(sourceflameaudio);
+    //this.gunaudio.pause();
+    
+    this.explosionaudio = new Audio();
+    this.explosionaudio.loop = false;
+    this.explosionaudio.preload = "auto";   
+    sourceexplosionaudio = document.createElement('source');
+    sourceexplosionaudio.type= 'audio/mpeg';
+    sourceexplosionaudio.src= "./sound/Explosion.mp3";
+    this.explosionaudio.appendChild(sourceexplosionaudio);
+    
+    this.endaudio = new Audio();
+    this.endaudio.loop = false;
+    this.endaudio.preload = "auto"; 
+    sourceendaudio = document.createElement('source');
+    sourceendaudio.type= 'audio/mpeg';
+    sourceendaudio.src= "./sound/wickedmalelaugh1.mp3";
+    this.endaudio.appendChild(sourceendaudio);
+    
+    this.winaudio = new Audio();
+    this.winaudio.loop = false;
+    this.winaudio.preload = "auto"; 
+    sourcewinaudio = document.createElement('source');
+    sourcewinaudio.type= 'audio/mpeg';
+    sourcewinaudio.src= "./sound/whahoo.mp3";
+    this.winaudio.appendChild(sourcewinaudio);
 }
 
 /**
@@ -262,40 +289,40 @@ GameEngine.prototype.setWindowY = function(y) {
 GameEngine.prototype.init = function (ctx) {
 
     this.ctx = ctx; // this adds the ctx object to the Game Engine
-	this.ctx.lostfocus = "False"; //used when detecting if game lost focus.
+    this.ctx.lostfocus = "False"; //used when detecting if game lost focus.
     window.onblur = function detectLostFocus() { this.document.getElementById('gameWorld').getContext('2d').lostfocus = "True";}
-	
-	this.surfaceWidth = this.ctx.canvas.width; // this sets the surfaceWidth to the canvas width
+    
+    this.surfaceWidth = this.ctx.canvas.width; // this sets the surfaceWidth to the canvas width
     this.surfaceHeight = this.ctx.canvas.height; // this sets the surfaceHeight to the canvas height 
 
     this.startInput();
-	this.setupGameState();
-	if (this.musicPlaying) {
-		this.backgroundaudio.play();
-	}
-		
+    this.setupGameState();
+    if (this.musicPlaying) {
+        this.backgroundaudio.play();
+    }
+        
 }
 
 GameEngine.prototype.start = function () {
     console.log("starting game");
     var that = this;
     (function gameLoop() {
-		if (that.menuMode == "Game") {
-			that.loop();
+        if (that.menuMode == "Game") {
+            that.loop();
             // TURN ON AGAIN!!
-		} else {//if (that.menuMode == "Start" || that.menuMode == "Pause") {
-			that.menuLoop();
-		}	
+        } else {//if (that.menuMode == "Start" || that.menuMode == "Pause") {
+            that.menuLoop();
+        }   
         requestAnimFrame(gameLoop, that.ctx.canvas); 
     })();
 }
 
 GameEngine.prototype.restart = function () {
-	console.log("restart");
+    console.log("restart");
     // Entities of the Game
     this.entities = []; // All entities of the game
     this.weapons = []; // All the weapons of the game
-	this.items = [];
+    this.items = [];
     // added from 435 ZOMBIE AI Project
     this.villains = []; // All the Zombies | TODO ? Get rid or change ?
     this.players = []; // All the Players | TODO ? Get rid or change ?
@@ -312,16 +339,16 @@ GameEngine.prototype.restart = function () {
     this.kills = 0; // this is the number of kills that the player has total
 
     this.mouse = {x:0, y:0, mousedown:false}; // this is the mouse coordinates and whether the mouse is pressed or not
-	this.keyState = {}; // this is the current keystate which is an object that is nothing
+    this.keyState = {}; // this is the current keystate which is an object that is nothing
 
     this.windowX = 0; // This is the x-coordinate of the top left corner of the canvas currently
     this.windowY = 0; // This is the y-coordinate of the top left corner of the canvas currently   
-	
-	this.setupGameState();
-	if (this.musicPlaying) {
-		this.backgroundaudio.play();
-	}
-		
+    
+    this.setupGameState();
+    if (this.musicPlaying) {
+        this.backgroundaudio.play();
+    }
+        
 }
 
 GameEngine.prototype.generateRandomItem = function(x, y) {
@@ -342,19 +369,21 @@ GameEngine.prototype.generateRandomItem = function(x, y) {
 }
 
 GameEngine.prototype.setupGameState = function () {
-	this.setupMaps();
-	
-	var player = new playerControlled(this);
-	// var player = new Angel(this);
-    player.controlled = true;
-    this.addEntity(player);
-	//this.setMap(this.allMaps["ruins"]);
-	this.setMap(this.allMaps["mill"]);
-	//this.setMap(this.allMaps["map1"]);
-	//this.menuMode = "Game";
-	this.menuMode = "Start";
-	
-	
+    this.setupMaps();
+    
+
+        var player = new playerControlled(this);
+        player.inplay = true;
+        player.controlled = true;
+        this.addEntity(player);
+
+    //this.setMap(this.allMaps["ruins"]);
+        this.setMap(this.allMaps["ruins"]);
+    //this.setMap(this.allMaps["map1"]);
+    //this.menuMode = "Game";
+    this.menuMode = "Start";
+    
+    
 }
 
 GameEngine.prototype.setupMaps = function () {
@@ -396,14 +425,11 @@ GameEngine.prototype.setupMaps = function () {
                         { x: 1338, y: 80 },
                         { x: 939, y: 965 },
                         { x: 1027, y: 1225 },
-                        { x: 660, y: 1029 },
-                        { x: 360, y: 1233 },
-                        { x: 360, y: 924},
                         { x: 752, y: 1250 },
                         { x: 2200, y: 1200 },
                         { x: 1248, y: 1221 }];
 
-   // map1.isBossMap = true;
+    map1.isBossMap = true;
     map1.addWall(new Wall(this, 0, 0,2400,40));
     map1.addWall(new Wall(this, 950, 0,190,100));
     map1.addWall(new Wall(this, 1430, 0,30,360));
@@ -544,7 +570,7 @@ GameEngine.prototype.setupMaps = function () {
     HospitalflameSpawn[3] = { x: 1020, y: 650 };
     HospitalflameSpawn[4] = { x: 980, y: 370 };
 
-	var flamethrower = new FlameThrower(this, ASSET_MANAGER.getAsset("./images/flamethrower.png"), HospitalflameSpawn);
+    var flamethrower = new FlameThrower(this, ASSET_MANAGER.getAsset("./images/flamethrower.png"), HospitalflameSpawn);
     hospitalItems.push(flamethrower);
 
 
@@ -553,9 +579,9 @@ GameEngine.prototype.setupMaps = function () {
     HospitalhealthSpawn[0] = { x: 500, y: 1150 };
     HospitalhealthSpawn[1] = { x: 1270, y: 1050 };
     HospitalhealthSpawn[2] = { x: 970, y: 335 };
-	
-	var healthpack = new HealthPack(this, ASSET_MANAGER.getAsset("./images/HealthPack.png"), HospitalhealthSpawn);
-	hospitalItems.push(healthpack);
+    
+    var healthpack = new HealthPack(this, ASSET_MANAGER.getAsset("./images/HealthPack.png"), HospitalhealthSpawn);
+    hospitalItems.push(healthpack);
 
     // Hospital speed spawning locations
     HospitalspeedSpawn = [];
@@ -569,11 +595,11 @@ GameEngine.prototype.setupMaps = function () {
 
     hospital.dialogue = [];
     hospital.dialogue.push(new Dialogue(this, "Tristan", "Now what?", "./images/tristan.png", 4));
-    hospital.dialogue.push(new Dialogue(this, "Gabrielle", "My friend has been taken by one of the Breaker's henchmen.", "./images/gabrielle.png", 4, true));
-    hospital.dialogue.push(new Dialogue(this, "Gabrielle", "He's trapped within a pocket dimension.", "./images/gabrielle.png", 4, true));
-    hospital.dialogue.push(new Dialogue(this, "Gabrielle", "I will cast us a new portal. It will take me some time to gather energy.", "./images/gabrielle.png", 4, true));
+    hospital.dialogue.push(new Dialogue(this, "Gabrielle", "My friend has been taken by one of the Breaker's henchmen.", "./images/Gabrielle.png", 4, true));
+    hospital.dialogue.push(new Dialogue(this, "Gabrielle", "He's trapped within a pocket dimension.", "./images/Gabrielle.png", 4, true));
+    hospital.dialogue.push(new Dialogue(this, "Gabrielle", "I will cast us a new portal. It will take me some time to gather energy.", "./images/Gabrielle.png", 4, true));
     hospital.dialogue.push(new Dialogue(this, "Tristan", "What do I do until then?", "./images/tristan.png", 4));
-    hospital.dialogue.push(new Dialogue(this, "Gabrielle", "Survive...", "./images/gabrielle.png", 4, true));
+    hospital.dialogue.push(new Dialogue(this, "Gabrielle", "Survive...", "./images/Gabrielle.png", 4, true));
     hospital.dialogue.push(new Dialogue(this, "Tristan", "Thought that was a given.", "./images/tristan.png", 4));
 
     // Ruins flamethrower
@@ -625,23 +651,24 @@ GameEngine.prototype.setupMaps = function () {
         //check if you defeated the boss
         if (this.game.lastVillain && this.game.lastVillain.name === "FinalBoss"
             && !this.unlocked) {
+            this.unlocked = true;
             for(var i = 0; i < this.game.villains.length; i++) {
                 this.game.villains[i].removeFromWorld = true;
             }
-
+            this.game.addEntity(new TimeWarper(this.game));
 
             this.dialogue.push(new Dialogue(this, "Tristan", "Woah! Are you me?", "./images/tristan.png", 4));
-            this.dialogue.push(new Dialogue(this, "Gabrielle", "Tristan meet Alternate World Tristan.", "./images/gabrielle.png", 4, true));
+            this.dialogue.push(new Dialogue(this, "Gabrielle", "Tristan meet Alternate World Tristan.", "./images/Gabrielle.png", 4, true));
             this.dialogue.push(new Dialogue(this, "Tristan", "Like looking in a mirror.", "./images/tristan.png", 4));
-            this.dialogue.push(new Dialogue(this, "Tristan", "A good looking mirror..", "./images/tristan.png", 4));
+            this.dialogue.push(new Dialogue(this, "Tristan", "A good looking mirror...", "./images/tristan.png", 4));
             this.dialogue.push(new Dialogue(this, "Alternate Tristan", "I like this guy, Gabrielle.", "./images/alternate-tristan.png", 4, true));
             this.dialogue.push(new Dialogue(this, "Tristan", "What's going on?", "./images/tristan.png", 4));
-            this.dialogue.push(new Dialogue(this, "Gabrielle", "You were chosen, Tristan.", "./images/gabrielle.png", 4, true));
-            this.dialogue.push(new Dialogue(this, "Gabrielle", "Your soul is a fractured spirit.", "./images/gabrielle.png", 4, true));
-            this.dialogue.push(new Dialogue(this, "Gabrielle", "One existing in multiple dimensions.", "./images/gabrielle.png", 4, true));
-            this.dialogue.push(new Dialogue(this, "Gabrielle", "This Alternate Tristan is a Time Warper, capable of bending time to his will.", "./images/gabrielle.png", 4, true));
-            this.dialogue.push(new Dialogue(this, "Gabrielle", "He will assist us in fighting the Breaker.", "./images/gabrielle.png", 4, true));
-            this.dialogue.push(new Dialogue(this, "Gabrielle", "Come on. We must head back to where we came.", "./images/gabrielle.png", 4, true));
+            this.dialogue.push(new Dialogue(this, "Gabrielle", "You were chosen, Tristan.", "./images/Gabrielle.png", 4, true));
+            this.dialogue.push(new Dialogue(this, "Gabrielle", "Your soul is a fractured spirit.", "./images/Gabrielle.png", 4, true));
+            this.dialogue.push(new Dialogue(this, "Gabrielle", "One existing in multiple dimensions.", "./images/Gabrielle.png", 4, true));
+            this.dialogue.push(new Dialogue(this, "Gabrielle", "This Alternate Tristan is a Time Warper, capable of bending time to his will.", "./images/Gabrielle.png", 4, true));
+            this.dialogue.push(new Dialogue(this, "Gabrielle", "He will assist us in fighting the Breaker.", "./images/Gabrielle.png", 4, true));
+            this.dialogue.push(new Dialogue(this, "Gabrielle", "Come on. We must head back to where we came.", "./images/Gabrielle.png", 4, true));
 
             this.dialogue.push(new Dialogue(this, "NEW PARTY MEMBER", "Alternate Tristan has been added to your party. Swap to him by pressing 3.", null, 4, "gameMessage"));
             this.dialogue.push(new Dialogue(this, "NEW PARTY MEMBER", "Alternate Tristan can slow down and freeze time.", null, 4, "gameMessage"));
@@ -651,54 +678,47 @@ GameEngine.prototype.setupMaps = function () {
             var hospital2 = this.game.allMaps["hospital"];
             var ruins2 =  this.game.allMaps["ruins"];
             hospital2.dialogue = [];
+            hospital2.drawDialogue = false;
             hospital2.update = function() {
+
                 if (this.unlocked === undefined) {
                     this.unlocked = false;
                     this.unlocked2 = false;
                 }
-                if (!this.unlocked) {                
-                    for (var i = 0; i < 50; i++) {
-                        this.game.addEntity(new Villain(this.game));
-                    }
-                    this.unlocked = true;
-                    var ruins2 = this.game.allMaps["ruins"];
-                    ruins2.dialogue = [];
-                    ruins2.drawDialogue = false;
-                    this.game.addEntity(new Portal(this.game, 200, 200, ruins2, 1700, 1400));
 
-                }
-                 if (this.randomKillNumber === undefined) {
-                    this.randomKillNumber = 5;
-                    
-                 }
-
-                if(this.game.kills === this.randomKillNumber && this.game.lastVillainKilledX && !this.unlocked2){
+                if(!this.unlocked2){
                     for(var i = 0; i < this.game.villains.length; i++) {
                         this.game.villains[i].removeFromWorld = true;
                     }
-//                    this.unlocked2 = true;
-                   //ruins2.dialogue = [];
-                    ruins2.update = function(){
-                        if(this.unlocked === undefined){
+
+                    this.unlocked2 = true;
+                    for (var i = 0; i < 50; i++) {
+                        this.game.addEntity(new Villain(this.game));
+                    }
+
+                    var ruins2 = this.game.allMaps["ruins"];
+                    ruins2.dialogue = [];
+                    ruins2.drawDialogue = false;
+                    ruins2.update = function() {
+
+                        if(this.unlocked === undefined) {
                             this.unlocked = false;
                         }
-                        if(!this.unlocked){
+
+                        if(!this.unlocked) {
+
                             for (var i = 0; i < 100; i++) {
                                 this.game.addEntity(new Villain(this.game, undefined, undefined, this.spawnPoints));
                             }
+
                             this.unlocked = true;
-
+                            this.game.addEntity(new Portal(this.game, 100, 100, this.game.allMaps["mill"], 200, 200));
                         }
-
-                        this.game.addEntity(new Portal(this.game, 100, 100, this.game.allMaps["mill"], 200, 200));
                     }
-
-                    this.game.addEntity(new Portal(this.game, 94, 1186, ruins2, 700, 200));
-                    this.unlocked2 = true;
+                    this.game.addEntity(new Portal(this.game, 200, 200, ruins2, 1700, 1400));
                 }
             }
             this.game.addEntity(new Portal(this.game, 400, 400, hospital2, 94, 1186));
-            this.unlocked = true;
         }
     }
 
@@ -716,8 +736,8 @@ GameEngine.prototype.setupMaps = function () {
             this.mapTime += this.game.timer.tick() * 10;
         }
 
-        if (this.game.kills - this.startingKills > 1 && !this.unlocked) {
-                hospital.dialogue.push(new Dialogue(this, "Gabrielle", "I'm casting the portal. It is time, mortal.", "./images/gabrielle.png", 4, true));
+        if (this.game.kills - this.startingKills > 20 && !this.unlocked) {
+                hospital.dialogue.push(new Dialogue(this, "Gabrielle", "I'm casting the portal. It is time, mortal.", "./images/Gabrielle.png", 4, true));
                 hospital.dialogue.push(new Dialogue(this, "Tristan", "You know... you are one pushy lady.", "./images/tristan.png", 4));
 
                 hospital.drawDialogue = true;
@@ -730,7 +750,7 @@ GameEngine.prototype.setupMaps = function () {
     ruins.update = function() {
 
         if (this.randomKillNumber === undefined) {
-            this.randomKillNumber = 1; //10 + randomInt(10);
+            this.randomKillNumber = 10 + randomInt(10);
             this.keyNeedsAdding = true;
         }
         if (this.game.kills === this.randomKillNumber && this.keyNeedsAdding && this.game.lastVillainKilledX) {
@@ -747,30 +767,29 @@ GameEngine.prototype.setupMaps = function () {
                     this.game.map.dialogue = [];
                     this.removeFromWorld = true;
                     this.game.addEntity(this.portal);
-                    this.game.gameRunning = false;
-                    this.game.map.dialogue.push(new Dialogue(this, "Gabrielle", "Thank you. My soul is in debt to you.", "./images/gabrielle.png", 4, true));
+                    this.game.map.dialogue.push(new Dialogue(this, "Gabrielle", "Thank you. My soul is in debt to you.", "./images/Gabrielle.png", 4, true));
                     this.game.map.dialogue.push(new Dialogue(this, "Tristan", "Holy crap... I think I just died and gone to heaven...", "./images/tristan.png", 4));
                     this.game.map.dialogue.push(new Dialogue(this, "Tristan", "Sexy heaven.", "./images/tristan.png", 4));
-                    this.game.map.dialogue.push(new Dialogue(this, "Gabrielle", "Ugh... mortal men are pigs.", "./images/gabrielle.png", 4, true));
+                    this.game.map.dialogue.push(new Dialogue(this, "Gabrielle", "Ugh... mortal men are pigs.", "./images/Gabrielle.png", 4, true));
 
                     this.game.map.dialogue.push(new Dialogue(this, "Tristan", "So you are an angel?", "./images/tristan.png", 4));
-                    this.game.map.dialogue.push(new Dialogue(this, "Gabrielle", "Of sorts. My name is Gabrielle, the Archangel of Hope.", "./images/gabrielle.png", 4, true));
+                    this.game.map.dialogue.push(new Dialogue(this, "Gabrielle", "Of sorts. My name is Gabrielle, the Archangel of Hope.", "./images/Gabrielle.png", 4, true));
 
                     this.game.map.dialogue.push(new Dialogue(this, "Tristan", "And what... I’m dead?", "./images/tristan.png", 4));
-                    this.game.map.dialogue.push(new Dialogue(this, "Gabrielle", "No... but we are partially in Death.", "./images/gabrielle.png", 4, true));
+                    this.game.map.dialogue.push(new Dialogue(this, "Gabrielle", "No... but we are partially in Death.", "./images/Gabrielle.png", 4, true));
 
                     this.game.map.dialogue.push(new Dialogue(this, "Tristan", "Come again.", "./images/tristan.png", 4));
-                    this.game.map.dialogue.push(new Dialogue(this, "Gabrielle", "The dimensions have shattered. A rift has been made.", "./images/gabrielle.png", 4, true));
-                    this.game.map.dialogue.push(new Dialogue(this, "Gabrielle", "By the Breaker, Destroyer of Realms.", "./images/gabrielle.png", 4, true));
-                    this.game.map.dialogue.push(new Dialogue(this, "Gabrielle", "Heaven, Hell, Death, and the Seven Alternate Worlds have collided.", "./images/gabrielle.png", 4, true));
+                    this.game.map.dialogue.push(new Dialogue(this, "Gabrielle", "The dimensions have shattered. A rift has been made.", "./images/Gabrielle.png", 4, true));
+                    this.game.map.dialogue.push(new Dialogue(this, "Gabrielle", "By the Breaker, Destroyer of Realms.", "./images/Gabrielle.png", 4, true));
+                    this.game.map.dialogue.push(new Dialogue(this, "Gabrielle", "Heaven, Hell, Death, and the Seven Alternate Worlds have collided.", "./images/Gabrielle.png", 4, true));
                     this.game.map.dialogue.push(new Dialogue(this, "Tristan", "Okay... so what happened everyone? Namely... my son.", "./images/tristan.png", 4));
-                    this.game.map.dialogue.push(new Dialogue(this, "Gabrielle", "Their souls have been trapped.", "./images/gabrielle.png", 4, true));
+                    this.game.map.dialogue.push(new Dialogue(this, "Gabrielle", "Their souls have been trapped.", "./images/Gabrielle.png", 4, true));
                     this.game.map.dialogue.push(new Dialogue(this, "Tristan", "What? So why haven't I been trapped?", "./images/tristan.png", 4));
-                    this.game.map.dialogue.push(new Dialogue(this, "Gabrielle", "Help me, and I’ll show you.", "./images/gabrielle.png", 4, true));
+                    this.game.map.dialogue.push(new Dialogue(this, "Gabrielle", "Help me, and I’ll show you.", "./images/Gabrielle.png", 4, true));
                     this.game.map.dialogue.push(new Dialogue(this, "Tristan", "Alright, Angelface, I'm going to trust you for now", "./images/tristan.png", 4));
-                    this.game.map.dialogue.push(new Dialogue(this, "Gabrielle", "There is a portal. We must get to it.", "./images/gabrielle.png", 4, true));
+                    this.game.map.dialogue.push(new Dialogue(this, "Gabrielle", "There is a portal. We must get to it.", "./images/Gabrielle.png", 4, true));
                     this.game.map.dialogue.push(new Dialogue(this, "NEW PARTY MEMBER ADDED", "Swap between party members by pressing 1 or 2.", null, 4, "gameMessage"));
-                    this.game.map.dialogue.push(new Dialogue(this, "NEW PARTY MEMBER ADDED", "Angel has attack and health aura's that help party and herself twice as much.", null, 4, "gameMessage"));
+                    this.game.map.dialogue.push(new Dialogue(this, "NEW PARTY MEMBER ADDED", "Angel has attack and health halo's that help her to hurt and heal.", null, 4, "gameMessage"));
 
                     this.game.addEntity(new Angel(this.game));
                     this.game.map.drawDialogue = true;
@@ -809,7 +828,6 @@ GameEngine.prototype.setupMaps = function () {
     hospital.drawDialogue = false;
     // this.setMap(hospital);
     // this.setMap(ruins);
-    cemetary = new Map(this, ASSET_MANAGER.getAsset("./images/cemetary.png"), "Small Room", 5000, 3674, 450, 337.5, 0.5);
     var mill = new Map(this, ASSET_MANAGER.getAsset("./images/mill.png"), "Small Room", 2560, 1730, 550, 550*.75, .69);
 
     mill.addWall(new Wall(this, 343, 56, 190, 17));
@@ -856,38 +874,44 @@ GameEngine.prototype.setupMaps = function () {
     mill.addWall(new Wall(this, 2300, 1400, 300, 150));
     mill.addWall(new Wall(this, 1785, 1140, 200, 200));
 
-    mill.dialogue.push(new Dialogue(this, "Gabrielle", "Four keys are required to escape this place. We must find them to get to the next map.", "./images/gabrielle.png", 4, true));
+    mill.dialogue.push(new Dialogue(this, "Gabrielle", "We must find the four orbs of power in this dimension.", "./images/Gabrielle.png", 4, true));
+    mill.dialogue.push(new Dialogue(this, "Gabrielle", "With that, I can open the gates to the Breaker’s henchmen’s realm.", "./images/Gabrielle.png", 4, true));
+    mill.dialogue.push(new Dialogue(this, "Gabrielle", "There I can forge a portal into the Breaker’s realm.", "./images/Gabrielle.png", 4, true));
+    mill.dialogue.push(new Dialogue(this, "Gabrielle", "And free your son and all of the other imprisoned souls.", "./images/Gabrielle.png", 4, true));
 
-    mill.addSkeletons = true;
-    mill.addSpiders = true;
+    mill.drawDialogue = true;
+
     mill.update = function() {
         if (this.numberOfKeys === undefined) {
             this.numberOfKeys = 0;
         }
         if (this.randomKillNumber === undefined) {
-            this.randomKillNumber = 1; //10 + randomInt(10);
-            this.keyNeedsAdding = true;
+            this.randomKillNumber = this.game.kills + randomInt(10);
+            this.keyNeedsAdding = 0;
         }
         console.log(this.randomKillNumber);
+        if (this.game.kills === this.randomKillNumber && this.keyNeedsAdding === this.numberOfKeys && this.game.lastVillainKilledX && this.randomKillNumber <= this.game.kills && this.numberOfKeys < 4) {
+            this.game.map.keyNeedsAdding += 1;
 
-        if (this.game.kills === this.randomKillNumber && this.keyNeedsAdding && this.game.lastVillainKilledX && this.randomKillNumber <= this.game.kills && this.numberOfKeys < 1) {
-
-            var key = new Key(this.game, this.game.lastVillainKilledX, this.game.lastVillainKilledY, new Portal(this.game.getPlayer().x + 20, this.game.getPlayer().y + 20, this.game.allMaps["map1"], 100, 100), 4);
+            key = new Key(this.game, this.game.lastVillainKilledX, this.game.lastVillainKilledY, new Portal(this.game.getPlayer().x + 10, this.game.getPlayer().y + 10, this.game.allMaps["map1"], 100, 100), 4);
 
             key.update = function () {
-                this.keyNeedsAdding = true;
-                this.numberOfKeys += 1;
+                if (!this.unlocked) {
+                    this.game.map.numberOfKeys += 1;
+                    this.unlocked = true;
+                }
                 var player = this.game.getPlayer();
                 if (player && this.collect(player)) {
                     this.removeFromWorld = true;
                 }
             }
             this.game.addEntity(key);
-            this.keyNeedsAdding = false;
-            this.randomKillNumber += this.game.kills + 1;
+            this.randomKillNumber += randomInt(10);
+        } else if (this.game.kills === this.randomKillNumber && this.keyNeedsAdding && this.game.lastVillainKilledX && this.randomKillNumber <= this.game.kills && this.numberOfKeys >= 4) {
+
+            var key = new Key(this.game, this.game.lastVillainKilledX, this.game.lastVillainKilledY, new Portal(this.game, this.game.lastVillainKilledX + 20, this.game.lastVillainKilledY + 20, this.game.allMaps["map1"], 100, 100), 4);
             this.game.addEntity(key);
-        } else if (this.game.kills === this.randomKillNumber && this.keyNeedsAdding && this.game.lastVillainKilledX && this.randomKillNumber <= this.game.kills && this.numberOfKeys >= 1) {
-            var key = new Key(this.game, this.game.lastVillainKilledX, this.game.lastVillainKilledY, new Portal(this.game.getPlayer().x + 20, this.game.getPlayer().y + 20, this.game.allMaps["map1"], 100, 100), 4);
+            this.keyNeedsAdding = false;
         }
     }
     // mill.addWall(new Wall(this, 2087, 235, 5, 240));
@@ -955,46 +979,143 @@ GameEngine.prototype.setupMaps = function () {
                         {x:1320, y: 1315},
                         {x:2220, y: 1480},
                         {x:524, y: 1305},
-
-                        {x:472, y: 1144}],
-                        {x:467, y: 100},
-                        {x:820, y: 137},
-                        {x:1295, y: 137},
-                        {x:578, y: 426},
-                        {x:218, y: 426},
-                        {x:760, y: 358},
-                        {x:281, y: 358},
-                        {x:490, y: 639},
-                        {x:490, y: 1052},
-                        {x:1387, y: 1547};
-                       // this.setMap(map1);
-
-                       // {x:472, y: 1144}];
+                        {x:472, y: 1144}];
     
     map1.bossMap = true;
-    for (var i = 0; i < 5; i++) {
-        var boss1 = new Boss(this);
-        boss1.maxHealth = 400;
-        boss1.health = 400;
-        map1.addVillain(boss1);
-    }
-    map1.update = function(){
-        var bossMap = new Map(this, ASSET_MANAGER.getAsset("./images/bossMap1.png"), "Boss Map - Level 1", 800, 600, 800, 600, 0.5);
+    var boss1 = new Boss(this);
+    boss1.health = 10000;
+    boss1.healthMAX = 10000;
+    boss1.x = 515;
+    boss1.y = 305;
+    var boss2 = new Boss(this);
+    boss2.health = 10000;
+    boss2.healthMAX = 10000;
+    boss2.x = 2130;
+    boss2.y = 630;
+    var boss3 = new Boss(this);
+    boss3.health = 10000;
+    boss3.healthMAX = 10000;
+    boss3.x = 1548;
+    boss3.y = 1320;
+    boss2.update = boss2.summonSpiders;
+    boss3.update = boss3.summonSkeletons;
+    map1.addVillain(boss1);
+    map1.addVillain(boss2);
+    map1.addVillain(boss3);
+    map1.dialogue.push(new Dialogue(this, "Gabrielle", "Once we destroy, the three henchmen. The final portal will open.", "./images/Gabrielle.png", 4, true));
+    map1.drawDialogue = true;
 
-        if (this.game.villains.length === 0) {
-            bossMap.bossMap = true;
-            this.game.addEntity(new Portal(this.game.getPlayer().x + 20, this.game.getPlayer().y + 20, bossMap, 100, 100));
+    map1.update = function(){
+        if (this.bossCount === undefined) {
+            this.bossCount = 0;
+        }
+        if (this.game.lastVillain && this.game.lastVillain.name === "FinalBoss") {
+            this.bossCount += 1;
+            this.game.lastVillain = undefined;
+        }
+        if (this.bossCount >= 3 && !this.addFinalMap) {
+            this.dialogue.push(new Dialogue(this, "Gabrielle", "Prepare to fight the Breaker.", "./images/Gabrielle.png", 4, true));
+            this.drawDialogue = true;
+
+            this.addFinalMap = true;
+            var finalMap = new Map(this.game, ASSET_MANAGER.getAsset("./images/bossMap1.png"), "Boss Map - Level 1", 800, 600, 800, 600, 0.5);
+            var breaker = new Boss(this.game);
+            breaker.ability3Attributes = {
+                // cooldowns used to determine whether to unleash ability3 or not
+                maxCooldown: 10,
+                cooldown: 10,
+                activate: false
+            };
+            breaker.name = "BREAKER";
+            breaker.update = function() {
+                this.aiUpdate("zombie");
+                if (this.frozen) {
+                    return;
+                }
+
+                if (this.timerForSlowDown) {
+                    if (this.timerForSlowDown <= 0) {
+                        this.timerForSlowDown = 0;
+                        for (var i = 0; i < this.game.entities.length; i++) {
+                            var other = this.game.entities[i];
+                            if (!other.isNonLiving && other.team != this.team && other.oldSpeed) {
+                                other.maxSpeed = other.oldSpeed;
+                                other.cooldown = other.oldCooldown;
+                                if (other.movingAnimation) {
+                                    other.movingAnimation.frameDuration = other.movingAnimationOld;
+                                }
+                                if (other.attackAnimation) {
+                                    other.attackAnimation.frameDuration = other.attackAnimationOld;                        
+                                }
+                                other.oldSpeed = false;
+                            }
+                        }
+                    } else {
+                        for (var i = 0; i < this.game.entities.length; i++) {
+                            var other = this.game.entities[i];
+                            if (!other.isNonLiving && other.team != this.team && !other.oldSpeed) {
+                                other.oldSpeed = other.maxSpeed;
+                                other.maxSpeed /= 4;
+                                other.oldCooldown = other.cooldown;
+                                other.cooldown *= 4;
+                                if (other.movingAnimation) {
+                                    other.movingAnimationOld = other.movingAnimation.frameDuration;
+                                    other.movingAnimation.frameDuration *= 4;
+                                }
+                                if (other.attackAnimation) {
+                                    other.attackAnimationOld = other.attackAnimation.frameDuration;
+                                    other.attackAnimation.frameDuration *= 4;
+                                }
+                            }
+                        }
+                        this.timerForSlowDown -= this.game.clockTick;
+                    }
+                }
+                if (this.ability2Timer) {
+                    if (this.ability2Timer >= 0) {
+                        this.ability2Timer -= this.game.clockTick;
+                        if (this.ability2Check > this.ability2Timer) {
+                            this.ability2Check -= 1;
+                            var villain = new Villain(this.game, this.x + this.velocity.x, this.y + this.velocity.y);
+                            this.game.addEntity(villain);
+                        }
+                        this.velocity.x = 0;
+                        this.velocity.y = 0;
+                    } else {
+                        this.ability2Timer = false;
+                    }
+                }
+
+                if (this.ability1Timer) {
+                    if (this.ability1Timer <= 0) {
+                        this.ability1Timer = false;
+                        this.maxSpeed = this.originalMaxSpeed;
+                        this.movingAnimation.frameDuration = this.movingAnimation.originalFrameDuration;
+                    } else {
+                        this.ability1Timer -= this.game.clockTick;
+                    }
+                }
+
+            }
+            breaker.healthMAX = 50000;
+            breaker.health = 50000;
+
+
+            finalMap.addVillain(breaker);
+            this.game.addEntity(new Portal(this.game, this.game.getPlayer().x + 60, this.game.getPlayer().y + 60, finalMap, 100, 100));
         }
     }
     ruins.setItems(ruinItems);
     ruins.drawDialogue = true;
-
+    ruins.stopSpiders = true;
+    ruins.stopSkeletons = true;
+    hospital.stopSkeletons = true;
 
     // this.setItems(hospitalItems);
 
     // this.addEntity(new Portal(this, 800, 600, hospital, 200, 200));
 
-	
+    
     // var angelPlayer = new Angel(this);
     // angelPlayer.x = 600;
     // angelPlayer.canvasX = 32;
@@ -1006,11 +1127,11 @@ GameEngine.prototype.setupMaps = function () {
     // this.addEntity(warperPlayer);
 
     // After Boss maps
-	
-	//save all the maps to the all Maps Array
+    
+    //save all the maps to the all Maps Array
     this.allMaps["ruins"] = ruins;
     this.allMaps["hospital"] = hospital;
-	this.allMaps["map1"] = map1;
+    this.allMaps["map1"] = map1;
     this.allMaps["mill"] = mill;
     // var player2 = new playerControlled(this);
     // this.addEntity(player2);
@@ -1135,7 +1256,7 @@ GameEngine.prototype.addEntity = function (entity) {
     this.entities.push(entity);
     // TODO Delete this!
     if (entity.name === "FlameThrower") this.weapons.push(entity);
-	if (entity.type === "item") this.items.push(entity);
+    if (entity.type === "item") this.items.push(entity);
     if (entity.type === "villain") this.villains.push(entity);
     if (entity.type === "playerControlled") this.players.push(entity);
 }
@@ -1284,14 +1405,15 @@ GameEngine.prototype.draw = function (top, left) {
     if (this.getPlayer()) {
         var heightOfAbilityImages = 50;
         var marginOfAbilityImages = 20;
-        if (this.getPlayer() && this.getPlayer().ability1Attributes.cooldown < 0) {
+        if ((this.getPlayer() && this.getPlayer().ability1Attributes.cooldown < 0 && this.getPlayer().name != "Angel")||
+            (this.getPlayer().name === "Angel" && this.getPlayer().currentAbility == 1)) {
             this.ability1Picture = this.getPlayer().ability1PictureActive;
             this.abilityButton1 = {x:marginOfAbilityImages, y:this.surfaceHeight - marginOfAbilityImages - heightOfAbilityImages, height:heightOfAbilityImages, width:heightOfAbilityImages};
         } else {
             this.ability1Picture = this.getPlayer().ability1PictureInactive;
         }
 
-        if (this.getPlayer() && this.getPlayer().ability2Attributes.cooldown < 0) {
+        if ((this.getPlayer() && this.getPlayer().ability2Attributes.cooldown < 0 && this.getPlayer().name != "Angel") || (this.getPlayer().name === "Angel" && this.getPlayer().currentAbility == 2)) {
             this.ability2Picture = this.getPlayer().ability2PictureActive;
             this.abilityButton2 = {x:marginOfAbilityImages + heightOfAbilityImages + marginOfAbilityImages, y:this.surfaceHeight - marginOfAbilityImages - heightOfAbilityImages, height:heightOfAbilityImages, width:heightOfAbilityImages};
         } else {
@@ -1390,8 +1512,12 @@ GameEngine.prototype.update = function () {
             }
         }
     }
-	AddSpiders(this);
-	AddSkeletons(this);
+    if (!this.map.stopSpiders) {
+       AddSpiders(this);
+    }
+    if (!this.map.stopSkeletons) {
+       AddSkeletons(this);
+    }
 
     // cyles through all of the entities once again
     for (var i = 0; i < entitiesCount; i++) {
@@ -1399,7 +1525,7 @@ GameEngine.prototype.update = function () {
         var entity = this.entities[i]; // the current entity
 
         // if the entity is not removed from world
-        if (!entity.removeFromWorld && entity.type !== "playerControlled" || entity.controlled) {
+        if (!entity.removeFromWorld && (entity.type !== "playerControlled" || entity.controlled)) {
 
             // update its attributes
             entity.update();
@@ -1410,21 +1536,31 @@ GameEngine.prototype.update = function () {
     for (var i = this.entities.length - 1; i >= 0; --i) {
         // if the entities is removed from world
         if (this.entities[i].removeFromWorld) {            
-			// splice the array from i to 1
-			this.entities.splice(i, 1);
+            // splice the array from i to 1
+            this.entities.splice(i, 1);
         }
     }
 
     // cycles through all the villains entities backwards
     for (var i = this.villains.length - 1; i >= 0; --i) {
+        if (this.powerUpKill === undefined) {
+            this.powerUpKill = this.kills + randomInt(10) + 1;
+        }
         if (this.villains[i].removeFromWorld) {
             var villain = this.villains[i];
+            if (villain.name == "BREAKER") {
+                this.menuMode = "Win";
+            }
             this.lastVillain = villain;
             this.lastVillainKilledX = villain.x - villain.radius;
-
             this.lastVillainKilledY = villain.y - villain.radius;
             this.villains.splice(i, 1);
 
+            console.log(this.powerUpKill);
+            if (this.kills === this.powerUpKill) {
+                this.powerUpKill = this.kills + randomInt(10) + 1;
+                this.addEntity(this.generateRandomItem(this.lastVillainKilledX, this.lastVillainKilledY));
+            }
 
             // this.movingAnimation.drawFrameRotate(this.game.clockTick, ctx, this.x - this.radius - this.game.getWindowX() - this.radialOffset, this.y - this.radius - this.game.getWindowY() - this.radialOffset, this.angle);
 
@@ -1449,6 +1585,7 @@ GameEngine.prototype.update = function () {
             // if the player is currently being controlled
             if (this.players[i].controlled) {
                 var currentPlayer = this.players[i];
+                this.deadPlayers.push(currentPlayer);
                 // // cycle through the other players
                 for (var j = 0; j < this.players.length; j++) {
                     // for the first player that is not removedFromWorld
@@ -1459,7 +1596,8 @@ GameEngine.prototype.update = function () {
                         this.players[j].canvasX = currentPlayer.canvasX;
                         this.players[j].y = currentPlayer.y;
                         this.players[j].canvasY = currentPlayer.canvasY;
-
+                        this.players[j].inplay = true;
+                        this.restoreSpeeds();
                         break;
                     }
                 }
@@ -1475,11 +1613,11 @@ GameEngine.prototype.update = function () {
         this.map.walls[i].update();
     }
 
-	//if the players array is empty it is game over you lose
-	if (this.players.length == 0) {
-		this.menuMode = "Lose";
-	}
-	
+    //if the players array is empty it is game over you lose
+    if (this.players.length == 0) {
+        this.menuMode = "Lose";
+    }
+    
     if (this.abilityButton1 && this.click && this.checkMenuClick(this.abilityButton1)) {
         this.getPlayer().currentAbility = 1;
     }
@@ -1510,7 +1648,7 @@ GameEngine.prototype.setItems = function(Items) {
 
 GameEngine.prototype.setMap = function(map, portal) {
     this.map = map;
-
+    this.lastmap = map;
     if (this.map !== null) {
        // Removes all the previous villains
        for (var i = 0; i < this.villains.length; i++) {
@@ -1557,6 +1695,11 @@ GameEngine.prototype.setMap = function(map, portal) {
         this.addEntity(this.map.weapons[i]);
     }
 
+    for (var i = 0; i < this.entities.length; i++) {
+        if (this.entities[i].type == "landmine") {
+            this.entities[i].removeFromWorld = true;
+        }
+    }
     this.setItems(this.map.items);
 }
 
@@ -1582,12 +1725,12 @@ GameEngine.prototype.drawStory = function() {
     var scene3 = 40;
     var indent = 70;
 
-	if (this.alpha5 < 1) {
-		    this.skipIntroButton = {x:this.surfaceWidth - 100, y: this.surfaceHeight - 75, height:50, width:75};    
+    if (this.alpha5 < 1) {
+            this.skipIntroButton = {x:this.surfaceWidth - 100, y: this.surfaceHeight - 75, height:50, width:75};    
 
-		this.skipIntroButton.lines = ["Skip"];
-		this.drawButton(this.skipIntroButton, "transparent");
-	}
+        this.skipIntroButton.lines = ["Skip"];
+        this.drawButton(this.skipIntroButton, "transparent");
+    }
 
     if (this.storyClockSeconds > 1) {
         if (this.alpha1 < 1 && this.storyClockSeconds < scene2) {
@@ -1707,7 +1850,7 @@ GameEngine.prototype.drawLoseMenu = function() {
     } 
     this.drawMessage ("GAME OVER", width + 127, height + 30);
     this.drawMessage ("YOU LOST!", width + 135, height + 60);
-	this.endaudio.play();   
+    this.endaudio.play();   
     height = 50;
     width = 200;
         
@@ -1727,7 +1870,7 @@ GameEngine.prototype.drawWinMenu = function() {
 
     this.drawMessage ("GAME OVER", width + 127, height + 30);
     this.drawMessage ("You Win!!", width + 151, height + 60);
-	this.winaudio.play();
+    this.winaudio.play();
         
     height = 50;
     width = 200;
@@ -1738,33 +1881,33 @@ GameEngine.prototype.drawWinMenu = function() {
 }
 
 GameEngine.prototype.drawMenu = function() {
-	this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
     if (this.surfaceHeight == 600) {
         this.ctx.drawImage(this.menuBackground, 0, 0, this.surfaceWidth, this.surfaceHeight, 0, 0, this.surfaceWidth, this.surfaceHeight);
     }
 
-	if (this.menuMode == "Start") {
+    if (this.menuMode == "Start") {
         this.drawStartMenu();
-	} else if (this.menuMode == "Pause") {
+    } else if (this.menuMode == "Pause") {
         this.drawPauseMenu();
-	} else if (this.menuMode == "Lose") {
+    } else if (this.menuMode == "Lose") {
         this.drawLoseMenu();
-	} else if (this.menuMode == "Win") {
+    } else if (this.menuMode == "Win") {
         this.drawWinMenu();
-	} else if (this.menuMode == "Storymode") {
+    } else if (this.menuMode == "Storymode") {
         this.drawStory();
     }
 }
 
 GameEngine.prototype.drawMessage = function(messageToDraw, startX, startY, color, font) {
-	//console.log("color " + color);
-		this.ctx.save();
+    //console.log("color " + color);
+        this.ctx.save();
         if (color === undefined) {
             if (this.surfaceHeight === 600) {
                 this.ctx.fillStyle = "black";
             } else {
-		        this.ctx.fillStyle = "white";
+                this.ctx.fillStyle = "white";
             }
         } else {
             this.ctx.fillStyle = color;
@@ -1773,21 +1916,21 @@ GameEngine.prototype.drawMessage = function(messageToDraw, startX, startY, color
             if (this.surfaceHeight === 600) {
                 this.ctx.font = "24px Georgia";
             } else {
-		        this.ctx.font="25px Arial";
+                this.ctx.font="25px Arial";
             }
         } else {
             this.ctx.font = font;
         }
-		//console.log("this.ctx.fillStyle" + this.ctx.fillStyle);
-		this.ctx.fillText(messageToDraw, startX, startY);
+        //console.log("this.ctx.fillStyle" + this.ctx.fillStyle);
+        this.ctx.fillText(messageToDraw, startX, startY);
 }
 
 GameEngine.prototype.drawButton = function(buttonToDraw, fillColor, textColor) {
-	//console.log("fillcolor" + fillColor);
-	//console.log("textColor" + textColor);
-	this.ctx.save();
-	
-	this.ctx.beginPath();
+    //console.log("fillcolor" + fillColor);
+    //console.log("textColor" + textColor);
+    this.ctx.save();
+    
+    this.ctx.beginPath();
     if (fillColor === undefined) {
         this.ctx.fillStyle = "blue";
     } else {
@@ -1796,49 +1939,49 @@ GameEngine.prototype.drawButton = function(buttonToDraw, fillColor, textColor) {
     this.ctx.fillRect(buttonToDraw.x, buttonToDraw.y, buttonToDraw.width, buttonToDraw.height);
     this.ctx.fill();
     this.ctx.closePath();
-	
-	this.ctx.beginPath();
+    
+    this.ctx.beginPath();
     this.ctx.strokeStyle = "black";
     this.ctx.rect(buttonToDraw.x, buttonToDraw.y, buttonToDraw.width, buttonToDraw.height);
     this.ctx.stroke();
     this.ctx.closePath();
-	
+    
     if (textColor === undefined) {
-	   this.ctx.fillStyle = "white";
+       this.ctx.fillStyle = "white";
     } else {
         this.ctx.fillStyle = textColor;
     }
-	this.ctx.font="25px Arial";
+    this.ctx.font="25px Arial";
 
-	for (var i = 0; i < buttonToDraw.lines.length; i++) {
-		var startX = buttonToDraw.x + buttonToDraw.width/2 - (buttonToDraw.lines[i].length/2 * 15);
-		var startY = buttonToDraw.y + (33 * (i + 1));
-		this.ctx.fillText(buttonToDraw.lines[i], startX, startY);
-	};
-	
-	// this.ctx.beginPath();
+    for (var i = 0; i < buttonToDraw.lines.length; i++) {
+        var startX = buttonToDraw.x + buttonToDraw.width/2 - (buttonToDraw.lines[i].length/2 * 15);
+        var startY = buttonToDraw.y + (33 * (i + 1));
+        this.ctx.fillText(buttonToDraw.lines[i], startX, startY);
+    };
+    
+    // this.ctx.beginPath();
     // this.ctx.fillStyle = "orange";
     // this.ctx.fillRect(buttonToDraw.x, buttonToDraw.y, 5, 5);
     // this.ctx.fill();
     // this.ctx.closePath();
-	
-	// this.ctx.fillText(line1,this.startButton.x + 32,this.startButton.y + 3);	
-	// this.ctx.fillText(line2,this.startButton.x + 35,this.startButton.y + 60);
-	// this.ctx.fillText(line3,this.startButton.x + 38,this.startButton.y + 90);
+    
+    // this.ctx.fillText(line1,this.startButton.x + 32,this.startButton.y + 3); 
+    // this.ctx.fillText(line2,this.startButton.x + 35,this.startButton.y + 60);
+    // this.ctx.fillText(line3,this.startButton.x + 38,this.startButton.y + 90);
     this.ctx.restore();
 }
 
 GameEngine.prototype.checkMenuClick = function (buttonToTest){
     // console.log("X: " + this.click.canvasx + " | Y:" + this.click.canvasy);
-	return(this.click.canvasx >= buttonToTest.x && this.click.canvasx <= buttonToTest.x + buttonToTest.width && this.click.canvasy >= buttonToTest.y && this.click.canvasy <= buttonToTest.y + buttonToTest.height)
+    return(this.click.canvasx >= buttonToTest.x && this.click.canvasx <= buttonToTest.x + buttonToTest.width && this.click.canvasy >= buttonToTest.y && this.click.canvasy <= buttonToTest.y + buttonToTest.height)
 }
 
 // GameEngine.prototype.checkMenuClick = function (x, y, width, height){
-	// console.log(this.click.x >= x);
-	// console.log(this.click.x <= x + width);
-	// console.log(this.click.y >= y);
-	// console.log(this.click.y <= y + height);
-	// return(this.click.x >= x && this.click.x <= x + width && this.click.y >= y && this.click.y <= y + height)
+    // console.log(this.click.x >= x);
+    // console.log(this.click.x <= x + width);
+    // console.log(this.click.y >= y);
+    // console.log(this.click.y <= y + height);
+    // return(this.click.x >= x && this.click.x <= x + width && this.click.y >= y && this.click.y <= y + height)
 // }
 
 // function printout() {
@@ -1846,100 +1989,100 @@ GameEngine.prototype.checkMenuClick = function (buttonToTest){
 // }
 
 GameEngine.prototype.menuLoop = function () {
-	//console.log(window);
-	//console.log(document);
-	//console.log(window.onblur);
-	//window.onblur = function setMenuMode() { console.log("printout called");}
-	//window.onblur = function setMenuMode() { console.log(this.document.getElementById('gameWorld').getContext('2d'));console.log(this.document.getElementById('gameWorld').getContext('2d').test = "now");console.log("printout called");}
-		//window.onblur = function setMenuMode() { this.menuMode = "Pause";console.log("printout called");}
+    //console.log(window);
+    //console.log(document);
+    //console.log(window.onblur);
+    //window.onblur = function setMenuMode() { console.log("printout called");}
+    //window.onblur = function setMenuMode() { console.log(this.document.getElementById('gameWorld').getContext('2d'));console.log(this.document.getElementById('gameWorld').getContext('2d').test = "now");console.log("printout called");}
+        //window.onblur = function setMenuMode() { this.menuMode = "Pause";console.log("printout called");}
 
-	// console.log(document.getElementById('gameWorld'));
-	// console.log(document.getElementById('gameWorld').style);
-	//console.log(document.getElementById('gameWorld').style.cursor = 'pointer');
-	document.getElementById('gameWorld').style.cursor = 'pointer';
-	//console.log(document.getElementById('gameWorld')._proto_;
-	this.drawMenu();
-	
-	//if there is a click, see if it clicked a button
-	//console.log(this.click);
-	if (this.click != null) {
-		//console.log(this.click);
-		//console.log(this.menuMode);
-		if (this.menuMode == "Start") {
-			//console.log(this.checkMenuClick(this.startButton));
-			//console.log(this.click);
-			//console.log(this.startButton);
-			if (this.checkMenuClick(this.startButton)){
-				//console.log("should be starting");
-				this.restart();
-				document.getElementById('gameWorld').style.cursor = '';
+    // console.log(document.getElementById('gameWorld'));
+    // console.log(document.getElementById('gameWorld').style);
+    //console.log(document.getElementById('gameWorld').style.cursor = 'pointer');
+    document.getElementById('gameWorld').style.cursor = 'pointer';
+    //console.log(document.getElementById('gameWorld')._proto_;
+    this.drawMenu();
+    
+    //if there is a click, see if it clicked a button
+    //console.log(this.click);
+    if (this.click != null) {
+        //console.log(this.click);
+        //console.log(this.menuMode);
+        if (this.menuMode == "Start") {
+            //console.log(this.checkMenuClick(this.startButton));
+            //console.log(this.click);
+            //console.log(this.startButton);
+            if (this.checkMenuClick(this.startButton)){
+                //console.log("should be starting");
+                this.restart();
+                document.getElementById('gameWorld').style.cursor = '';
                 if (this.hasSeenIntro) {
-    				this.menuMode = "Game";
+                    this.menuMode = "Game";
                 } else {
                     this.menuMode = "Storymode";
                 }
-			}
-			// } else if (this.checkMenuClick(this.restartButton)){
-				// this.restart();
-				// console.log(document.getElementById('gameWorld').style.cursor = 'url("./images/cursor.png")');
-				// this.menuMode = "Game";
-			// }
-		} else if (this.menuMode == "Pause") {
-			if (this.checkMenuClick(this.continueButton)){
-				//console.log("should be continuing");
-				if (this.musicPlaying) {
-					this.backgroundaudio.play();
-				}					
-				document.getElementById('gameWorld').style.cursor = '';
-				this.menuMode = "Game";
-			} else if (this.checkMenuClick(this.startButton)){
-				//console.log("should be restarting");
-				this.restart();
-				if (this.musicPlaying) {
-					this.backgroundaudio.play();
-				}	
-				document.getElementById('gameWorld').style.cursor = '';
-				this.menuMode = "Game";
-			}
-		} else if (this.menuMode == "Lose" || this.menuMode == "Win") {
-			if (this.checkMenuClick(this.okButton)){								
-				this.menuMode = "Start";
-			}
+            }
+            // } else if (this.checkMenuClick(this.restartButton)){
+                // this.restart();
+                // console.log(document.getElementById('gameWorld').style.cursor = 'url("./images/cursor.png")');
+                // this.menuMode = "Game";
+            // }
+        } else if (this.menuMode == "Pause") {
+            if (this.checkMenuClick(this.continueButton)){
+                //console.log("should be continuing");
+                if (this.musicPlaying) {
+                    this.backgroundaudio.play();
+                }                   
+                document.getElementById('gameWorld').style.cursor = '';
+                this.menuMode = "Game";
+            } else if (this.checkMenuClick(this.startButton)){
+                //console.log("should be restarting");
+                this.restart();
+                if (this.musicPlaying) {
+                    this.backgroundaudio.play();
+                }   
+                document.getElementById('gameWorld').style.cursor = '';
+                this.menuMode = "Game";
+            }
+        } else if (this.menuMode == "Lose" || this.menuMode == "Win") {
+            if (this.checkMenuClick(this.okButton)){                                
+                this.menuMode = "Start";
+            }
         } else if (this.menuMode == "Intro") {
 
-		} else if (this.menuMode == "EndLevel") {
-			if (this.checkMenuClick(this.okButton)){
-				//increment level
-			}
-		} else if (this.menuMode == "Storymode") {
+        } else if (this.menuMode == "EndLevel") {
+            if (this.checkMenuClick(this.okButton)){
+                //increment level
+            }
+        } else if (this.menuMode == "Storymode") {
             if ((this.beginButton && this.checkMenuClick(this.beginButton)) ||
             (this.skipIntroButton && this.checkMenuClick(this.skipIntroButton))) {
                 this.menuMode = "Game";
-				if (this.musicPlaying) {
-					this.backgroundaudio.play();
-				}	
+                if (this.musicPlaying) {
+                    this.backgroundaudio.play();
+                }   
                 document.getElementById('gameWorld').style.cursor = '';
             }
         }
-		
-	}
-	
+        
+    }
+    
 
-	// if (this.click != null) {
-		// //console.log(this.click);
-		// if (this.checkMenuClick(this.startButton)){
-			// this.menuMode = "Game";
-		// }
-		// // if (this.click.x >= this.startButton.x && 
-		// // this.click.x <= this.startButton.x + this.startButton.width &&
-		// // this.click.y >= this.startButton.y && 
-		// // this.click.y <= this.startButton.y + this.startButton.height) {
-			
-			// // //this.showMenu = false;
-			// // //this.FirstMenu = false;
-			// // //this.reset();
-		// // }
-	// }
+    // if (this.click != null) {
+        // //console.log(this.click);
+        // if (this.checkMenuClick(this.startButton)){
+            // this.menuMode = "Game";
+        // }
+        // // if (this.click.x >= this.startButton.x && 
+        // // this.click.x <= this.startButton.x + this.startButton.width &&
+        // // this.click.y >= this.startButton.y && 
+        // // this.click.y <= this.startButton.y + this.startButton.height) {
+            
+            // // //this.showMenu = false;
+            // // //this.FirstMenu = false;
+            // // //this.reset();
+        // // }
+    // }
     //this.clockTick = this.timer.tick(); // increments the clock tick
     //this.update(); // updates the GameEngine and all the entities in the game
     //this.draw(); // draws the GameEngine and all the entities in the game
@@ -2066,35 +2209,36 @@ GameEngine.prototype.loopDialogue = function() {
  * This loops through the game engine until the game ends
  */
 GameEngine.prototype.loop = function () {
-	//pauses the game if game looses focus
-	// if (this.click != null) {
-		// console.log(this.click);
-	// }
+    //pauses the game if game looses focus
+    // if (this.click != null) {
+        // console.log(this.click);
+    // }
 
-	if (this.ctx.lostfocus == "True") {
-		//console.log("lostfocus");
-		this.ctx.lostfocus = "False";
-		this.backgroundaudio.pause();
-		this.menuMode = "Pause";
-	}
+    if (this.ctx.lostfocus == "True") {
+        //console.log("lostfocus");
+        this.ctx.lostfocus = "False";
+        this.backgroundaudio.pause();
+        this.menuMode = "Pause";
+    }
     if (this.gameRunning) {
         this.clockTick = this.timer.tick(); // increments the clock tick
 
         this.update(); // updates the GameEngine and all the entities in the game
 
-    	this.draw(); // draws the GameEngine and all the entities in the game
+        this.draw(); // draws the GameEngine and all the entities in the game
+        this.loopDialogue();
+
     } else {
         for (var i = 0; i < this.players.length; i++) {
             this.drawPlayerView(i, this.players[i]);
         }
     }
 
-    this.loopDialogue();
     this.click = null; // resets the click to null
-	
-	if (this.musicPlaying) {
-		this.backgroundaudio.play();
-	}
+    
+    if (this.musicPlaying) {
+        this.backgroundaudio.play();
+    }
     this.map.update();
 
 }
