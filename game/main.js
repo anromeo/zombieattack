@@ -63,6 +63,7 @@ ASSET_MANAGER.queueDownload("./images/flame3.png");
 ASSET_MANAGER.queueDownload("./images/map1.png");
 ASSET_MANAGER.queueDownload("./images/shooter-walking.png");
 ASSET_MANAGER.queueDownload("./images/shooter-walking2.png");
+ASSET_MANAGER.queueDownload("./images/alternative-shooter-walking.png");
 
 // Moving Animations
 ASSET_MANAGER.queueDownload("./images/boss-moving.png");
@@ -78,6 +79,7 @@ ASSET_MANAGER.queueDownload("./images/portal.png");
 ASSET_MANAGER.queueDownload("./images/bossMap1.png");
 ASSET_MANAGER.queueDownload("./images/ruins.png");
 
+ASSET_MANAGER.queueDownload("./images/alternate-tristan.png");
 ASSET_MANAGER.queueDownload("./images/tristan.png");
 ASSET_MANAGER.queueDownload("./images/gabrielle.png");
 
@@ -86,11 +88,10 @@ ASSET_MANAGER.queueDownload("./images/woman-shadow.png");
 
 ASSET_MANAGER.queueDownload("./images/angel-walking.png");
 
-ASSET_MANAGER.queueDownload("./images/factory.png");
+ASSET_MANAGER.queueDownload("./images/Spider1.png");
 
-ASSET_MANAGER.queueDownload("./images/smallroom.png");
-
-ASSET_MANAGER.queueDownload("./images/city.png");
+ASSET_MANAGER.queueDownload("./images/SkeletonWalk.png");
+ASSET_MANAGER.queueDownload("./images/SkeletonAttack.png");
 
 ASSET_MANAGER.queueDownload("./images/shooter-ability1.png");
 ASSET_MANAGER.queueDownload("./images/shooter-ability1-inactive.png");
@@ -104,7 +105,6 @@ ASSET_MANAGER.queueDownload("./images/angel-ability1-inactive.png");
 ASSET_MANAGER.queueDownload("./images/angel-ability2.png");
 ASSET_MANAGER.queueDownload("./images/angel-ability2-inactive.png");
 
-ASSET_MANAGER.queueDownload("./images/mansion.png");
 ASSET_MANAGER.queueDownload("./images/land-mine.png");
 ASSET_MANAGER.queueDownload("./images/land-mine-explosion.png");
 
@@ -124,14 +124,14 @@ ASSET_MANAGER.downloadAll(function () {
 	//to add entities, change maps and otherwise setup the game go to gameEngine SetupGameState
 	gameEngine.start();
 
-    var audioRunning = true;
-    document.getElementById("pause-audio").addEventListener("click", function(){
-
-        if (audioRunning === true) {
-            console.log(gameEngine.backgroundaudio.pause);
+	document.getElementById("pause-audio").addEventListener("click", function(){
+        if (gameEngine.musicPlaying === true) {
+            //console.log(gameEngine.backgroundaudio.pause);
             gameEngine.backgroundaudio.pause();
+			gameEngine.musicPlaying = false;
         } else {
             gameEngine.backgroundaudio.play();
+			gameEngine.musicPlaying = true;
         }
     });
 });

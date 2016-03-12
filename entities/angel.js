@@ -6,6 +6,8 @@
 // Source Used: http://jaran.de/goodbits/2011/07/17/calculating-an-intercept-course-to-a-target-with-constant-direction-and-velocity-in-a-2-dimensional-plane/
 
 function Angel(game) {
+	//console.log("building angel");
+	//LivingEntity.call(this, game, 100, 100);
     playerControlled.call(this, game);
 
     this.player = 1;
@@ -80,13 +82,40 @@ function Angel(game) {
     this.ability2PictureInactive = ASSET_MANAGER.getAsset("./images/angel-ability2-inactive.png");
 
     this.angle = 0;
-    this.angleOffset = -210;
+    //this.angleOffset = -210;
+	this.spriteAngleOffset = 80;
 
     this.anglePlayerControlled = -100;
 };
 
 Angel.prototype = new playerControlled();
 Angel.prototype.constructor = Angel;
+
+// This function will eventually move to the shooter class.
+Angel.prototype.attack = function(target) {
+
+    var dir = direction(target, this);
+    var shot;
+    if (this.weapon === "FlameThrower") {
+        shot = new Flame(this.game, this, dir);
+        this.game.flameaudio.play();
+    } else {
+        shot = new Projectile(this.game);
+        shot.radius = 15;
+        shot.color = "gold";
+    }
+    shot.strength += this.strength;
+    shot.maxSpeed = this.maxSpeed * 2;
+    shot.x = this.x + dir.x * (this.radius + shot.radius + 20);
+    shot.y = this.y + dir.y * (this.radius + shot.radius + 20);
+    shot.velocity.x = dir.x * shot.maxSpeed;
+    shot.velocity.y = dir.y * shot.maxSpeed;
+    //shot.thrown = true;
+    shot.thrower = this;
+    shot.team = this.team;
+    this.game.addEntity(shot);
+
+}
 
 Angel.prototype.ability1 = function(entity) {
 }
@@ -95,7 +124,7 @@ Angel.prototype.ability2 = function(entity) {
 }
 
 Angel.prototype.update = function() {
-    console.log(this.angleOffset);
+    //console.log(this.spriteAngleOffset);
     if (this.frozen) {
         return;
     }
@@ -129,5 +158,5 @@ Angel.prototype.update = function() {
 }
 
 Angel.prototype.draw = function (ctx) {
-	playerControlled.prototype.draw.call(ctx, this);
+	playerControlled.prototype.draw.call(this, ctx);
 }

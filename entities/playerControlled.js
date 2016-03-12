@@ -6,6 +6,7 @@
 // Source Used: http://jaran.de/goodbits/2011/07/17/calculating-an-intercept-course-to-a-target-with-constant-direction-and-velocity-in-a-2-dimensional-plane/
 
 function playerControlled(game) {
+	//console.log("building playerControlled");
     //LivingEntity.call(this, game, 0, 0, 0, 0, this.radius + Math.random() * (800 - this.radius * 2), this.radius + Math.random() * (800 - this.radius * 2));  
     // LivingEntity.call(this, game, game.surfaceWidth/2 * Math.random(), game.surfaceHeight/2 * Math.random());
 
@@ -173,6 +174,15 @@ playerControlled.prototype.swapIfCanSwap = function(game) {
         && game.players[indexOfSwappingPlayerControlled]
         && !game.players[indexOfSwappingPlayerControlled].controlled) {
 
+        game.players[indexOfSwappingPlayerControlled].x = this.game.getPlayer().x;
+        game.players[indexOfSwappingPlayerControlled].canvasX = this.game.getPlayer().canvasX;
+        game.players[indexOfSwappingPlayerControlled].y = this.game.getPlayer().y;
+        game.players[indexOfSwappingPlayerControlled].canvasY = this.game.getPlayer().canvasY;
+
+        this.game.getPlayer.x = -100000;
+        this.game.getPlayer().canvasX = -100000;
+        this.game.getPlayer().y = -10000;
+        this.game.getPlayer().canvasY = -100000;
         // for every playerControlled object of the gameWipes away the control for all playerControlled Objects of the game
         for(var i = 0; i < game.players.length; i++) {
             // Wipes away the control for all playerControlled Objects of the game
@@ -199,7 +209,6 @@ playerControlled.prototype.selectAction = function () {
         if (this.game.keyState) {
             var x = 0;
             var y = 0;
-
             // If the player has pressed a key '1' to '9' then swap players if
             // the other player exists
             this.swapIfCanSwap(this.game);            
@@ -231,14 +240,10 @@ playerControlled.prototype.selectAction = function () {
             }  
             
             if (this.game.keyState[32]) {
-                switch (this.currentAbility) {
-                    case 1: this.ability1Attributes.activate = true;
-                    break;
-                    case 2: this.ability2Attributes.activate = true;
-                    break;
-                    case 3: ;
-                    break;
-                }
+                this.ability2Attributes.activate = true;
+            }
+            if (this.game.keyState[16]) {
+                this.ability1Attributes.activate = true;
             }
             action.direction.x += (x) * acceleration;
             action.direction.y += (y) * acceleration;
@@ -395,7 +400,6 @@ playerControlled.prototype.ability2 = function(entity) {
 // }
 
 playerControlled.prototype.update = function () {
-
 
     if (this.timerForSpeed) {
         if (this.timerForSpeed <= 0) {
@@ -588,6 +592,8 @@ playerControlled.prototype.draw = function (ctx) {
 		
 		this.game.x = this.game.mouse.x;
 		this.game.y = this.game.mouse.y;
+        // console.log("X " + this.game.x);
+        // console.log("Y " + this.game.y);
     }
     
     if (this.timerForSpeed) {
@@ -638,9 +644,9 @@ playerControlled.prototype.draw = function (ctx) {
 
         ctx.lineWidth = 1;
     }
-    if (this.controlled) {
-        console.log("X: " + this.x + " | Y: " + this.y);
-    }
+    // if (this.controlled) {
+        // console.log("X: " + this.x + " | Y: " + this.y);
+    // }
     // ctx.beginPath();
     // ctx.fillStyle = this.color;
     // ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
@@ -655,7 +661,7 @@ playerControlled.prototype.draw = function (ctx) {
     // ctx.closePath();
 
         //shooting line
-    if (this.game.mouse && this.shootingLine && this.controlled) {
+    if (this.game.mouse && this.shootingLine && this.controlled && this.name != "Angel") {
         ctx.beginPath();
 		        // var lineBeginX = this.canvasX + this.radius;
         // var lineBeginY = this.canvasY + this.radius;
@@ -688,7 +694,7 @@ playerControlled.prototype.draw = function (ctx) {
     }
 
 
-    if (this.game.mouse && this.game.mouse.mousedown && this.controlled) {
+    if (this.game.mouse && this.game.mouse.mousedown && this.controlled && this.name != "Angel") {
         ctx.beginPath();
         // var lineBeginX = this.canvasX + this.radius;
         // var lineBeginY = this.canvasY + this.radius;
