@@ -955,7 +955,7 @@ GameEngine.prototype.setupMaps = function () {
                         {x:1320, y: 1315},
                         {x:2220, y: 1480},
                         {x:524, y: 1305},
-<<<<<<< HEAD
+
                         {x:472, y: 1144}],
                         {x:467, y: 100},
                         {x:820, y: 137},
@@ -967,9 +967,9 @@ GameEngine.prototype.setupMaps = function () {
                         {x:490, y: 639},
                         {x:490, y: 1052},
                         {x:1387, y: 1547};
-    this.setMap(map1);
-=======
-                        {x:472, y: 1144}];
+                       // this.setMap(map1);
+
+                       // {x:472, y: 1144}];
     
     map1.bossMap = true;
     for (var i = 0; i < 5; i++) {
@@ -986,7 +986,6 @@ GameEngine.prototype.setupMaps = function () {
             this.game.addEntity(new Portal(this.game.getPlayer().x + 20, this.game.getPlayer().y + 20, bossMap, 100, 100));
         }
     }
->>>>>>> 57a349e5c9c1adc106ad1bf2b6325e0376d3c488
     ruins.setItems(ruinItems);
     ruins.drawDialogue = true;
 
